@@ -1,0 +1,26 @@
+package com.alfabank.homework.courseproject.data.places
+
+import com.alfabank.homework.courseproject.data.dto.CoordsDTO
+import com.alfabank.homework.courseproject.data.dto.ImageDTO
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class PlaceDTO(
+    @SerialName("address")
+    val address: String?,
+    @SerialName("categories")
+    val categories: List<String>?,
+    @SerialName("coords")
+    val coords: CoordsDTO?,
+    @SerialName("description")
+    val description: String?,
+    @SerialName("id")
+    val id: Int?,
+    @SerialName("images")
+    val images: List<ImageDTO>?,
+    @SerialName("tags")
+    val tags: List<String>?,
+    @SerialName("title")
+    val title: String?
+)

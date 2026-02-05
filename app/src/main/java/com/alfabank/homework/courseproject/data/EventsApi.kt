@@ -19,16 +19,29 @@ interface EventsApi {
         @Query("expand") expand: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
         @Query("location") location: String = "spb",
         @Query("page_size") pageSize: Int = 20,
-        @Query("fields") fields: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
+        @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories"),
     ): ListOfEventsResponseDTO
 
     @GET("events")
     suspend fun getEventsByCategories(
         @Query("expand") expand: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
         @Query("location") location: String = "spb",
+        @Query("text_format") textFormat: String = "text",
         @Query("page_size") pageSize: Int = 20,
         @Query("categories") categories: String,
-        @Query("fields") fields: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
+        @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories"),
+    ): ListOfEventsResponseDTO
+
+    //Актуальные события сортировка по favorites_count
+    @GET("events")
+    suspend fun getPopularEvents(
+        @Query("actual_since") actualSince: String,
+        @Query("order_by") orderBy: String = "-favorites_count,-publication_date",
+        @Query("expand") expand: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
+        @Query("location") location: String = "spb",
+        @Query("text_format") textFormat: String = "text",
+        @Query("page_size") pageSize: Int = 20,
+        @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories"),
     ): ListOfEventsResponseDTO
 
     @GET

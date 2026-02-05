@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PlaceDTO(
+data class EventPlaceDTO(
     @SerialName("address")
     val address: String?,
     @SerialName("coords")

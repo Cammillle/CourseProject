@@ -28,7 +28,7 @@ data class EventDTO(
     @SerialName("location")
     val location: LocationDTO?,
     @SerialName("place")
-    val place: PlaceDTO?,
+    val place: EventPlaceDTO?,
     @SerialName("categories")
     val categories: List<String>?
 ){

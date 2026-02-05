@@ -1,6 +1,6 @@
 package com.alfabank.homework.courseproject.domain.model
 
-data class Place(
+data class EventPlace(
     val address: String?,
     val coords: Coords?,
     val id: Int?,

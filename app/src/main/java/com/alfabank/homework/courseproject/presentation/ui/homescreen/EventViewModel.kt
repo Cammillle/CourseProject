@@ -18,7 +18,7 @@ class EventViewModel : ViewModel() {
     private var nextUrl: String? = null
 
     init {
-        loadEventsByCategories()
+        getTodayPopularEvents()
     }
 
 //    fun loadEvents() {
@@ -38,6 +38,35 @@ class EventViewModel : ViewModel() {
 //            )
 //        }
 //    }
+
+    fun getTodayPopularEvents() {
+        viewModelScope.launch {
+            _homeState.value =
+                _homeState.value.copy(
+                    isLoading = true,
+                    error = null,
+                    nextDataIsLoading = false
+                )
+            repository.getTodayPopularEvents().fold(
+                onSuccess = { eventsData ->
+                    _homeState.value = _homeState.value.copy(
+                        isLoading = false,
+                        events = eventsData.events,
+                        nextDataIsLoading = false
+                    )
+                    nextUrl = eventsData.nextUrl
+                },
+                onFailure = { error ->
+                    _homeState.value = _homeState.value.copy(
+                        isLoading = false,
+                        error = error.message ?: "Unknown error",
+                        nextDataIsLoading = false
+                    )
+                    Log.e("TAGATG", homeState.value.error.toString())
+                }
+            )
+        }
+    }
 
     fun loadEventsByCategories(category: String = "tour") {
         viewModelScope.launch {
