@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alfabank.homework.courseproject.domain.model.Event
-import com.alfabank.homework.courseproject.presentation.ui.homescreen.EventCard
 
 @Composable
 fun FeedScreen(
@@ -42,7 +41,9 @@ fun FeedScreen(
 
 @Composable
 fun EventsList(
-    events: List<Event> = emptyList(), nextDataIsLoading: Boolean, loadNextEvents: () -> Unit
+    events: List<Event> = emptyList(),
+    nextDataIsLoading: Boolean,
+    loadNextEvents: () -> Unit
 ) {
     val listState = rememberLazyListState()
 

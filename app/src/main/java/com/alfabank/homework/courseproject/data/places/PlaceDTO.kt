@@ -22,5 +22,9 @@ data class PlaceDTO(
     @SerialName("tags")
     val tags: List<String>?,
     @SerialName("title")
-    val title: String?
+    val title: String?,
+    @SerialName("is_free")
+    val isFree: Boolean?,
+    @SerialName("timetable")
+    val timetable: String?
 )

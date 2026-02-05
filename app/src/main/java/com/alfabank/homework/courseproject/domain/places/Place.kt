@@ -11,5 +11,7 @@ data class Place(
     val id: Int,
     val images: List<ImageEvent>?,
     val tags: List<String>,
-    val title: String
+    val title: String,
+    val isFree: Boolean,
+    val timetable: String
 )

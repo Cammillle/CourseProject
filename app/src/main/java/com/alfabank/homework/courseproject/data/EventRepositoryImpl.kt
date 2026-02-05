@@ -1,13 +1,29 @@
 package com.alfabank.homework.courseproject.data
 
+import com.alfabank.homework.courseproject.api.PlacesApi
 import com.alfabank.homework.courseproject.domain.EventData
 import com.alfabank.homework.courseproject.domain.EventRepository
+import com.alfabank.homework.courseproject.domain.PlaceData
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class EventRepositoryImpl : EventRepository {
     private val api = EventsApi()
+    private val placesApi = PlacesApi()
+
+    suspend fun getTodayPopularPlaces(): Result<PlaceData> {
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+
+        return try {
+            val response = placesApi.getPopularPlaces(actualSince = today)
+            val places = response.places?.map { it.toPlace() } ?: emptyList()
+            val nextPage = response.next
+            Result.success(PlaceData(places = places, nextUrl = nextPage))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
 
     suspend fun getTodayPopularEvents(): Result<EventData> {

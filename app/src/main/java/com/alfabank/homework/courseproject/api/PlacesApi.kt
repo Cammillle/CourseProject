@@ -17,10 +17,10 @@ interface PlacesApi {
     suspend fun getPopularPlaces(
         @Query("actual_since") actualSince: String,
         @Query("order_by") orderBy: String = "-favorites_count,-publication_date",
-        @Query("expand") expand: List<String> = listOf("id,title,address,images,description,coords,categories,tags"),
+        @Query("expand") expand: List<String> = listOf("id,title,address,images,description,coords,categories,tags,timetable"),
         @Query("location") location: String = "spb",
         @Query("text_format") textFormat: String = "text",
-        @Query("fields") fields: List<String> = listOf("id,title,address,images,description,coords,categories,tags"),
+        @Query("fields") fields: List<String> = listOf("id,title,address,images,description,coords,categories,tags,timetable"),
     ): PlacesResponseDTO
 
 }

@@ -32,7 +32,9 @@ fun PlaceDTO.toPlace(): Place {
         id = id ?: 0,
         images = images?.map { it.toImageEvent() },
         tags = tags ?: emptyList(),
-        title = title ?: ""
+        title = title ?: "",
+        isFree = isFree ?: true,
+        timetable = timetable ?: ""
     )
 }
 

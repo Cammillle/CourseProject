@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.domain.model
 
+
 data class Event(
     val dates: List<DateEvent>?,
     val id: Int,
