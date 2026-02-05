@@ -1,4 +1,4 @@
-package com.alfabank.homework.courseproject.ui.theme
+package com.alfabank.homework.courseproject.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
