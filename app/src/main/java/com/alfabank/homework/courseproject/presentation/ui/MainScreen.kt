@@ -1,0 +1,94 @@
+package com.alfabank.homework.courseproject.presentation.ui
+
+import android.util.Log
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.alfabank.homework.courseproject.navigation.AppNavGraph
+import com.alfabank.homework.courseproject.navigation.NavigationItem
+import com.alfabank.homework.courseproject.navigation.rememberNavigationState
+import com.alfabank.homework.courseproject.presentation.ui.favouritescreen.FavouriteScreen
+import com.alfabank.homework.courseproject.presentation.ui.feedScreen.EventsFilterScreen
+import com.alfabank.homework.courseproject.presentation.ui.feedScreen.FeedScreen
+import com.alfabank.homework.courseproject.presentation.ui.homescreen.EventViewModel
+import com.alfabank.homework.courseproject.presentation.ui.mapscreen.MapScreen
+import com.alfabank.homework.courseproject.presentation.ui.profilescreen.ProfileScreen
+
+@Composable
+fun MainScreen() {
+    val viewModel: EventViewModel = viewModel()
+    val homeState = viewModel.homeState.collectAsStateWithLifecycle()
+
+    val navigationState = rememberNavigationState()
+    val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
+    Log.d("MainScreen", "$navBackStackEntry")
+
+    Scaffold(
+        bottomBar = {
+            if (navBackStackEntry != null) {
+                NavigationBar {
+                    val items = listOf(
+                        NavigationItem.Map, NavigationItem.Home, NavigationItem.Profile,
+                        NavigationItem.Favourite
+                    )
+                    items.forEach { item ->
+                        val selected = navBackStackEntry?.destination?.hierarchy?.any {
+                            it.route == item.screen.route
+                        } ?: false
+
+                        NavigationBarItem(
+                            selected = selected,
+                            onClick = {
+                                if (!selected) {
+                                    navigationState.navigateTo(item.screen.route)
+                                }
+                            },
+                            icon = {
+                                Icon(
+                                    painter = painterResource(item.icon),
+                                    contentDescription = null
+                                )
+                            },
+                            label = { Text(text = stringResource(item.titleResId)) },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.onBackground,
+                                selectedTextColor = MaterialTheme.colorScheme.onBackground
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    ) { paddingValues ->
+
+        AppNavGraph(
+            navHostController = navigationState.navHostController,
+            eventsFeedScreenContent = {
+                FeedScreen(
+                    events = homeState.value.events,
+                    nextDataIsLoading = homeState.value.nextDataIsLoading,
+                    loadNextEvents = { viewModel.loadNextEvents() },
+                    paddingValues = paddingValues
+                )
+            },
+            eventsFeedFiltersScreenContent = { EventsFilterScreen() },
+            favouriteScreenContent = { FavouriteScreen() },
+            profileScreenContent = { ProfileScreen() },
+            yandexMapScreenContent = { MapScreen() }
+        )
+        Log.d("MainScreen", "${navigationState.navHostController}")
+
+    }
+}
