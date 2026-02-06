@@ -1,4 +1,4 @@
-package com.alfabank.homework.courseproject.presentation.ui.filterScreen
+package com.alfabank.homework.courseproject.presentation.ui.filterScreen.categoryFilter
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row

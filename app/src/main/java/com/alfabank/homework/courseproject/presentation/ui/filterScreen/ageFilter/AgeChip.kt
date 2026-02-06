@@ -1,4 +1,4 @@
-package com.alfabank.homework.courseproject.presentation.ui.filterScreen
+package com.alfabank.homework.courseproject.presentation.ui.filterScreen.ageFilter
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilterChip

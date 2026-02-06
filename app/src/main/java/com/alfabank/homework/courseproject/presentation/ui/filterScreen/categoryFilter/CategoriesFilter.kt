@@ -1,4 +1,4 @@
-package com.alfabank.homework.courseproject.presentation.ui.filterScreen
+package com.alfabank.homework.courseproject.presentation.ui.filterScreen.categoryFilter
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -53,9 +53,7 @@ fun CategoriesFilter() {
                 "Кино", "Концерты", "Спорт", "Фестивали", "Театры", "Шоу", "Экскурсии"
             )
         )
-
     }
-
 
     Card(
         modifier = Modifier.fillMaxWidth(),

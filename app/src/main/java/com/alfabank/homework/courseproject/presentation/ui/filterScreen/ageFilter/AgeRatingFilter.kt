@@ -1,4 +1,4 @@
-package com.alfabank.homework.courseproject.presentation.ui.filterScreen
+package com.alfabank.homework.courseproject.presentation.ui.filterScreen.ageFilter
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically

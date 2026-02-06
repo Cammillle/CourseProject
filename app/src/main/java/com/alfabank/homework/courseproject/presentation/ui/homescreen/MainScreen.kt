@@ -40,8 +40,8 @@ fun MainScreen() {
 
     Scaffold(
         topBar = {
-            if (currentDestination == Screen.Home.route
-                || currentDestination == Screen.EventsFeed.route
+            if (
+                currentDestination == Screen.EventsFeed.route
             ) {
                 FeedTopBar(
                     navigateOnFilterScreen = {
@@ -52,38 +52,42 @@ fun MainScreen() {
         },
         bottomBar = {
             if (navBackStackEntry != null) {
-                NavigationBar {
-                    val items = listOf(
-                        NavigationItem.Map,
-                        NavigationItem.Home,
-                        NavigationItem.Profile,
-                        NavigationItem.Favourite
-                    )
-                    items.forEach { item ->
-                        val selected = navBackStackEntry?.destination?.hierarchy?.any {
-                            it.route == item.screen.route
-                        } ?: false
-
-                        NavigationBarItem(
-                            selected = selected,
-                            onClick = {
-                                if (!selected) {
-                                    navigationState.navigateTo(item.screen.route)
-                                }
-                            },
-                            icon = {
-                                Icon(
-                                    painter = painterResource(item.icon), contentDescription = null
-                                )
-                            },
-                            label = { Text(text = stringResource(item.titleResId)) },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.onBackground,
-                                selectedTextColor = MaterialTheme.colorScheme.onBackground
-                            )
+                if (currentDestination != Screen.EventsFeedFilters.route) {
+                    NavigationBar {
+                        val items = listOf(
+                            NavigationItem.Map,
+                            NavigationItem.Home,
+                            NavigationItem.Profile,
+                            NavigationItem.Favourite
                         )
+                        items.forEach { item ->
+                            val selected = navBackStackEntry?.destination?.hierarchy?.any {
+                                it.route == item.screen.route
+                            } ?: false
+
+                            NavigationBarItem(
+                                selected = selected,
+                                onClick = {
+                                    if (!selected) {
+                                        navigationState.navigateTo(item.screen.route)
+                                    }
+                                },
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(item.icon),
+                                        contentDescription = null
+                                    )
+                                },
+                                label = { Text(text = stringResource(item.titleResId)) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.onBackground,
+                                    selectedTextColor = MaterialTheme.colorScheme.onBackground
+                                )
+                            )
+                        }
                     }
                 }
+
             }
         }) { paddingValues ->
 
@@ -100,7 +104,9 @@ fun MainScreen() {
             eventsFeedFiltersScreenContent = {
                 EventsFilterScreen(
                     onBackClick = { navigationState.navHostController.popBackStack() },
-                    onClearAll = {})
+                    onClearAll = {},
+                    onSaveFiltersClick = { navigationState.navHostController.popBackStack() }
+                )
             },
             favouriteScreenContent = { FavouriteScreen() },
             profileScreenContent = { ProfileScreen() },
