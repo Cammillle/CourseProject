@@ -23,6 +23,7 @@ import com.alfabank.homework.courseproject.presentation.ui.favouritescreen.Favou
 import com.alfabank.homework.courseproject.presentation.ui.feedScreen.EventsFilterScreen
 import com.alfabank.homework.courseproject.presentation.ui.feedScreen.FeedScreen
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.EventViewModel
+import com.alfabank.homework.courseproject.presentation.ui.homescreen.components.FeedTopBar
 import com.alfabank.homework.courseproject.presentation.ui.mapscreen.MapScreen
 import com.alfabank.homework.courseproject.presentation.ui.profilescreen.ProfileScreen
 
@@ -36,6 +37,7 @@ fun MainScreen() {
     Log.d("MainScreen", "$navBackStackEntry")
 
     Scaffold(
+        topBar = { FeedTopBar() },
         bottomBar = {
             if (navBackStackEntry != null) {
                 NavigationBar {
