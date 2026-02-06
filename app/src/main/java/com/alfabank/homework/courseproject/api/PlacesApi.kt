@@ -1,6 +1,5 @@
 package com.alfabank.homework.courseproject.api
 
-import com.alfabank.homework.courseproject.data.EventsApi
 import com.alfabank.homework.courseproject.data.places.PlacesResponseDTO
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json

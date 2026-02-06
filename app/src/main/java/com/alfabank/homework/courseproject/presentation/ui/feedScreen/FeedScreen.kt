@@ -63,7 +63,6 @@ fun EventsList(
         }
     }
 
-
     LazyColumn(
         state = listState, modifier = Modifier
             .fillMaxWidth()
