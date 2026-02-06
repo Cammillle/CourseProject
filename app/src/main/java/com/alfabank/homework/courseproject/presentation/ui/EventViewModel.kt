@@ -1,4 +1,4 @@
-package com.alfabank.homework.courseproject.presentation.ui.homescreen
+package com.alfabank.homework.courseproject.presentation.ui
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

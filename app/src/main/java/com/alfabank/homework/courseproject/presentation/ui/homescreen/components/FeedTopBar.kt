@@ -25,7 +25,9 @@ import com.alfabank.homework.courseproject.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedTopBar() {
+fun FeedTopBar(
+    navigateOnFilterScreen: () -> Unit
+) {
     var showCityDialog by remember { mutableStateOf(false) }
     var selectedCity by remember { mutableStateOf("Санкт-Петербург") }
 
@@ -51,7 +53,7 @@ fun FeedTopBar() {
             IconButton(onClick = { /* поиск */ }) {
                 Icon(Icons.Default.Search, contentDescription = "Поиск")
             }
-            IconButton(onClick = { /* фильтры */ }) {
+            IconButton(onClick = { navigateOnFilterScreen() }) {
                 Icon(
                     painterResource(R.drawable.outline_filter_list_24),
                     contentDescription = "Фильтры"
@@ -77,6 +79,8 @@ fun FeedTopBar() {
 
 @Composable
 @Preview
-private fun Preview(){
-    FeedTopBar()
+private fun Preview() {
+    FeedTopBar(
+        navigateOnFilterScreen = {}
+    )
 }

@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Surface
+import com.alfabank.homework.courseproject.presentation.ui.homescreen.MainScreen
 import com.alfabank.homework.courseproject.presentation.ui.theme.CourseProjectTheme
 
 class MainActivity : ComponentActivity() {
