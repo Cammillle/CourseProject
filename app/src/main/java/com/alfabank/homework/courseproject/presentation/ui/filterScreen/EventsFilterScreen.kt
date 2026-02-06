@@ -43,7 +43,8 @@ import com.alfabank.homework.courseproject.presentation.ui.filterScreen.dateFilt
 fun EventsFilterScreen(
     onBackClick: () -> Unit,
     onClearAll: () -> Unit,
-    onSaveFiltersClick: () -> Unit
+    onSaveFiltersClick: () -> Unit,
+    onResetFilters: () -> Unit
 ) {
 
     Scaffold(
@@ -80,7 +81,7 @@ fun EventsFilterScreen(
         bottomBar = {
             ButtonsRow(
                 onSaveFiltersClick = { onSaveFiltersClick() },
-                onResetFilters = {}
+                onResetFilters = { onResetFilters() }
             )
         }
     ) { paddingValues ->
@@ -120,7 +121,8 @@ private fun Preview() {
     EventsFilterScreen(
         onBackClick = {},
         onClearAll = {},
-        onSaveFiltersClick = {}
+        onSaveFiltersClick = {},
+        onResetFilters = {}
     )
 }
 

@@ -105,7 +105,8 @@ fun MainScreen() {
                 EventsFilterScreen(
                     onBackClick = { navigationState.navHostController.popBackStack() },
                     onClearAll = {},
-                    onSaveFiltersClick = { navigationState.navHostController.popBackStack() }
+                    onSaveFiltersClick = { navigationState.navHostController.popBackStack() },
+                    onResetFilters = { navigationState.navHostController.popBackStack() }
                 )
             },
             favouriteScreenContent = { FavouriteScreen() },

@@ -11,7 +11,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,7 +37,7 @@ fun DateFilterWithPickers() {
 
     var dateFrom by remember { mutableStateOf<LocalDate?>(null) }
     var dateTo by remember { mutableStateOf<LocalDate?>(null) }
-    var selectedQuickFilter by remember { mutableStateOf<String?>(null) }
+    var selectedQuickFilter by remember { mutableStateOf<String?>("Любое время") }
 
     // Состояния для DatePicker
     var showFromDatePicker by remember { mutableStateOf(false) }
@@ -121,6 +119,10 @@ fun DateFilterWithPickers() {
                                         } else {
                                             selectedQuickFilter = filter
                                             val dates = when (filter) {
+                                                "Любое время" -> {
+                                                    Pair(null, null)
+                                                }
+
                                                 "Сегодня" -> {
                                                     val today = LocalDate.now()
                                                     Pair(today, today)
