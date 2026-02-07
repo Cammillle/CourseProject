@@ -22,7 +22,7 @@ data class EventDTO(
     @SerialName("description")
     val description: String?,
     @SerialName("id")
-    val id: Int,
+    val id: Long,
     @SerialName("images")
     val images: List<ImageDTO>?,
     @SerialName("location")

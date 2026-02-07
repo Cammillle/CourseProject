@@ -25,6 +25,7 @@ import com.alfabank.homework.courseproject.presentation.ui.favouritescreen.Favou
 import com.alfabank.homework.courseproject.presentation.ui.filterScreen.EventsFilterScreen
 import com.alfabank.homework.courseproject.presentation.ui.feedScreen.FeedScreen
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.components.FeedTopBar
+import com.alfabank.homework.courseproject.presentation.ui.homescreen.eventScreen.EventScreen
 import com.alfabank.homework.courseproject.presentation.ui.mapscreen.MapScreen
 import com.alfabank.homework.courseproject.presentation.ui.profilescreen.ProfileScreen
 
@@ -41,7 +42,7 @@ fun MainScreen() {
     Scaffold(
         topBar = {
             if (
-                currentDestination == Screen.EventsFeed.route
+                currentDestination == Screen.EventsListFeed.route
             ) {
                 FeedTopBar(
                     navigateOnFilterScreen = {
@@ -98,7 +99,10 @@ fun MainScreen() {
                     events = homeState.value.events,
                     nextDataIsLoading = homeState.value.nextDataIsLoading,
                     loadNextEvents = { viewModel.loadNextEvents() },
-                    paddingValues = paddingValues
+                    paddingValues = paddingValues,
+                    onClick = {
+                        navigationState.navigateTo(Screen.Event.route)
+                    }
                 )
             },
             eventsFeedFiltersScreenContent = {
@@ -111,7 +115,9 @@ fun MainScreen() {
             },
             favouriteScreenContent = { FavouriteScreen() },
             profileScreenContent = { ProfileScreen() },
-            yandexMapScreenContent = { MapScreen() })
+            yandexMapScreenContent = { MapScreen() },
+            feedScreenContent = { EventScreen() }
+        )
         Log.d("MainScreen", "${navigationState.navHostController}")
 
     }

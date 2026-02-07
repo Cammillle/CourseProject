@@ -43,13 +43,15 @@ import com.alfabank.homework.courseproject.domain.model.Event
 @Suppress("NonSkippableComposable")
 @Composable
 fun EventCard(
-    event: Event
+    event: Event,
+    onClick: (Long) -> Unit
 ) {
     val isFavorite = remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = { onClick(event.id) })
             .padding(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White

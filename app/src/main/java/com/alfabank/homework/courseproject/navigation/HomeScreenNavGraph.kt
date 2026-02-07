@@ -7,13 +7,19 @@ import androidx.navigation.compose.navigation
 
 fun NavGraphBuilder.homeScreenNavGraph(
     eventsFeedScreenContent: @Composable () -> Unit,
+    feedScreenContent: @Composable () -> Unit,
     eventsFeedFiltersScreenContent: @Composable () -> Unit
 ) {
     navigation(
-        startDestination = Screen.EventsFeed.route,
+        startDestination = Screen.EventsListFeed.route,
         route = Screen.Home.route
     ) {
-        composable(Screen.EventsFeed.route) {
+        composable(
+            Screen.Event.route
+        ) {
+            feedScreenContent()
+        }
+        composable(Screen.EventsListFeed.route) {
             eventsFeedScreenContent()
         }
         composable(Screen.EventsFeedFilters.route) {

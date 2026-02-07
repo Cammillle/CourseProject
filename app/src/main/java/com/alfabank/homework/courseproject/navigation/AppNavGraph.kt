@@ -11,7 +11,7 @@ fun AppNavGraph(
     navHostController: NavHostController,
     eventsFeedScreenContent: @Composable () -> Unit,
     eventsFeedFiltersScreenContent: @Composable () -> Unit,
-
+    feedScreenContent: @Composable () -> Unit,
     favouriteScreenContent: @Composable () -> Unit,
     profileScreenContent: @Composable () -> Unit,
     yandexMapScreenContent: @Composable () -> Unit
@@ -22,7 +22,8 @@ fun AppNavGraph(
     ) {
         homeScreenNavGraph(
             eventsFeedScreenContent = eventsFeedScreenContent,
-            eventsFeedFiltersScreenContent = eventsFeedFiltersScreenContent
+            eventsFeedFiltersScreenContent = eventsFeedFiltersScreenContent,
+            feedScreenContent = feedScreenContent
         )
         composable(Screen.Favourite.route) {
             favouriteScreenContent()

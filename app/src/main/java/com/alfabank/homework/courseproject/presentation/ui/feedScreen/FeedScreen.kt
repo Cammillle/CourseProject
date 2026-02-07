@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -28,7 +27,8 @@ fun FeedScreen(
     paddingValues: PaddingValues,
     events: List<Event> = emptyList(),
     nextDataIsLoading: Boolean,
-    loadNextEvents: () -> Unit
+    loadNextEvents: () -> Unit,
+    onClick: (Long) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -40,7 +40,8 @@ fun FeedScreen(
         EventsList(
             events = events,
             nextDataIsLoading = nextDataIsLoading,
-            loadNextEvents = loadNextEvents
+            loadNextEvents = loadNextEvents,
+            onClick = onClick
         )
     }
 
@@ -50,7 +51,8 @@ fun FeedScreen(
 fun EventsList(
     events: List<Event> = emptyList(),
     nextDataIsLoading: Boolean,
-    loadNextEvents: () -> Unit
+    loadNextEvents: () -> Unit,
+    onClick: (Long) -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -76,7 +78,7 @@ fun EventsList(
             .padding(10.dp)
     ) {
         items(items = events, key = { it.id }) {
-            EventCard(event = it)
+            EventCard(event = it, onClick = onClick)
         }
         if (nextDataIsLoading) {
             item {
