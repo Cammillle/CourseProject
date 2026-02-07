@@ -33,7 +33,6 @@ import com.alfabank.homework.courseproject.presentation.ui.profilescreen.Profile
 fun MainScreen() {
     val viewModel: EventViewModel = viewModel()
     val homeState = viewModel.homeState.collectAsStateWithLifecycle()
-    val eventState = viewModel.eventState.collectAsStateWithLifecycle()
 
     val navigationState = rememberNavigationState()
     val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
@@ -103,8 +102,8 @@ fun MainScreen() {
                     nextDataIsLoading = homeState.value.nextDataIsLoading,
                     loadNextEvents = { viewModel.loadNextEvents() },
                     paddingValues = paddingValues,
-                    onClick = {
-                        navigationState.navigateTo(Screen.Event.route)
+                    onClick = { id ->
+                        navigationState.navigateToEventDetails(id = id)
                     }
                 )
             },
@@ -119,10 +118,10 @@ fun MainScreen() {
             favouriteScreenContent = { FavouriteScreen() },
             profileScreenContent = { ProfileScreen() },
             yandexMapScreenContent = { MapScreen() },
-            feedScreenContent = {
+            feedScreenContent = { id ->
                 EventDetailScreen(
-                    paddingValues = paddingValues,
-                    state = eventState.value
+                    onBackClick = { navigationState.navHostController.popBackStack() },
+                    eventId = id
                 )
             }
         )

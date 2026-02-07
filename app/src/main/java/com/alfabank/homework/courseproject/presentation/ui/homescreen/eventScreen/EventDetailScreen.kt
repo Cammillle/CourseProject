@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,9 +29,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,8 +49,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.alfabank.homework.courseproject.R
-import com.alfabank.homework.courseproject.domain.model.Event
 import com.alfabank.homework.courseproject.presentation.ui.theme.BackgroundGrey
 import com.alfabank.homework.courseproject.presentation.ui.theme.Grey1
 import com.alfabank.homework.courseproject.presentation.ui.theme.Grey2
@@ -57,12 +60,15 @@ import com.alfabank.homework.courseproject.presentation.ui.theme.Grey3
 import com.alfabank.homework.courseproject.presentation.ui.theme.Grey4
 import com.alfabank.homework.courseproject.presentation.ui.theme.ProjectYellow
 
-@Suppress("NonSkippableComposable")
 @Composable
 fun EventDetailScreen(
-    paddingValues: PaddingValues,
-    state: EventState
+    onBackClick: () -> Unit,
+    eventId: Long
 ) {
+    val viewModel: EventDetailsViewModel = viewModel()
+    val eventState = viewModel.eventState.collectAsStateWithLifecycle()
+    val state = eventState.value
+
     var isLiked by remember { mutableStateOf(false) }
 
     if (state.error == null) {
@@ -76,16 +82,29 @@ fun EventDetailScreen(
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_launcher_background),
-                        contentDescription = "Event image",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(300.dp),
-                        contentScale = ContentScale.Crop
-                    )
+                    val images = event.images
+                    if (!images.isNullOrEmpty()) {
+                        val image = images[0].thumbnails?.x384
+                        AsyncImage(
+                            contentDescription = "",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                            contentScale = ContentScale.Crop,
+                            model = image
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_launcher_background),
+                            contentDescription = "Event image",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(400.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                     IconButton(
-                        onClick = { /* Обработка навигации назад */ },
+                        onClick = { onBackClick() },
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 52.dp)
                             .background(BackgroundGrey.copy(alpha = 0.8f), CircleShape)
@@ -132,8 +151,9 @@ fun EventDetailScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        val price = event.price
                         Text(
-                            text = "От 1500 ₽",
+                            text = price ?: "Цена неизвестна",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Grey1
@@ -182,13 +202,19 @@ fun EventDetailScreen(
                             )
                         }
                         Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = "Пятница, март 13, 2026 19:00",
-                            fontSize = 14.sp,
-                            color = Grey1,
-                            fontWeight = FontWeight.Normal,
-                            modifier = Modifier.weight(1f)
-                        )
+
+                        val dates = event.dates
+                        dates?.let { dates ->
+                            val startDate = dates[0].startDate
+                            val startTime = dates[0].startTime
+                            Text(
+                                text = "$startDate $startTime",
+                                fontSize = 14.sp,
+                                color = Grey1,
+                                fontWeight = FontWeight.Normal,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -222,18 +248,22 @@ fun EventDetailScreen(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Text(
-                                text = "Дом Шрёдера",
-                                fontSize = 14.sp,
-                                color = Grey1,
-                                fontWeight = FontWeight.Normal,
-                            )
-                            Text(
-                                text = "Петроградская наб, дом 32.",
-                                fontSize = 12.sp,
-                                color = Grey2,
-                                fontWeight = FontWeight.Normal,
-                            )
+                            val place = event.place
+                            place?.let { place ->
+                                Text(
+                                    text = "${place.title}",
+                                    fontSize = 14.sp,
+                                    color = Grey1,
+                                    fontWeight = FontWeight.Normal,
+                                )
+                                Text(
+                                    text = "${place.address}",
+                                    fontSize = 12.sp,
+                                    color = Grey2,
+                                    fontWeight = FontWeight.Normal,
+                                )
+                            }
+
                         }
                         Icon(
                             imageVector = Icons.Outlined.KeyboardArrowRight,
@@ -245,7 +275,9 @@ fun EventDetailScreen(
                     HorizontalDivider(color = Color.White.copy(alpha = 0.5f))
                 }
                 Column(
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 80.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
@@ -258,13 +290,24 @@ fun EventDetailScreen(
                         fontSize = 14.sp,
                         color = Grey1,
                         fontWeight = FontWeight.Normal,
-                        text =
-                            "djskfjskfjdkfjkdsjfdsjf jkfjskfjdskfjskdlf " +
-                                    "jsfsjfksldfj  ksjfklsjfdksljf fklsjfks jkfsjsk " +
-                                    "jfksfjksdjf ksjfksjfksjkfsdjkfdjskfdsjkfdsjfksdjkfsjkfjsdkfjsdlkfjsf"
+                        text = "${event.title} ${event.description} ${event.bodyText}"
                     )
                 }
             }
+
+        }
+    }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        if (state.isLoading) {
+            CircularProgressIndicator()
+        } else if (state.error != null) {
+            Text(
+                text = state.error.toString(),
+                color = MaterialTheme.colorScheme.error
+            )
         }
     }
 }

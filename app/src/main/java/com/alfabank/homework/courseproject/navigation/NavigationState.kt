@@ -18,6 +18,10 @@ class NavigationState(
             restoreState = true
         }
     }
+
+    fun navigateToEventDetails(id: Long) {
+        navHostController.navigate(route = Screen.Event.getRouteWithArgs(id = id))
+    }
 }
 
 

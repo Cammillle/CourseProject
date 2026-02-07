@@ -16,9 +16,6 @@ class EventViewModel : ViewModel() {
     private val _homeState = MutableStateFlow(HomeState())
     val homeState = _homeState.asStateFlow()
 
-    private val _eventState = MutableStateFlow(EventState())
-    val eventState = _eventState.asStateFlow()
-
     private var nextUrl: String? = null
 
     init {
@@ -49,30 +46,6 @@ class EventViewModel : ViewModel() {
                         nextDataIsLoading = false
                     )
                     Log.e("TAGATG", homeState.value.error.toString())
-                }
-            )
-        }
-    }
-
-    fun getEventById(id: Long) {
-        viewModelScope.launch {
-            _eventState.value = _eventState.value.copy(
-                isLoading = true,
-                error = null
-            )
-            repository.getEventById(id).fold(
-                onSuccess = { event ->
-                    _eventState.value = _eventState.value.copy(
-                        isLoading = false,
-                        event = event
-                    )
-
-                },
-                onFailure = { error ->
-                    _eventState.value = _eventState.value.copy(
-                        isLoading = false,
-                        error = error.message ?: "Unknown error"
-                    )
                 }
             )
         }

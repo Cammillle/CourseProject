@@ -10,7 +10,7 @@ fun AppNavGraph(
     navHostController: NavHostController,
     eventsFeedScreenContent: @Composable () -> Unit,
     eventsFeedFiltersScreenContent: @Composable () -> Unit,
-    feedScreenContent: @Composable () -> Unit,
+    feedScreenContent: @Composable (Long) -> Unit,
     favouriteScreenContent: @Composable () -> Unit,
     profileScreenContent: @Composable () -> Unit,
     yandexMapScreenContent: @Composable () -> Unit

@@ -9,6 +9,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.Url
 
@@ -44,9 +45,9 @@ interface EventsApi {
         @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories"),
     ): ListOfEventsResponseDTO
 
-    @GET("events")
+    @GET("events/{event_id}")
     suspend fun getEventById(
-        @Query("event_id") eventId: Long,
+        @Path("event_id") eventId: Long,
         @Query("expand") expand: List<String> = listOf("images,place,location,dates"),
         @Query("text_format") textFormat: String = "text",
     ): EventDTO

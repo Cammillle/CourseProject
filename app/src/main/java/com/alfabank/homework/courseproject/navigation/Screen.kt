@@ -7,14 +7,20 @@ sealed class Screen(
 
     object EventsFeedFilters : Screen(ROUTE_EVENT_FILTERS)
     object EventsListFeed : Screen(ROUTE_EVENTS_FEED)
-    object Event : Screen(ROUTE_EVENT)
+    object Event : Screen("$ROUTE_EVENT/{event_id}") {
+        fun getRouteWithArgs(id: Long): String {
+            return "$ROUTE_EVENT/$id"
+        }
+    }
 
     object Favourite : Screen(ROUTE_FAVOURITE)
     object YandexMap : Screen(ROUTE_YANDEX_MAP)
     object Profile : Screen(ROUTE_PROFILE)
 
 
-    private companion object {
+    companion object {
+        const val KEY_EVENT_ID= "event_id"
+
         const val ROUTE_HOME = "home"
         const val ROUTE_EVENT_FILTERS = "home_filters"
 

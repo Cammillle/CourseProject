@@ -41,7 +41,7 @@ fun PlaceDTO.toPlace(): Place {
 fun EventDTO.toEvent(): Event {
     return Event(
         dates = dates?.map { it.toDateEvent() },
-        id = id,
+        id = id ?: 0L,
         place = place?.toPlace(),
         title = title,
         description = description,
