@@ -30,7 +30,11 @@ data class EventDTO(
     @SerialName("place")
     val place: EventPlaceDTO?,
     @SerialName("categories")
-    val categories: List<String>?
+    val categories: List<String>?,
+    @SerialName("body_text")
+    val bodyText: String?,
+    @SerialName("site_url")
+    val siteUrl: String?
 ){
     val ageRestriction: String?
         get() = ageRestrictionRaw?.let { element ->

@@ -11,6 +11,7 @@ data class Event(
     val title: String?,
     val ageRestriction: String?,
     val price: String?,
-    val location: Location?
+    val location: Location?,
+    val bodyText: String,
+    val siteUrl: String,
 )
-

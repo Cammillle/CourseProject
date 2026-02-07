@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.data
 
+import com.alfabank.homework.courseproject.data.dto.EventDTO
 import com.alfabank.homework.courseproject.data.dto.ListOfEventsResponseDTO
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -13,7 +14,6 @@ import retrofit2.http.Url
 
 interface EventsApi {
 
-    //id,place,dates,location,description,images,title,age_restriction,price,categories
     @GET("events")
     suspend fun getAllEvents(
         @Query("expand") expand: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
@@ -43,6 +43,13 @@ interface EventsApi {
         @Query("page_size") pageSize: Int = 20,
         @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories"),
     ): ListOfEventsResponseDTO
+
+    @GET("events")
+    suspend fun getEventById(
+        @Query("event_id") eventId: Long,
+        @Query("expand") expand: List<String> = listOf("images,place,location,dates"),
+        @Query("text_format") textFormat: String = "text",
+    ): EventDTO
 
     @GET
     suspend fun getNextEvents(

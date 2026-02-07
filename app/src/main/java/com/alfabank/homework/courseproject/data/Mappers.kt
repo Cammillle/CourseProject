@@ -49,7 +49,9 @@ fun EventDTO.toEvent(): Event {
         categories = categories,
         ageRestriction = ageRestriction,
         price = price,
-        location = location?.toLocation()
+        location = location?.toLocation(),
+        bodyText = bodyText ?: "",
+        siteUrl = siteUrl ?: ""
     )
 }
 

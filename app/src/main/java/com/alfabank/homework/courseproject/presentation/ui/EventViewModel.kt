@@ -15,29 +15,14 @@ class EventViewModel : ViewModel() {
     private val _homeState = MutableStateFlow(HomeState())
     val homeState = _homeState.asStateFlow()
 
+    private val _eventState = MutableStateFlow(EventState())
+    val eventState = _eventState.asStateFlow()
+
     private var nextUrl: String? = null
 
     init {
         getTodayPopularEvents()
     }
-
-//    fun loadEvents() {
-//        viewModelScope.launch {
-//            _homeState.value = _homeState.value.copy(isLoading = true, error = null)
-//            repository.getAllEvents(pageSize = 20).fold(
-//                onSuccess = { events ->
-//                    _homeState.value = _homeState.value.copy(isLoading = false, events = events)
-//                },
-//                onFailure = { error ->
-//                    _homeState.value = _homeState.value.copy(
-//                        isLoading = false,
-//                        error = error.message ?: "Unknown error"
-//                    )
-//                    Log.e("TAGATG", homeState.value.error.toString())
-//                }
-//            )
-//        }
-//    }
 
     fun getTodayPopularEvents() {
         viewModelScope.launch {
@@ -63,6 +48,30 @@ class EventViewModel : ViewModel() {
                         nextDataIsLoading = false
                     )
                     Log.e("TAGATG", homeState.value.error.toString())
+                }
+            )
+        }
+    }
+
+    fun getEventById(id: Long) {
+        viewModelScope.launch {
+            _eventState.value = _eventState.value.copy(
+                isLoading = true,
+                error = null
+            )
+            repository.getEventById(id).fold(
+                onSuccess = { event ->
+                    _eventState.value = _eventState.value.copy(
+                        isLoading = false,
+                        event = event
+                    )
+
+                },
+                onFailure = { error ->
+                    _eventState.value = _eventState.value.copy(
+                        isLoading = false,
+                        error = error.message ?: "Unknown error"
+                    )
                 }
             )
         }
@@ -142,4 +151,10 @@ data class HomeState(
     var isLoading: Boolean = false,
     var error: String? = null,
     val nextDataIsLoading: Boolean = false
+)
+
+data class EventState(
+    var event: Event? = null,
+    var isLoading: Boolean = false,
+    var error: String? = null,
 )
