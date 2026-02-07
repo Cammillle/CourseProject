@@ -107,7 +107,7 @@ fun EventDetailScreen(
                         onClick = { onBackClick() },
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 52.dp)
-                            .background(BackgroundGrey.copy(alpha = 0.8f), CircleShape)
+                            .background(BackgroundGrey, CircleShape)
                             .size(48.dp)
                     ) {
                         Icon(
@@ -205,15 +205,26 @@ fun EventDetailScreen(
 
                         val dates = event.dates
                         dates?.let { dates ->
-                            val startDate = dates[0].startDate
-                            val startTime = dates[0].startTime
-                            Text(
-                                text = "$startDate $startTime",
-                                fontSize = 14.sp,
-                                color = Grey1,
-                                fontWeight = FontWeight.Normal,
-                                modifier = Modifier.weight(1f)
-                            )
+                            val isEndless = dates[0].isEndless
+                            if (isEndless != null && isEndless) {
+                                Text(
+                                    text = "С расписанием",
+                                    fontSize = 14.sp,
+                                    color = Grey1,
+                                    fontWeight = FontWeight.Normal,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }else{
+                                val startDate = dates[0].startDate
+                                val startTime = dates[0].startTime
+                                Text(
+                                    text = "$startDate $startTime",
+                                    fontSize = 14.sp,
+                                    color = Grey1,
+                                    fontWeight = FontWeight.Normal,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
                         }
                     }
 
