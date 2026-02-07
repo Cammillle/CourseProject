@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alfabank.homework.courseproject.data.EventRepositoryImpl
 import com.alfabank.homework.courseproject.domain.model.Event
+import com.alfabank.homework.courseproject.presentation.ui.homescreen.eventScreen.EventState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -151,10 +152,4 @@ data class HomeState(
     var isLoading: Boolean = false,
     var error: String? = null,
     val nextDataIsLoading: Boolean = false
-)
-
-data class EventState(
-    var event: Event? = null,
-    var isLoading: Boolean = false,
-    var error: String? = null,
 )

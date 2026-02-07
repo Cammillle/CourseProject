@@ -69,6 +69,7 @@ fun EventsApi(): EventsApi {
     val json = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true
+        explicitNulls = false
         // Custom serializers would be added here if needed
         // serializersModule = SerializersModule {
         //     contextual(Date::class, DateSerializer)

@@ -25,7 +25,7 @@ import com.alfabank.homework.courseproject.presentation.ui.favouritescreen.Favou
 import com.alfabank.homework.courseproject.presentation.ui.filterScreen.EventsFilterScreen
 import com.alfabank.homework.courseproject.presentation.ui.feedScreen.FeedScreen
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.components.FeedTopBar
-import com.alfabank.homework.courseproject.presentation.ui.homescreen.eventScreen.EventScreen
+import com.alfabank.homework.courseproject.presentation.ui.homescreen.eventScreen.EventDetailScreen
 import com.alfabank.homework.courseproject.presentation.ui.mapscreen.MapScreen
 import com.alfabank.homework.courseproject.presentation.ui.profilescreen.ProfileScreen
 
@@ -33,6 +33,7 @@ import com.alfabank.homework.courseproject.presentation.ui.profilescreen.Profile
 fun MainScreen() {
     val viewModel: EventViewModel = viewModel()
     val homeState = viewModel.homeState.collectAsStateWithLifecycle()
+    val eventState = viewModel.eventState.collectAsStateWithLifecycle()
 
     val navigationState = rememberNavigationState()
     val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
@@ -53,7 +54,9 @@ fun MainScreen() {
         },
         bottomBar = {
             if (navBackStackEntry != null) {
-                if (currentDestination != Screen.EventsFeedFilters.route) {
+                if (currentDestination != Screen.EventsFeedFilters.route
+                    && (currentDestination != Screen.Event.route)
+                ) {
                     NavigationBar {
                         val items = listOf(
                             NavigationItem.Map,
@@ -116,7 +119,12 @@ fun MainScreen() {
             favouriteScreenContent = { FavouriteScreen() },
             profileScreenContent = { ProfileScreen() },
             yandexMapScreenContent = { MapScreen() },
-            feedScreenContent = { EventScreen() }
+            feedScreenContent = {
+                EventDetailScreen(
+                    paddingValues = paddingValues,
+                    state = eventState.value
+                )
+            }
         )
         Log.d("MainScreen", "${navigationState.navHostController}")
 
