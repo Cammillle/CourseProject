@@ -19,12 +19,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun FeedFilters() {
+fun FeedFilters(
+    onCategoryChange: (String) -> Unit,
+    onCategoryClear: () -> Unit
+) {
     val filters1 = listOf(
         "Концерты",
-        "Вечеринки",
-        "Фестивали",
-        "Театры"
+        "Спектакли",
+        "Экскурсии",
+        "Ярмарки",
+        "Активный отдых",
+        "Выставки",
+        "Фестивали"
     )
     val filters2 = listOf(
         "Тренды",
@@ -33,7 +39,7 @@ fun FeedFilters() {
     var selectedFilter1 by remember { mutableStateOf<String?>(null) }
     var selectedFilter2 by remember { mutableStateOf<String?>(filters2[0]) }
 
-    Column{
+    Column {
         LazyRow(
             modifier = Modifier.padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -42,7 +48,15 @@ fun FeedFilters() {
                 FilterChip(
                     text = filter,
                     selected = selectedFilter1 == filter,
-                    onClick = { selectedFilter1 = if (selectedFilter1 == filter) null else filter }
+                    onClick = {
+                        if(selectedFilter1 == filter){
+                            selectedFilter1 = null
+                            onCategoryClear()
+                        }else{
+                            selectedFilter1 = filter
+                            onCategoryChange(filter)
+                        }
+                    }
                 )
             }
         }

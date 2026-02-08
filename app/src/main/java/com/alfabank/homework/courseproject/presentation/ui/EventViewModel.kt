@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alfabank.homework.courseproject.data.EventRepositoryImpl
 import com.alfabank.homework.courseproject.domain.model.Event
-import com.alfabank.homework.courseproject.presentation.ui.homescreen.eventScreen.EventState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -17,6 +16,8 @@ class EventViewModel : ViewModel() {
     val homeState = _homeState.asStateFlow()
 
     private var nextUrl: String? = null
+    private var selectedCategory1: String? = null
+    private var selectedCategory2: String? = null
 
     init {
         getTodayPopularEvents()
@@ -51,7 +52,17 @@ class EventViewModel : ViewModel() {
         }
     }
 
-    fun loadEventsByCategories(category: String = "tour") {
+    fun loadEventsByCategories(category: String) {
+        val categoryMap = mapOf(
+            "Концерты" to "concert",
+            "Спектакли" to "theater",
+            "Экскурсии" to "tour",
+            "Ярмарки" to "yarmarki-razvlecheniya-yarmarki",
+            "Активный отдых" to "recreation",
+            "Выставки" to "exhibition",
+            "Фестивали" to "festival"
+        )
+
         viewModelScope.launch {
             _homeState.value =
                 _homeState.value.copy(
@@ -59,7 +70,8 @@ class EventViewModel : ViewModel() {
                     error = null,
                     nextDataIsLoading = false
                 )
-            repository.getEventsByCategory(pageSize = 20, category = category).fold(
+            val category = categoryMap.getValue(category)
+            repository.getTodayPopularEventsByCategory1(category = category).fold(
                 onSuccess = { eventsData ->
                     _homeState.value = _homeState.value.copy(
                         isLoading = false,
@@ -121,7 +133,6 @@ class EventViewModel : ViewModel() {
 
 data class HomeState(
     var events: List<Event> = emptyList(),
-    var selectedEvent: Event? = null,
     var isLoading: Boolean = false,
     var error: String? = null,
     val nextDataIsLoading: Boolean = false

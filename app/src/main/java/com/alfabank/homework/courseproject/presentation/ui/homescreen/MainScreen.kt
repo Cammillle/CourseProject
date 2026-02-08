@@ -98,13 +98,14 @@ fun MainScreen() {
             navHostController = navigationState.navHostController,
             eventsFeedScreenContent = {
                 FeedScreen(
-                    events = homeState.value.events,
-                    nextDataIsLoading = homeState.value.nextDataIsLoading,
+                    state = homeState.value,
                     loadNextEvents = { viewModel.loadNextEvents() },
                     paddingValues = paddingValues,
-                    onClick = { id ->
+                    onEventClick = { id ->
                         navigationState.navigateToEventDetails(id = id)
-                    }
+                    },
+                    onCategoryChange = { viewModel.loadEventsByCategories(it) },
+                    onCategoryClear = { viewModel.getTodayPopularEvents() }
                 )
             },
             eventsFeedFiltersScreenContent = {

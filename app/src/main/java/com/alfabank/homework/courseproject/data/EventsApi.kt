@@ -16,20 +16,14 @@ import retrofit2.http.Url
 interface EventsApi {
 
     @GET("events")
-    suspend fun getAllEvents(
-        @Query("expand") expand: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
-        @Query("location") location: String = "spb",
-        @Query("page_size") pageSize: Int = 20,
-        @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories"),
-    ): ListOfEventsResponseDTO
-
-    @GET("events")
-    suspend fun getEventsByCategories(
+    suspend fun getPopularEventsByCategory1(
+        @Query("categories") categories: String,
+        @Query("actual_since") actualSince: String,
+        @Query("order_by") orderBy: String = "-publication_date",
         @Query("expand") expand: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
         @Query("location") location: String = "spb",
         @Query("text_format") textFormat: String = "text",
-        @Query("page_size") pageSize: Int = 20,
-        @Query("categories") categories: String,
+        @Query("page_size") pageSize: Int = 10,
         @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories"),
     ): ListOfEventsResponseDTO
 
@@ -37,11 +31,11 @@ interface EventsApi {
     @GET("events")
     suspend fun getPopularEvents(
         @Query("actual_since") actualSince: String,
-        @Query("order_by") orderBy: String = "-favorites_count,-publication_date",
+        @Query("order_by") orderBy: String = "-publication_date",
         @Query("expand") expand: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
         @Query("location") location: String = "spb",
         @Query("text_format") textFormat: String = "text",
-        @Query("page_size") pageSize: Int = 20,
+        @Query("page_size") pageSize: Int = 10,
         @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories"),
     ): ListOfEventsResponseDTO
 
