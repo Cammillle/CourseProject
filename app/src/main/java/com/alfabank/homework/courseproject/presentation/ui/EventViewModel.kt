@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alfabank.homework.courseproject.data.EventRepositoryImpl
 import com.alfabank.homework.courseproject.domain.model.Event
+import com.alfabank.homework.courseproject.presentation.ui.homescreen.FeedScreenEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -18,10 +19,26 @@ class EventViewModel : ViewModel() {
     private var nextUrl: String? = null
 
     init {
-        loadEventsByCategories("Концерты")
+        getTodayPopularEvents()
     }
 
-    fun getTodayPopularEvents() {
+    fun onEvent(event: FeedScreenEvent) {
+        when (event) {
+            is FeedScreenEvent.onCategoryChange -> {
+                _homeState.value = _homeState.value.copy(
+                    searchQuery = event.category)
+
+
+            }
+
+            is FeedScreenEvent.onSearchQueryChange -> TODO()
+            FeedScreenEvent.onLoadNextData -> TODO()
+        }
+    }
+
+    fun getTodayPopularEvents(
+        query: String = _homeState.value.searchQuery.lowercase()
+    ) {
         viewModelScope.launch {
             _homeState.value =
                 _homeState.value.copy(
@@ -29,7 +46,7 @@ class EventViewModel : ViewModel() {
                     error = null,
                     nextDataIsLoading = false
                 )
-            repository.getTodayPopularEvents().fold(
+            repository.getEventsWithoutFilters().fold(
                 onSuccess = { eventsData ->
                     _homeState.value = _homeState.value.copy(
                         isLoading = false,
@@ -50,7 +67,11 @@ class EventViewModel : ViewModel() {
         }
     }
 
-    fun loadEventsByCategories(category: String) {
+    fun loadEventsByCategories(
+        category: String,
+        fetchFromRemote: Boolean = false,
+        query: String = ""
+    ) {
         val categoryMap = mapOf(
             "Концерты" to "concert",
             "Спектакли" to "theater",
@@ -69,24 +90,49 @@ class EventViewModel : ViewModel() {
                     nextDataIsLoading = false
                 )
             val category = categoryMap.getValue(category)
-            repository.getTodayPopularEventsByCategory1(category = category).fold(
-                onSuccess = { eventsData ->
-                    _homeState.value = _homeState.value.copy(
-                        isLoading = false,
-                        events = eventsData.events,
-                        nextDataIsLoading = false
-                    )
-                    nextUrl = eventsData.nextUrl
-                },
-                onFailure = { error ->
-                    _homeState.value = _homeState.value.copy(
-                        isLoading = false,
-                        error = error.message ?: "Unknown error",
-                        nextDataIsLoading = false
-                    )
-                    Log.e("TAGATG", homeState.value.error.toString())
-                }
-            )
+
+            repository.getTodayPopularEventsByCategory(
+                fetchFromRemote = fetchFromRemote,
+                category = category,
+                query = query
+            ).collect { result ->
+                result.fold(
+                    onSuccess = { eventsData ->
+                        _homeState.value = _homeState.value.copy(
+                            isLoading = false,
+                            events = eventsData.events,
+                            nextDataIsLoading = false
+                        )
+                        nextUrl = eventsData.nextUrl
+                    },
+                    onFailure = { error ->
+                        _homeState.value = _homeState.value.copy(
+                            isLoading = false,
+                            error = error.message ?: "Unknown error",
+                            nextDataIsLoading = false
+                        )
+                        Log.e("TAGATG", homeState.value.error.toString())
+                    }
+                )
+            }
+//            repository.getTodayPopularEventsByCategory1(category = category).fold(
+//                onSuccess = { eventsData ->
+//                    _homeState.value = _homeState.value.copy(
+//                        isLoading = false,
+//                        events = eventsData.events,
+//                        nextDataIsLoading = false
+//                    )
+//                    nextUrl = eventsData.nextUrl
+//                },
+//                onFailure = { error ->
+//                    _homeState.value = _homeState.value.copy(
+//                        isLoading = false,
+//                        error = error.message ?: "Unknown error",
+//                        nextDataIsLoading = false
+//                    )
+//                    Log.e("TAGATG", homeState.value.error.toString())
+//                }
+//            )
         }
     }
 
@@ -133,5 +179,7 @@ data class HomeState(
     var events: List<Event> = emptyList(),
     var isLoading: Boolean = false,
     var error: String? = null,
-    val nextDataIsLoading: Boolean = false
+    val nextDataIsLoading: Boolean = false,
+    val searchQuery: String = "",
+    val category: String = ""
 )

@@ -8,7 +8,13 @@ import com.alfabank.homework.courseproject.data.dto.ImageDTO
 import com.alfabank.homework.courseproject.data.dto.ListOfEventsResponseDTO
 import com.alfabank.homework.courseproject.data.dto.LocationDTO
 import com.alfabank.homework.courseproject.data.dto.ThumbnailsDTO
+import com.alfabank.homework.courseproject.data.local.EventDBO
+import com.alfabank.homework.courseproject.data.local.LocationDBO
+import com.alfabank.homework.courseproject.data.local.PlaceDBO
+import com.alfabank.homework.courseproject.data.local.toEventPlace
+import com.alfabank.homework.courseproject.data.local.toLocation
 import com.alfabank.homework.courseproject.data.places.PlaceDTO
+import com.alfabank.homework.courseproject.domain.EventData
 import com.alfabank.homework.courseproject.domain.model.Coords
 import com.alfabank.homework.courseproject.domain.model.DateEvent
 import com.alfabank.homework.courseproject.domain.model.Event
@@ -35,6 +41,61 @@ fun PlaceDTO.toPlace(): Place {
         title = title ?: "",
         isFree = isFree ?: true,
         timetable = timetable ?: ""
+    )
+}
+
+fun List<EventDBO>.toEventData(): EventData {
+    return EventData(
+        events = this.map { it.toEvent() },
+        nextUrl = null
+    )
+}
+
+fun EventDBO.toEvent(): Event {
+    return Event(
+        dates = dates,
+        id = id,
+        place = place?.toEventPlace(),
+        title = title,
+        description = description,
+        images = listOf(
+            ImageEvent(
+                image = null,
+                thumbnails = Thumbnails(x384 = mainImageUrl, x96 = null)
+            )
+        ),
+        categories = categories,
+        ageRestriction = ageRestriction,
+        price = price,
+        location = location?.toLocation(),
+        bodyText = bodyText ?: "",
+        siteUrl = siteUrl ?: ""
+    )
+}
+
+fun Event.toEventDBO(): EventDBO {
+    return EventDBO(
+        id = id,
+        title = title,
+        ageRestriction = ageRestriction,
+        price = price,
+        description = description,
+        bodyText = bodyText,
+        siteUrl = siteUrl,
+        location = LocationDBO(
+            lat = this.location?.coords?.lat,
+            lon = this.location?.coords?.lon,
+            name = this.location?.name
+        ),
+        place = PlaceDBO(
+            address = this.place?.address,
+            lat = this.place?.coords?.lat,
+            lon = this.place?.coords?.lon,
+            title = this.place?.title
+        ),
+        dates = dates ?: emptyList(),
+        categories = categories ?: emptyList(),
+        mainImageUrl = images?.get(0)?.thumbnails?.x384
     )
 }
 

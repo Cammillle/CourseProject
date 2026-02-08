@@ -34,7 +34,7 @@ fun FeedFilters(
         "Выставки",
         "Фестивали"
     )
-    var selectedFilter by remember { mutableStateOf<String?>(filters1[0]) }
+    var selectedFilter by remember { mutableStateOf<String?>(null) }
 
     Column {
         LazyRow(

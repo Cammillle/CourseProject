@@ -29,7 +29,7 @@ interface EventsApi {
 
     //Актуальные события сортировка по favorites_count
     @GET("events")
-    suspend fun getPopularEvents(
+    suspend fun getEventsWithoutFilters(
         @Query("actual_since") actualSince: String,
         @Query("order_by") orderBy: String = "-publication_date",
         @Query("expand") expand: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),

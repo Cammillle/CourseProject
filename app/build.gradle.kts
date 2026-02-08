@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -31,11 +32,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
         compose = true
@@ -67,7 +65,6 @@ dependencies {
 
     // Networking - Retrofit
     implementation(libs.retrofit)
-    implementation(libs.retrofit.gson)
     implementation(libs.retrofit.serialization)
 
     // JSON
@@ -82,4 +79,9 @@ dependencies {
 
     // Image Loading
     implementation(libs.coil.compose)
+
+    //Room
+    implementation(libs.room)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 }
