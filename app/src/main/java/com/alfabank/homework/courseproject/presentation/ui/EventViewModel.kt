@@ -16,11 +16,9 @@ class EventViewModel : ViewModel() {
     val homeState = _homeState.asStateFlow()
 
     private var nextUrl: String? = null
-    private var selectedCategory1: String? = null
-    private var selectedCategory2: String? = null
 
     init {
-        getTodayPopularEvents()
+        loadEventsByCategories("Концерты")
     }
 
     fun getTodayPopularEvents() {

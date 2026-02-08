@@ -28,16 +28,13 @@ fun FeedFilters(
         "Спектакли",
         "Экскурсии",
         "Ярмарки",
-        "Активный отдых",
+        "Активный отдых"
+    )
+    val filters2 = listOf(
         "Выставки",
         "Фестивали"
     )
-    val filters2 = listOf(
-        "Тренды",
-        "Ближайшие"
-    )
-    var selectedFilter1 by remember { mutableStateOf<String?>(null) }
-    var selectedFilter2 by remember { mutableStateOf<String?>(filters2[0]) }
+    var selectedFilter by remember { mutableStateOf<String?>(filters1[0]) }
 
     Column {
         LazyRow(
@@ -47,13 +44,13 @@ fun FeedFilters(
             items(filters1) { filter ->
                 FilterChip(
                     text = filter,
-                    selected = selectedFilter1 == filter,
+                    selected = selectedFilter == filter,
                     onClick = {
-                        if(selectedFilter1 == filter){
-                            selectedFilter1 = null
+                        if (selectedFilter == filter) {
+                            selectedFilter = null
                             onCategoryClear()
-                        }else{
-                            selectedFilter1 = filter
+                        } else {
+                            selectedFilter = filter
                             onCategoryChange(filter)
                         }
                     }
@@ -67,8 +64,16 @@ fun FeedFilters(
             items(filters2) { filter ->
                 FilterChip(
                     text = filter,
-                    selected = selectedFilter2 == filter,
-                    onClick = { selectedFilter2 = if (selectedFilter2 == filter) null else filter }
+                    selected = selectedFilter == filter,
+                    onClick = {
+                        if (selectedFilter == filter) {
+                            selectedFilter = null
+                            onCategoryClear()
+                        } else {
+                            selectedFilter = filter
+                            onCategoryChange(filter)
+                        }
+                    }
                 )
             }
         }
