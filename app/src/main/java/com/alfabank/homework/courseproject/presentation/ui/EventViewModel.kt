@@ -115,24 +115,6 @@ class EventViewModel : ViewModel() {
                     }
                 )
             }
-//            repository.getTodayPopularEventsByCategory1(category = category).fold(
-//                onSuccess = { eventsData ->
-//                    _homeState.value = _homeState.value.copy(
-//                        isLoading = false,
-//                        events = eventsData.events,
-//                        nextDataIsLoading = false
-//                    )
-//                    nextUrl = eventsData.nextUrl
-//                },
-//                onFailure = { error ->
-//                    _homeState.value = _homeState.value.copy(
-//                        isLoading = false,
-//                        error = error.message ?: "Unknown error",
-//                        nextDataIsLoading = false
-//                    )
-//                    Log.e("TAGATG", homeState.value.error.toString())
-//                }
-//            )
         }
     }
 

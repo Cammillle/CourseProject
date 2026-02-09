@@ -23,14 +23,14 @@ class EventRepositoryImpl() {
         category: String
     ): Flow<Result<EventData>> {
         return flow {
-            val localEvents = dao.searchEvents(query)
-            emit(Result.success(localEvents.toEventData()))
+            //val localEvents = dao.searchEvents(query)
+            //emit(Result.success(localEvents.toEventData()))
 
-            val isDbIsEmpty = localEvents.isEmpty() && query.isEmpty()
-            val shouldJustLoadFromCache = !isDbIsEmpty && !fetchFromRemote
-            if (shouldJustLoadFromCache) {
-                return@flow
-            }
+            //val isDbIsEmpty = localEvents.isEmpty() && query.isEmpty()
+            //val shouldJustLoadFromCache = !isDbIsEmpty && !fetchFromRemote
+            //if (shouldJustLoadFromCache) {
+            //    return@flow
+           // }
             val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
             val remoteData = try {
                 if (category.isEmpty() && query.isEmpty()) {
