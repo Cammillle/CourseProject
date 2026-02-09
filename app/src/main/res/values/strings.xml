@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">CourseProject</string>
     <string name="navigation_item_main">Лента</string>
-    <string name="navigation_item_map">Карта</string>
+    <string name="navigation_item_map">Гиды</string>
     <string name="navigation_item_favourite">Избранное</string>
     <string name="navigation_item_profile">Профиль</string>
 

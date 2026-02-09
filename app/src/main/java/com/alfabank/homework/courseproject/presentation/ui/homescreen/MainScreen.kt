@@ -58,10 +58,10 @@ fun MainScreen() {
                 ) {
                     NavigationBar {
                         val items = listOf(
-                            NavigationItem.Map,
                             NavigationItem.Home,
-                            NavigationItem.Profile,
-                            NavigationItem.Favourite
+                            NavigationItem.Map,
+                            NavigationItem.Favourite,
+                            NavigationItem.Profile
                         )
                         items.forEach { item ->
                             val selected = navBackStackEntry?.destination?.hierarchy?.any {
@@ -118,7 +118,11 @@ fun MainScreen() {
             },
             favouriteScreenContent = { FavouriteScreen() },
             profileScreenContent = { ProfileScreen() },
-            yandexMapScreenContent = { MapScreen() },
+            yandexMapScreenContent = {
+                MapScreen(
+                    paddingValues = paddingValues
+                )
+            },
             feedScreenContent = { id ->
                 EventDetailScreen(
                     onBackClick = { navigationState.navHostController.popBackStack() },
