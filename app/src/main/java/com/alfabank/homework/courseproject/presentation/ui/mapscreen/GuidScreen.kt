@@ -11,6 +11,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,6 +35,14 @@ fun GuidScreen(
             GuildFilters(
                 onGuidChange = {}
             )
+            YandexMapComponent(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp),
+                cameraPosition = TODO(),
+                events = TODO(),
+                selectedEventId = TODO()
+            ) { }
 
         }
 

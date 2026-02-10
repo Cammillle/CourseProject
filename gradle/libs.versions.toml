@@ -8,6 +8,7 @@ espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.3"
 composeBom = "2024.09.00"
+mapKit = "4.29.0-lite"
 retrofit = "2.9.0"
 retrofitKotlinxSerialization = "1.0.0"
 kotlinxSerialization = "1.6.3"
@@ -46,6 +47,7 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 room = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = {module = "androidx.room:room-ktx", version.ref = "room"}
+yandex-mapskit = { module = "com.yandex.android:maps.mobile", version.ref = "mapKit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

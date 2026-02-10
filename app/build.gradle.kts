@@ -84,4 +84,7 @@ dependencies {
     implementation(libs.room)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+
+    // Яндекс MapKit
+    implementation(libs.yandex.mapskit)
 }
