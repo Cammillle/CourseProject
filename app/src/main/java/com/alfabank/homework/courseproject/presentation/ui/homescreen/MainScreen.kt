@@ -26,7 +26,7 @@ import com.alfabank.homework.courseproject.presentation.ui.filterScreen.EventsFi
 import com.alfabank.homework.courseproject.presentation.ui.feedScreen.FeedScreen
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.components.FeedTopBar
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.eventScreen.EventDetailScreen
-import com.alfabank.homework.courseproject.presentation.ui.mapscreen.MapScreen
+import com.alfabank.homework.courseproject.presentation.ui.mapscreen.GuidScreen
 import com.alfabank.homework.courseproject.presentation.ui.profilescreen.ProfileScreen
 
 @Composable
@@ -119,9 +119,7 @@ fun MainScreen() {
             favouriteScreenContent = { FavouriteScreen() },
             profileScreenContent = { ProfileScreen() },
             yandexMapScreenContent = {
-                MapScreen(
-                    paddingValues = paddingValues
-                )
+                GuidScreen()
             },
             feedScreenContent = { id ->
                 EventDetailScreen(
