@@ -1,7 +1,7 @@
 package com.alfabank.homework.courseproject.api
 
+import com.alfabank.homework.courseproject.data.dto.lists.ListItemResponseDTO
 import com.alfabank.homework.courseproject.data.dto.lists.ListsResponseDTO
-import com.alfabank.homework.courseproject.data.places.PlacesResponseDTO
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -27,7 +27,7 @@ interface ListsApi {
         @Query("text_format") textFormat: String = "text",
         @Query("fields") fields: List<String> = listOf("-body_text,"),
         @Query("expand") expand: List<String> = listOf("place")
-    )
+    ): ListItemResponseDTO
 
 
 }

@@ -1,6 +1,6 @@
 package com.alfabank.homework.courseproject.data.dto.lists
 
-
+import com.alfabank.homework.courseproject.domain.model.Coords
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

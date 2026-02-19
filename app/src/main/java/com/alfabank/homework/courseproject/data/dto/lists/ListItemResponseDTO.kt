@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ListItemsResponseDTO(
+data class ListItemResponseDTO(
     @SerialName("body_text")
     val bodyText: String?,
     @SerialName("ctype")

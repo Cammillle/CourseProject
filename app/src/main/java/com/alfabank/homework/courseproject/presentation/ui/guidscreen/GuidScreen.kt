@@ -1,4 +1,4 @@
-package com.alfabank.homework.courseproject.presentation.ui.mapscreen
+package com.alfabank.homework.courseproject.presentation.ui.guidscreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,9 +41,13 @@ fun GuidScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(10.dp),
-                cameraPosition = TODO(),
-                events = TODO(),
-                selectedEventId = TODO()
+                cameraPosition = CameraPosition(
+                    Point(59.9342802, 30.3350986),
+                    11.0f,
+                    0.0f,
+                    0.0f),
+                events = emptyList(),
+                selectedEventId = 1
             ) { }
 
         }

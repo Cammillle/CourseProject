@@ -1,4 +1,4 @@
-package com.alfabank.homework.courseproject.presentation.ui.mapscreen
+package com.alfabank.homework.courseproject.presentation.ui.guidscreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
