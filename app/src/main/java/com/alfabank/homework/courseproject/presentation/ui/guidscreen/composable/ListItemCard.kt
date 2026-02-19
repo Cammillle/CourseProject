@@ -158,8 +158,8 @@ fun EventCollectionCardPreview() {
                 title = "Летние фестивали 2025",
                 description = "Самые яркие события этого лета: музыка, еда, искусство и не только. Успейте забронировать билеты!",
                 imageUrls = listOf(
-                    "https://example.com/image1.jpg",
-                    "https://example.com/image2.jpg",
+                    "https://media.kudago.com/images/event/82/bb/82bb410cca413007c5598f40c6ebd68c.jpg",
+                    "https://media.kudago.com/images/event/82/bb/82bb410cca413007c5598f40c6ebd68c.jpg",
                     "https://example.com/image3.jpg",
                     "https://example.com/image4.jpg"
                 ),

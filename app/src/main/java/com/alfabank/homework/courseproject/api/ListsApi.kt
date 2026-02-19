@@ -23,10 +23,10 @@ interface ListsApi {
 
     @GET("lists/{item_id}")
     suspend fun getListItemsById(
-        @Path("item_id") itemId: Long,
+        @Path("item_id") itemId: Int,
         @Query("text_format") textFormat: String = "text",
         @Query("fields") fields: List<String> = listOf("-body_text,"),
-        @Query("expand") expand: List<String> = listOf("place")
+        @Query("expand") expand: List<String> = listOf("place","images")
     ): ListItemResponseDTO
 
 

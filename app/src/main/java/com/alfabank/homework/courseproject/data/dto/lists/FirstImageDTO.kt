@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FirstImage(
+data class FirstImageDTO(
     @SerialName("image")
     val image: String?,
     @SerialName("thumbnails")
