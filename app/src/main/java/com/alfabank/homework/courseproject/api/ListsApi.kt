@@ -25,7 +25,7 @@ interface ListsApi {
     suspend fun getListItemsById(
         @Path("item_id") itemId: Int,
         @Query("text_format") textFormat: String = "text",
-        @Query("fields") fields: List<String> = listOf("-body_text,"),
+        //@Query("fields") fields: List<String> = listOf("-body_text"),
         @Query("expand") expand: List<String> = listOf("place","images")
     ): ListItemResponseDTO
 
@@ -44,6 +44,7 @@ fun ListsApi(): ListsApi {
     val json = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true
+        explicitNulls = false
         // Custom serializers would be added here if needed
         // serializersModule = SerializersModule {
         //     contextual(Date::class, DateSerializer)

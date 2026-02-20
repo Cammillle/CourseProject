@@ -15,8 +15,7 @@ import kotlinx.coroutines.launch
 
 class GuidViewModel : ViewModel() {
     private val repository = GuidRepositoryImpl()
-    private val ids = listOf(4058, 14579)
-
+    private val ids = listOf(4058, 14579,12257,14475,14570,14559,14560,7785,14558,648,12384)
 
     private val _guidScreenState = MutableStateFlow<GuidScreenState>(GuidScreenState())
     val guidScreenState = _guidScreenState.asStateFlow()
@@ -58,14 +57,14 @@ class GuidViewModel : ViewModel() {
 
 }
 
+var cameraPosition: CameraPosition = CameraPosition(
+    Point(59.9342802, 30.3350986),
+    11.0f,
+    0.0f,
+    0.0f
+)
 
 data class GuidScreenState(
-    var cameraPosition: CameraPosition = CameraPosition(
-        Point(59.9342802, 30.3350986),
-        11.0f,
-        0.0f,
-        0.0f
-    ),
     var lists: List<ListItemResponse> = emptyList(),
     var selectedEvent: Event? = null,
     var isLoading: Boolean = false,
