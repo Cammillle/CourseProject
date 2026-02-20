@@ -30,7 +30,7 @@ fun AppNavGraph(
         composable(Screen.Profile.route) {
             profileScreenContent()
         }
-        composable(Screen.YandexMap.route) {
+        composable(Screen.Guids.route) {
             yandexMapScreenContent()
         }
     }

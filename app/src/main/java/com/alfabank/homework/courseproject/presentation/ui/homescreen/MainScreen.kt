@@ -124,7 +124,6 @@ fun MainScreen() {
             feedScreenContent = { id ->
                 EventDetailScreen(
                     onBackClick = { navigationState.navHostController.popBackStack() },
-                    eventId = id
                 )
             }
         )

@@ -62,9 +62,9 @@ import com.alfabank.homework.courseproject.presentation.ui.theme.ProjectYellow
 
 @Composable
 fun EventDetailScreen(
-    onBackClick: () -> Unit,
-    eventId: Long
+    onBackClick: () -> Unit
 ) {
+    //передача id ивента через SavedStateHandle, достаем из вьюмодели
     val viewModel: EventDetailsViewModel = viewModel()
     val eventState = viewModel.eventState.collectAsStateWithLifecycle()
     val state = eventState.value

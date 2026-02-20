@@ -30,13 +30,15 @@ fun ListItemCard(
     title: String,
     description: String,
     imageUrls: List<String> = emptyList(),
-    onClick: () -> Unit,
+    onMapNavigate: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() },
+            .clickable {
+                onMapNavigate()
+            },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = Grey3),
         elevation = CardDefaults.cardElevation(4.dp)
@@ -163,7 +165,7 @@ fun EventCollectionCardPreview() {
                     "https://example.com/image3.jpg",
                     "https://example.com/image4.jpg"
                 ),
-                onClick = { }
+                onMapNavigate = {}
             )
         }
     }

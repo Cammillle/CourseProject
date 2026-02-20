@@ -4,6 +4,7 @@ sealed class Screen(
     val route: String
 ) {
     object Home : Screen(ROUTE_HOME) //вложенный граф навигации
+    object Guids : Screen(ROUTE_GUIDS) // вложенный граф навигации
 
     object EventsFeedFilters : Screen(ROUTE_EVENT_FILTERS)
     object EventsListFeed : Screen(ROUTE_EVENTS_FEED)
@@ -14,7 +15,7 @@ sealed class Screen(
     }
 
     object Favourite : Screen(ROUTE_FAVOURITE)
-    object YandexMap : Screen(ROUTE_YANDEX_MAP)
+
     object Profile : Screen(ROUTE_PROFILE)
 
 
@@ -28,7 +29,9 @@ sealed class Screen(
         const val ROUTE_EVENT = "event"
 
         const val ROUTE_FAVOURITE = "favourite"
+        const val ROUTE_GUIDS = "guids"
         const val ROUTE_YANDEX_MAP = "yandex_map"
+
         const val ROUTE_PROFILE = "profile"
     }
 

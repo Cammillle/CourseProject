@@ -14,7 +14,7 @@ sealed class NavigationItem(
     )
 
     object Map : NavigationItem(
-        screen = Screen.YandexMap,
+        screen = Screen.Guids,
         titleResId = R.string.navigation_item_map,
         icon = R.drawable.outline_map_24
     )
