@@ -34,7 +34,6 @@ data class ItemDTO(
 
 fun ItemDTO.toItem(): Item{
     return Item(
-        bodyText = bodyText,
         ctype = ctype,
         description = description,
         firstImage = firstImage?.image,
@@ -46,23 +45,14 @@ fun ItemDTO.toItem(): Item{
     )
 }
 
+@Serializable
 data class Item(
-    @SerialName("body_text")
-    val bodyText: String?,
-    @SerialName("ctype")
     val ctype: String?,
-    @SerialName("description")
     val description: String?,
-    @SerialName("first_image")
     val firstImage: String?,
-    @SerialName("id")
     val id: Long,
-    @SerialName("item_url")
     val itemUrl: String?,
-    @SerialName("place")
     val place: EventPlace?,
-    @SerialName("title")
     val title: String?,
-    @SerialName("year")
     val year: Int?
 )

@@ -3,7 +3,7 @@ package com.alfabank.homework.courseproject.presentation.ui.guidscreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alfabank.homework.courseproject.data.GuidRepositoryImpl
-import com.alfabank.homework.courseproject.data.dto.lists.ListItemResponse
+import com.alfabank.homework.courseproject.data.dto.lists.ListItem
 import com.alfabank.homework.courseproject.domain.model.Event
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -65,7 +65,7 @@ var cameraPosition: CameraPosition = CameraPosition(
 )
 
 data class GuidScreenState(
-    var lists: List<ListItemResponse> = emptyList(),
+    var lists: List<ListItem> = emptyList(),
     var selectedEvent: Event? = null,
     var isLoading: Boolean = false,
     var error: String? = null

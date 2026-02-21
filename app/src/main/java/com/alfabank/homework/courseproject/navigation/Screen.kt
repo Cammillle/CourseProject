@@ -4,7 +4,13 @@ sealed class Screen(
     val route: String
 ) {
     object Home : Screen(ROUTE_HOME) //вложенный граф навигации
-    object Guids : Screen(ROUTE_GUIDS) // вложенный граф навигации
+    object Guids : Screen(ROUTE_GUIDS)
+
+    object YandexMap : Screen("$ROUTE_YANDEX_MAP/{list_item_id}") {
+        fun getRouteWithListItemId(listItem: String): String {
+            return "$ROUTE_YANDEX_MAP/$listItem"
+        }
+    }
 
     object EventsFeedFilters : Screen(ROUTE_EVENT_FILTERS)
     object EventsListFeed : Screen(ROUTE_EVENTS_FEED)
@@ -20,7 +26,9 @@ sealed class Screen(
 
 
     companion object {
-        const val KEY_EVENT_ID= "event_id"
+        const val KEY_EVENT_ID = "event_id"
+        const val KEY_LIST_ITEM_ID = "list_item_id"
+
 
         const val ROUTE_HOME = "home"
         const val ROUTE_EVENT_FILTERS = "home_filters"

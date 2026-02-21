@@ -16,11 +16,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.alfabank.homework.courseproject.data.dto.lists.ListItem
 import com.alfabank.homework.courseproject.presentation.ui.guidscreen.composable.ListItemCard
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuidScreen(
+    onMapNavigate: (ListItem) -> Unit
 ) {
     val viewModel: GuidViewModel = viewModel()
     val guidState = viewModel.guidScreenState.collectAsStateWithLifecycle()
@@ -49,7 +53,8 @@ fun GuidScreen(
                     title = item.title ?: "",
                     description = item.description ?: "",
                     imageUrls = item.images ?: emptyList(),
-                    onClick = {}
+                    onMapNavigate = {
+                        onMapNavigate(item) },
                 )
             }
         }

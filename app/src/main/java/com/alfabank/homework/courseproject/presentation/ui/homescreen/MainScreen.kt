@@ -27,6 +27,7 @@ import com.alfabank.homework.courseproject.presentation.ui.feedScreen.FeedScreen
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.components.FeedTopBar
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.eventScreen.EventDetailScreen
 import com.alfabank.homework.courseproject.presentation.ui.guidscreen.GuidScreen
+import com.alfabank.homework.courseproject.presentation.ui.mapScreen.MapScreen
 import com.alfabank.homework.courseproject.presentation.ui.profilescreen.ProfileScreen
 
 @Composable
@@ -118,13 +119,20 @@ fun MainScreen() {
             },
             favouriteScreenContent = { FavouriteScreen() },
             profileScreenContent = { ProfileScreen() },
-            yandexMapScreenContent = {
-                GuidScreen()
+            guidsScreenContent = {
+                GuidScreen(
+                    onMapNavigate = { item ->
+                        navigationState.navigateToYandexMap(item)
+                    }
+                )
             },
             feedScreenContent = { id ->
                 EventDetailScreen(
                     onBackClick = { navigationState.navHostController.popBackStack() },
                 )
+            },
+            yandexMapScreenContent = { item ->
+                MapScreen(item)
             }
         )
         Log.d("MainScreen", "${navigationState.navHostController}")

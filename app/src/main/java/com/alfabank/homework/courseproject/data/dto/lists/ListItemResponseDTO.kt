@@ -23,8 +23,8 @@ data class ListItemResponseDTO(
     val title: String?
 )
 
-fun ListItemResponseDTO.toListItemResponse(): ListItemResponse{
-    return ListItemResponse(
+fun ListItemResponseDTO.toListItem(): ListItem{
+    return ListItem(
         ctype = ctype,
         description = description,
         id = id,
@@ -36,7 +36,9 @@ fun ListItemResponseDTO.toListItemResponse(): ListItemResponse{
     )
 }
 
-data class ListItemResponse(
+
+@Serializable
+data class ListItem(
     val ctype: String?,
     val description: String?,
     val id: Long,

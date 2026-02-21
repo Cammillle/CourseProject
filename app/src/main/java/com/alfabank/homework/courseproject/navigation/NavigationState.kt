@@ -5,6 +5,9 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.alfabank.homework.courseproject.data.dto.lists.ListItem
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class NavigationState(
     val navHostController: NavHostController
@@ -21,6 +24,12 @@ class NavigationState(
 
     fun navigateToEventDetails(id: Long) {
         navHostController.navigate(route = Screen.Event.getRouteWithArgs(id = id))
+    }
+
+    fun navigateToYandexMap(listItem: ListItem) {
+        val json = Json.encodeToString(listItem)
+        val encodedJson = java.net.URLEncoder.encode(json, "UTF-8")
+        navHostController.navigate(route = Screen.YandexMap.getRouteWithListItemId(encodedJson))
     }
 }
 
