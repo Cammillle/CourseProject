@@ -1,7 +1,10 @@
 package com.alfabank.homework.courseproject.data.dto.lists
 
+import com.alfabank.homework.courseproject.data.dto.CoordsDTO
 import com.alfabank.homework.courseproject.data.dto.EventPlaceDTO
+import com.alfabank.homework.courseproject.data.toCoords
 import com.alfabank.homework.courseproject.data.toPlace
+import com.alfabank.homework.courseproject.domain.model.Coords
 import com.alfabank.homework.courseproject.domain.model.EventPlace
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -24,6 +27,8 @@ data class ItemDTO(
     val itemUrl: String?,
     @SerialName("place")
     val place: EventPlaceDTO?,
+    @SerialName("coords")
+    val coords: CoordsDTO?,
     @SerialName("poster")
     val poster: Poster?,
     @SerialName("title")
@@ -32,7 +37,7 @@ data class ItemDTO(
     val year: Int?
 )
 
-fun ItemDTO.toItem(): Item{
+fun ItemDTO.toItem(): Item {
     return Item(
         ctype = ctype,
         description = description,
@@ -41,7 +46,8 @@ fun ItemDTO.toItem(): Item{
         itemUrl = itemUrl,
         place = place?.toPlace(),
         title = title,
-        year = year
+        year = year,
+        coords = coords?.toCoords()
     )
 }
 
@@ -53,6 +59,7 @@ data class Item(
     val id: Long,
     val itemUrl: String?,
     val place: EventPlace?,
+    val coords: Coords?,
     val title: String?,
     val year: Int?
 )

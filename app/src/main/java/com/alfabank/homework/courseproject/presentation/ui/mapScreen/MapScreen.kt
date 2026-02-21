@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,25 +21,34 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.alfabank.homework.courseproject.data.dto.lists.ListItem
 
+@Suppress("NonSkippableComposable")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
     item: ListItem
 ) {
-    Log.d("MapScreen", "$item")
+    Log.d("MapScreen", "Items ${item.items?.get(0)}")
 
     val imageList = item.images ?: emptyList()
     val pagerState = rememberPagerState(pageCount = { imageList.size })
+
+    val viewModel: MapScreenViewModel = viewModel()
+    val screenState = viewModel.screenState.collectAsStateWithLifecycle()
+    val currentState = screenState.value
 
     Scaffold(
         topBar = {
@@ -77,7 +87,6 @@ fun MapScreen(
                     )
                 }
 
-
                 CustomPagerIndicator(
                     pagerState = pagerState,
                     modifier = Modifier
@@ -86,17 +95,21 @@ fun MapScreen(
                 )
             }
 
-
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .weight(1f)
                     .background(Color.LightGray)
             ) {
-                Text(
-                    text = "карта",
-                    modifier = Modifier.align(Alignment.Center)
+                YandexMapComponent(
+                    cameraPosition = currentState.cameraPosition,
+                    events = item.items ?: emptyList(),
+                    selectedEventId = currentState.selectedEvent?.id,
+                    onEventSelected = {
+                        viewModel.selectEvent(it)
+                    }
                 )
+
             }
         }
     }
@@ -106,12 +119,12 @@ fun MapScreen(
 
 @Composable
 fun CustomPagerIndicator(
-    pagerState: androidx.compose.foundation.pager.PagerState,
+    pagerState: PagerState,
     modifier: Modifier = Modifier,
     activeColor: Color = MaterialTheme.colorScheme.primary,
     inactiveColor: Color = Color.Gray,
-    indicatorSize: androidx.compose.ui.unit.Dp = 8.dp,
-    spacing: androidx.compose.ui.unit.Dp = 4.dp
+    indicatorSize: Dp = 8.dp,
+    spacing: Dp = 4.dp
 ) {
     Row(
         modifier = modifier,
