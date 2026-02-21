@@ -79,6 +79,8 @@ dependencies {
 
     // Image Loading
     implementation(libs.coil.compose)
+    implementation("com.google.accompanist:accompanist-pager:0.35.0-alpha")
+
 
     //Room
     implementation(libs.room)

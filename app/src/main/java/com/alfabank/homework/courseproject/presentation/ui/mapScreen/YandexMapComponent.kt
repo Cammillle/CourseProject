@@ -1,5 +1,8 @@
-package com.alfabank.homework.courseproject.presentation.ui.guidscreen
+package com.alfabank.homework.courseproject.presentation.ui.mapScreen
 
+import android.content.Context
+import android.graphics.Color
+import android.graphics.PointF
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -14,11 +17,17 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.alfabank.homework.courseproject.R
 import com.alfabank.homework.courseproject.domain.model.Event
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.map.MapObjectTapListener
+import com.yandex.mapkit.map.PlacemarkMapObject
+import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
+import com.yandex.runtime.image.ImageProvider
 
 @Composable
 fun YandexMapComponent(
@@ -30,7 +39,6 @@ fun YandexMapComponent(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-
 
     val markersCollection = remember { mutableStateOf<MapObjectCollection?>(null) }
     val tapListenerRef = remember { mutableStateOf<MapObjectTapListener?>(null) }
@@ -86,7 +94,7 @@ fun YandexMapComponent(
         if (mapView.mapWindow.map.isValid()) {
             mapView.mapWindow.map.move(
                 cameraPosition,
-                com.yandex.mapkit.Animation(com.yandex.mapkit.Animation.Type.SMOOTH, 1.0f),
+                Animation(Animation.Type.SMOOTH, 1.0f),
                 null
             )
         }
@@ -102,7 +110,7 @@ private fun updateMarkers(
     mapView: MapView,
     events: List<Event>,
     selectedEventId: Long?,
-    context: android.content.Context,
+    context: Context,
     onEventSelected: (Event) -> Unit
 ) {
     val collection = mapView.mapWindow.map.mapObjects.addCollection()
@@ -111,19 +119,19 @@ private fun updateMarkers(
     events.forEach { event ->
         val coords = event.place?.coords ?: event.location?.coords
         coords?.let {
-            val point = com.yandex.mapkit.geometry.Point(it.lat!!, it.lon!!)
+            val point = Point(it.lat!!, it.lon!!)
             val placemark = collection.addPlacemark().apply {
                 geometry = point
                 setIcon(
-                    com.yandex.runtime.image.ImageProvider.fromResource(
+                    ImageProvider.fromResource(
                         context,
                         if (event.id == selectedEventId) R.drawable.circle_24_red
                         else R.drawable.circle_24_green
                     )
                 )
                 setIconStyle(
-                    com.yandex.mapkit.map.IconStyle().apply {
-                        anchor = android.graphics.PointF(0.5f, 1.0f)
+                    IconStyle().apply {
+                        anchor = PointF(0.5f, 1.0f)
                         flat = false
                         scale = 1.0f
                         zIndex = 1f
@@ -133,14 +141,14 @@ private fun updateMarkers(
                 event.place?.title?.let { title ->
                     setText(
                         title,
-                        com.yandex.mapkit.map.TextStyle().apply {
+                        TextStyle().apply {
                             size = if (event.id == selectedEventId) 13.0f else 11.0f
-                            color = if (event.id == selectedEventId) android.graphics.Color.RED
-                            else android.graphics.Color.BLACK
-                            placement = com.yandex.mapkit.map.TextStyle.Placement.BOTTOM
+                            color = if (event.id == selectedEventId) Color.RED
+                            else Color.BLACK
+                            placement = TextStyle.Placement.BOTTOM
                             offset = 5.0f
                             outlineWidth = if (event.id == selectedEventId) 2.0f else 1.0f
-                            outlineColor = android.graphics.Color.WHITE
+                            outlineColor = Color.WHITE
                         }
                     )
                 }
@@ -149,8 +157,8 @@ private fun updateMarkers(
     }
 
     // Обработчик кликов
-    val tapListener = com.yandex.mapkit.map.MapObjectTapListener { mapObject, point ->
-        if (mapObject is com.yandex.mapkit.map.PlacemarkMapObject) {
+    val tapListener = MapObjectTapListener { mapObject, point ->
+        if (mapObject is PlacemarkMapObject) {
             val tappedEvent = mapObject.userData as? Event
             tappedEvent?.let {
                 onEventSelected(it)
@@ -161,7 +169,7 @@ private fun updateMarkers(
                         mapView.mapWindow.map.cameraPosition.azimuth,
                         mapView.mapWindow.map.cameraPosition.tilt
                     ),
-                    com.yandex.mapkit.Animation(com.yandex.mapkit.Animation.Type.SMOOTH, 0.3f),
+                    Animation(Animation.Type.SMOOTH, 0.3f),
                     null
                 )
                 return@MapObjectTapListener true
