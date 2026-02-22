@@ -35,6 +35,9 @@ class MapScreenViewModel : ViewModel() {
             )
         }
     }
+    fun clearSelection() {
+        _screenState.update { it.copy(selectedEvent = null) }
+    }
 }
 
 data class MapScreenState(

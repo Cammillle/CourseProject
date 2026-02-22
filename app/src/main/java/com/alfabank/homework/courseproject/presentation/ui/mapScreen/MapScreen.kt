@@ -1,6 +1,11 @@
 package com.alfabank.homework.courseproject.presentation.ui.mapScreen
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,103 +48,60 @@ fun MapScreen(
 ) {
     Log.d("MapScreen", "Items ${item.items?.get(0)}")
 
-    val imageList = item.images ?: emptyList()
-    val pagerState = rememberPagerState(pageCount = { imageList.size })
-
     val viewModel: MapScreenViewModel = viewModel()
     val screenState = viewModel.screenState.collectAsStateWithLifecycle()
     val currentState = screenState.value
 
     Scaffold(
         topBar = {
-            TopAppBar(title = {
-                Text(
-                    text = "Гиды",
-                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                )
-            })
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Гиды",
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                    )
+                }
+            )
         }
     ) { paddingValues ->
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(10.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(0.2f)
-            ) {
 
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) { page ->
-                    AsyncImage(
-                        model = imageList[page],
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop // или ContentScale.Fit
+            YandexMapComponent(
+                modifier = Modifier.fillMaxSize(),
+                cameraPosition = currentState.cameraPosition,
+                events = item.items ?: emptyList(),
+                selectedEventId = currentState.selectedEvent?.id,
+                onEventSelected = {
+                    viewModel.selectEvent(it)
+                }
+            )
+
+            AnimatedVisibility(
+                visible = currentState.selectedEvent != null,
+                enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
+                exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(16.dp)
+            ) {
+                currentState.selectedEvent?.let { event ->
+                    MapEventCard(
+                        event = event,
+                        onClose = { viewModel.clearSelection() },
+                        onBuyTickets = {
+                            // openUrl(...)
+                        }
                     )
                 }
-
-                CustomPagerIndicator(
-                    pagerState = pagerState,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(16.dp)
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-                    .background(Color.LightGray)
-            ) {
-                YandexMapComponent(
-                    cameraPosition = currentState.cameraPosition,
-                    events = item.items ?: emptyList(),
-                    selectedEventId = currentState.selectedEvent?.id,
-                    onEventSelected = {
-                        viewModel.selectEvent(it)
-                    }
-                )
-
             }
         }
     }
-
 }
 
-
-@Composable
-fun CustomPagerIndicator(
-    pagerState: PagerState,
-    modifier: Modifier = Modifier,
-    activeColor: Color = MaterialTheme.colorScheme.primary,
-    inactiveColor: Color = Color.Gray,
-    indicatorSize: Dp = 8.dp,
-    spacing: Dp = 4.dp
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        repeat(pagerState.pageCount) { pageIndex ->
-            val isSelected = pageIndex == pagerState.currentPage
-            Box(
-                modifier = Modifier
-                    .size(indicatorSize)
-                    .padding(horizontal = spacing / 2)
-                    .clip(CircleShape)
-                    .background(if (isSelected) activeColor else inactiveColor)
-            )
-        }
-    }
-}

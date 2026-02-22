@@ -30,6 +30,7 @@ import com.yandex.runtime.image.ImageProvider
 
 @Composable
 fun YandexMapComponent(
+    modifier: Modifier = Modifier,
     cameraPosition: CameraPosition,
     events: List<Item> = emptyList(),
     selectedEventId: Long? = null,
@@ -98,8 +99,8 @@ fun YandexMapComponent(
     }
 
     AndroidView(
-        factory = {mapView},
-        modifier = Modifier.fillMaxSize()
+        factory = { mapView },
+        modifier = modifier
     )
 }
 
@@ -144,7 +145,19 @@ private fun updateMarkers(
                         }
                     )
                     userData = event
-                    event.place?.title?.let { title ->
+                    event.title?.let {
+                        setText(
+                            event.title.replace("+"," "),
+                            TextStyle().apply {
+                                size = if (event.id == selectedEventId) 13.0f else 11.0f
+                                color = if (event.id == selectedEventId) Color.RED else Color.BLACK
+                                placement = TextStyle.Placement.BOTTOM
+                                offset = 5.0f
+                                outlineWidth = if (event.id == selectedEventId) 2.0f else 1.0f
+                                outlineColor = Color.WHITE
+                            }
+                        )
+                    } ?: event.place?.title?.let { title ->
                         setText(
                             title,
                             TextStyle().apply {
@@ -171,6 +184,7 @@ private fun updateMarkers(
     Log.d("MapScreen", "Total markers added: $markersAdded")
 
     val tapListener = MapObjectTapListener { mapObject, point ->
+        Log.d("MapScreen","TAP TAP")
         if (mapObject is PlacemarkMapObject) {
             val tappedEvent = mapObject.userData as? Item
             tappedEvent?.let {
