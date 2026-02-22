@@ -84,7 +84,7 @@ fun EventDetailScreen(
                 ) {
                     val images = event.images
                     if (!images.isNullOrEmpty()) {
-                        val image = images[0].thumbnails?.x384
+                        val image = images[0]
                         AsyncImage(
                             contentDescription = "",
                             modifier = Modifier
@@ -203,29 +203,28 @@ fun EventDetailScreen(
                         }
                         Spacer(modifier = Modifier.width(16.dp))
 
-                        val dates = event.dates
-                        dates?.let { dates ->
-                            val isEndless = dates[0].isEndless
-                            if (isEndless != null && isEndless) {
-                                Text(
-                                    text = "С расписанием",
-                                    fontSize = 14.sp,
-                                    color = Grey1,
-                                    fontWeight = FontWeight.Normal,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }else{
-                                val startDate = dates[0].startDate
-                                val startTime = dates[0].startTime
-                                Text(
-                                    text = "$startDate $startTime",
-                                    fontSize = 14.sp,
-                                    color = Grey1,
-                                    fontWeight = FontWeight.Normal,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
+
+                        val isEndless = event.isEndless
+                        if (isEndless != null && isEndless) {
+                            Text(
+                                text = "С расписанием",
+                                fontSize = 14.sp,
+                                color = Grey1,
+                                fontWeight = FontWeight.Normal,
+                                modifier = Modifier.weight(1f)
+                            )
+                        } else {
+                            val startDate = event.startDate
+                            val startTime = event.startTime
+                            Text(
+                                text = "$startDate $startTime",
+                                fontSize = 14.sp,
+                                color = Grey1,
+                                fontWeight = FontWeight.Normal,
+                                modifier = Modifier.weight(1f)
+                            )
                         }
+
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -259,22 +258,26 @@ fun EventDetailScreen(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            val place = event.place
-                            place?.let { place ->
+                            val placeTitle = event.placeTitle
+                            placeTitle?.let { title ->
                                 Text(
-                                    text = "${place.title}",
+                                    text = title,
                                     fontSize = 14.sp,
                                     color = Grey1,
                                     fontWeight = FontWeight.Normal,
                                 )
                                 Text(
-                                    text = "${place.address}",
+                                    text = event.address ?: "Адрес неизвестен",
                                     fontSize = 12.sp,
                                     color = Grey2,
                                     fontWeight = FontWeight.Normal,
                                 )
-                            }
-
+                            } ?: Text(
+                                text = "Нет адреса",
+                                fontSize = 14.sp,
+                                color = Grey1,
+                                fontWeight = FontWeight.Normal,
+                            )
                         }
                         Icon(
                             imageVector = Icons.Outlined.KeyboardArrowRight,

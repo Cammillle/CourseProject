@@ -1,6 +1,5 @@
 package com.alfabank.homework.courseproject.presentation.ui.mapScreen
 
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,8 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.alfabank.homework.courseproject.data.dto.lists.Item
+import com.alfabank.homework.courseproject.domain.Item
 
+@Suppress("NonSkippableComposable")
 @Composable
 fun MapEventCard(
     event: Item,
@@ -58,7 +58,7 @@ fun MapEventCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val title = event.title ?: event.place?.title ?: ""
+                val title = event.placeTitle ?: event.title ?: ""
                 Text(
                     text = title.replace("+"," "),
                     style = MaterialTheme.typography.titleLarge,
@@ -108,9 +108,9 @@ fun MapEventCard(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
-                event.place?.address?.let { address ->
+                event.address?.let { address ->
                     Text(
-                        text = address,
+                        text = address.replace("+"," "),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }

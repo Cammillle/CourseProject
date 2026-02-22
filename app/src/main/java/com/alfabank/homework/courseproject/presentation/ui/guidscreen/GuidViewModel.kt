@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alfabank.homework.courseproject.data.GuidRepositoryImpl
 import com.alfabank.homework.courseproject.data.dto.lists.ListItem
-import com.alfabank.homework.courseproject.domain.model.Event
+import com.alfabank.homework.courseproject.domain.Item
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import kotlinx.coroutines.async
@@ -66,7 +66,7 @@ var cameraPosition: CameraPosition = CameraPosition(
 
 data class GuidScreenState(
     var lists: List<ListItem> = emptyList(),
-    var selectedEvent: Event? = null,
+    var selectedEvent: Item? = null,
     var isLoading: Boolean = false,
     var error: String? = null
 )

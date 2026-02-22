@@ -21,7 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.alfabank.homework.courseproject.domain.model.Event
+import com.alfabank.homework.courseproject.domain.Item
 import com.alfabank.homework.courseproject.presentation.ui.HomeState
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.components.FeedFilters
 
@@ -75,7 +75,7 @@ fun FeedScreen(
 
 @Composable
 fun EventsList(
-    events: List<Event> = emptyList(),
+    events: List<Item> = emptyList(),
     nextDataIsLoading: Boolean,
     loadNextEvents: () -> Unit,
     onClick: (Long) -> Unit

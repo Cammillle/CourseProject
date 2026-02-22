@@ -1,7 +1,6 @@
 package com.alfabank.homework.courseproject.api
 
 import com.alfabank.homework.courseproject.data.dto.lists.ListItemResponseDTO
-import com.alfabank.homework.courseproject.data.dto.lists.ListsResponseDTO
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -13,13 +12,6 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ListsApi {
-
-    @GET("lists")
-    suspend fun getLists(
-        @Query("location") location: String = "spb",
-        @Query("text_format") textFormat: String = "text",
-        @Query("fields") fields: List<String> = listOf("id,title,publication_date"),
-    ): ListsResponseDTO
 
     @GET("lists/{item_id}")
     suspend fun getListItemsById(

@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.data.dto.lists
 
+import com.alfabank.homework.courseproject.domain.Item
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -39,7 +40,7 @@ fun ListItemResponseDTO.toListItem(): ListItem{
 
 @Serializable
 data class ListItem(
-    val ctype: String?,
+    val ctype: String?,// list
     val description: String?,
     val id: Long,
     val images: List<String>?,

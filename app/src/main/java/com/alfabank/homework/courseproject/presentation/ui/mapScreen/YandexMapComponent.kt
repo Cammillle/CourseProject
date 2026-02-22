@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.alfabank.homework.courseproject.R
-import com.alfabank.homework.courseproject.data.dto.lists.Item
+import com.alfabank.homework.courseproject.domain.Item
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -117,11 +117,10 @@ private fun updateMarkers(
     collection.clear()
 
     events.forEach { event ->
-        val coords = event.place?.coords ?: event.coords
-        if (coords?.lat != null && coords.lon != null) {
+        if (event.lat != null && event.lon != null) {
 
             val placemark = collection.addPlacemark(
-                Point(coords.lat, coords.lon)
+                Point(event.lat,event.lon)
             )
 
             placemark.setIcon(
@@ -142,7 +141,7 @@ private fun updateMarkers(
                     zIndex = 1000f
                 }
             )
-            val title = event.title ?: event.place?.title ?: ""
+            val title = event.placeTitle ?: event.title ?: ""
             placemark.setText(
                 title.replace("+", " "),
                 TextStyle().apply {

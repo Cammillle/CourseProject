@@ -2,12 +2,15 @@ package com.alfabank.homework.courseproject.data.dto.lists
 
 import com.alfabank.homework.courseproject.data.dto.CoordsDTO
 import com.alfabank.homework.courseproject.data.dto.EventPlaceDTO
-import com.alfabank.homework.courseproject.data.toCoords
-import com.alfabank.homework.courseproject.data.toPlace
-import com.alfabank.homework.courseproject.domain.model.Coords
-import com.alfabank.homework.courseproject.domain.model.EventPlace
+import com.alfabank.homework.courseproject.domain.Item
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.double
+import kotlinx.serialization.json.doubleOrNull
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.intOrNull
 
 @Serializable
 data class ItemDTO(
@@ -15,6 +18,10 @@ data class ItemDTO(
     val bodyText: String?,
     @SerialName("ctype")
     val ctype: String?,
+    @SerialName("address")
+    val address: String?,
+    @SerialName("age_restriction")
+    val ageRestrictionRaw: JsonElement?,
     @SerialName("description")
     val description: String?,
     @SerialName("first_image")
@@ -35,31 +42,41 @@ data class ItemDTO(
     val title: String?,
     @SerialName("year")
     val year: Int?
-)
+){
+    val ageRestriction: String?
+        get() = ageRestrictionRaw?.let { element ->
+            when (element) {
+                is JsonPrimitive -> {
+                    when {
+                        element.isString -> element.content
+                        element.intOrNull != null -> element.int.toString()
+                        element.doubleOrNull != null -> element.double.toInt().toString()
+                        else -> null
+                    }
+                }
+                else -> null
+            }
+        }
+}
 
 fun ItemDTO.toItem(): Item {
     return Item(
         ctype = ctype,
         description = description,
-        firstImage = firstImage?.image,
         id = id,
+        startDate = year.toString(),
+        startTime = null,
+        address = address,
+        ageRestriction = ageRestriction,
+        images = listOf(firstImage?.thumbnails?.x384),
+        categories = null,
+        price = null,
         itemUrl = itemUrl,
-        place = place?.toPlace(),
         title = title,
-        year = year,
-        coords = coords?.toCoords()
+        placeTitle = place?.title,
+        lat = place?.coords?.lat ?: coords?.lat,
+        lon = place?.coords?.lon ?: coords?.lon,
+        isEndless = null,
+        bodyText = bodyText,
     )
 }
-
-@Serializable
-data class Item(
-    val ctype: String?,
-    val description: String?,
-    val firstImage: String?,
-    val id: Long,
-    val itemUrl: String?,
-    val place: EventPlace?,
-    val coords: Coords?,
-    val title: String?,
-    val year: Int?
-)

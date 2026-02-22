@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alfabank.homework.courseproject.data.EventRepositoryImpl
-import com.alfabank.homework.courseproject.domain.model.Event
+import com.alfabank.homework.courseproject.domain.Item
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.FeedScreenEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -158,7 +158,7 @@ class EventViewModel : ViewModel() {
 }
 
 data class HomeState(
-    var events: List<Event> = emptyList(),
+    var events: List<Item> = emptyList(),
     var isLoading: Boolean = false,
     var error: String? = null,
     val nextDataIsLoading: Boolean = false,

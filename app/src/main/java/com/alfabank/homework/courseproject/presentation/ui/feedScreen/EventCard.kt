@@ -38,12 +38,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.alfabank.homework.courseproject.R
-import com.alfabank.homework.courseproject.domain.model.Event
+import com.alfabank.homework.courseproject.domain.Item
 
 @Suppress("NonSkippableComposable")
 @Composable
 fun EventCard(
-    event: Event,
+    event: Item,
     onClick: (Long) -> Unit
 ) {
     val isFavorite = remember { mutableStateOf(false) }
@@ -80,7 +80,7 @@ fun EventCard(
                             .fillMaxSize()
                             .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
                         contentScale = ContentScale.Crop,
-                        model = images[0].thumbnails?.x384
+                        model = images[0]
                     )
                 } else {
                     Image(
@@ -200,8 +200,8 @@ fun EventCard(
             ) {
                 val title = event.title
                 val description = event.description
-                val date = event.dates?.get(0)?.startDate
-                val time = event.dates?.get(0)?.startTime
+                val date = event.startDate
+                val time = event.startTime
 
                 // Заголовок
                 Text(
@@ -240,10 +240,10 @@ fun EventCard(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        val place = event.place
-                        if (place != null) {
+                        val placeTitle = event.placeTitle
+                        if (placeTitle != null) {
                             Text(
-                                text = place.title.toString(),
+                                text = placeTitle,
                                 style = TextStyle(
                                     color = Color.Black,
                                     fontSize = 14.sp,
