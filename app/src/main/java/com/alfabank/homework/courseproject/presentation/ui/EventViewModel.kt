@@ -8,6 +8,7 @@ import com.alfabank.homework.courseproject.domain.Item
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.FeedScreenEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class EventViewModel : ViewModel() {
@@ -46,24 +47,27 @@ class EventViewModel : ViewModel() {
                     error = null,
                     nextDataIsLoading = false
                 )
-            repository.getEventsWithoutFilters().fold(
-                onSuccess = { eventsData ->
-                    _homeState.value = _homeState.value.copy(
-                        isLoading = false,
-                        events = eventsData.events,
-                        nextDataIsLoading = false
-                    )
-                    nextUrl = eventsData.nextUrl
-                },
-                onFailure = { error ->
-                    _homeState.value = _homeState.value.copy(
-                        isLoading = false,
-                        error = error.message ?: "Unknown error",
-                        nextDataIsLoading = false
-                    )
-                    Log.e("TAGATG", homeState.value.error.toString())
-                }
-            )
+            repository.getEventsWithoutFilters().
+            collect{result ->
+                result.fold(
+                    onSuccess = { eventsData ->
+                        _homeState.value = _homeState.value.copy(
+                            isLoading = false,
+                            events = eventsData.events,
+                            nextDataIsLoading = false
+                        )
+                        nextUrl = eventsData.nextUrl
+                    },
+                    onFailure = { error ->
+                        _homeState.value = _homeState.value.copy(
+                            isLoading = false,
+                            error = error.message ?: "Unknown error",
+                            nextDataIsLoading = false
+                        )
+                        Log.e("TAGATG", homeState.value.error.toString())
+                    }
+                )
+            }
         }
     }
 
@@ -92,7 +96,6 @@ class EventViewModel : ViewModel() {
             val category = categoryMap.getValue(category)
 
             repository.getTodayPopularEventsByCategory(
-                fetchFromRemote = fetchFromRemote,
                 category = category,
                 query = query
             ).collect { result ->

@@ -7,6 +7,7 @@ import com.alfabank.homework.courseproject.data.EventRepositoryImpl
 import com.alfabank.homework.courseproject.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class EventDetailsViewModel(
@@ -30,21 +31,23 @@ class EventDetailsViewModel(
                 isLoading = true,
                 error = null
             )
-            repository.getEventById(id).fold(
-                onSuccess = { event ->
-                    _eventState.value = _eventState.value.copy(
-                        isLoading = false,
-                        event = event
-                    )
+            repository.getEventById(id).collect{result ->
+                result.fold(
+                    onSuccess = { event ->
+                        _eventState.value = _eventState.value.copy(
+                            isLoading = false,
+                            event = event
+                        )
 
-                },
-                onFailure = { error ->
-                    _eventState.value = _eventState.value.copy(
-                        isLoading = false,
-                        error = error.message ?: "Unknown error"
-                    )
-                }
-            )
+                    },
+                    onFailure = { error ->
+                        _eventState.value = _eventState.value.copy(
+                            isLoading = false,
+                            error = error.message ?: "Unknown error"
+                        )
+                    }
+                )
+            }
         }
     }
 

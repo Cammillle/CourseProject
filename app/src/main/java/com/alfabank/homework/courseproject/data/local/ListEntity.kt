@@ -3,6 +3,7 @@ package com.alfabank.homework.courseproject.data.local
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.alfabank.homework.courseproject.domain.Item
 
 @Entity(tableName = "lists_of_event")
 @TypeConverters(StringListConverter::class)
@@ -16,3 +17,4 @@ data class ListEntity(
     val itemUrl: String?,
     val siteUrl: String?
 )
+

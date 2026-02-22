@@ -33,7 +33,7 @@ data class ItemEntity(
     val ageRestriction: String?,
 
     val address: String?,
-    val lan: Double?,
+    val lat: Double?,
     val lon: Double?,
 
     val images: List<String>?,
@@ -41,9 +41,11 @@ data class ItemEntity(
     val price: String?,
     val siteUrl: String?,
 
+    val isEndless: Boolean?,
     val startDate: String?,
     val startTime: String?,
 
-    val categories: List<String>?
+    val category:String?
 )
+
 
