@@ -55,7 +55,7 @@ fun MainScreen() {
         bottomBar = {
             if (navBackStackEntry != null) {
                 if (currentDestination != Screen.EventsFeedFilters.route
-                    && (currentDestination != Screen.Event.route)
+                    && (currentDestination != Screen.Event.route) && (currentDestination != Screen.YandexMap.route)
                 ) {
                     NavigationBar {
                         val items = listOf(
@@ -132,7 +132,10 @@ fun MainScreen() {
                 )
             },
             yandexMapScreenContent = { item ->
-                MapScreen(item)
+                MapScreen(
+                    item,
+                    onBack = {navigationState.navHostController.popBackStack()}
+                )
             }
         )
         Log.d("MainScreen", "${navigationState.navHostController}")
