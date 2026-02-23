@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 
 @Entity(
-    tableName = "event",
+    tableName = "items",
     foreignKeys = [
         ForeignKey(
             entity = ListEntity::class,
@@ -45,7 +45,6 @@ data class ItemEntity(
     val startDate: String?,
     val startTime: String?,
 
-    val category:String?
 )
 
 

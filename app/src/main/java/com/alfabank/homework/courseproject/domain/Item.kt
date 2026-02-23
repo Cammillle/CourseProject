@@ -25,5 +25,5 @@ data class Item(
     val title: String?,
     val placeTitle: String?,
     val lat: Double?,
-    val lon: Double?
+    val lon: Double?,
 )

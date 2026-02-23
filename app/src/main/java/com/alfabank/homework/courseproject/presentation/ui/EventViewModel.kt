@@ -27,7 +27,8 @@ class EventViewModel : ViewModel() {
         when (event) {
             is FeedScreenEvent.onCategoryChange -> {
                 _homeState.value = _homeState.value.copy(
-                    searchQuery = event.category)
+                    searchQuery = event.category
+                )
 
 
             }
@@ -45,10 +46,10 @@ class EventViewModel : ViewModel() {
                 _homeState.value.copy(
                     isLoading = true,
                     error = null,
-                    nextDataIsLoading = false
+                    nextDataIsLoading = false,
+                    category = ""
                 )
-            repository.getEventsWithoutFilters().
-            collect{result ->
+            repository.getEventsWithoutFilters().collect { result ->
                 result.fold(
                     onSuccess = { eventsData ->
                         _homeState.value = _homeState.value.copy(
@@ -73,7 +74,6 @@ class EventViewModel : ViewModel() {
 
     fun loadEventsByCategories(
         category: String,
-        fetchFromRemote: Boolean = false,
         query: String = ""
     ) {
         val categoryMap = mapOf(
@@ -86,15 +86,16 @@ class EventViewModel : ViewModel() {
             "Фестивали" to "festival"
         )
 
+        val category = categoryMap.getValue(category)
+
         viewModelScope.launch {
             _homeState.value =
                 _homeState.value.copy(
                     isLoading = true,
                     error = null,
-                    nextDataIsLoading = false
+                    nextDataIsLoading = false,
+                    category = category
                 )
-            val category = categoryMap.getValue(category)
-
             repository.getTodayPopularEventsByCategory(
                 category = category,
                 query = query
@@ -125,6 +126,7 @@ class EventViewModel : ViewModel() {
         Log.e("TAGATG", "Load Next")
 
         val currentNextUrl = nextUrl
+        val currentCategory = _homeState.value.category
 
         if (currentNextUrl == null || _homeState.value.nextDataIsLoading) {
             Log.e("TAGATG", "Load Next return")
@@ -137,7 +139,10 @@ class EventViewModel : ViewModel() {
                 error = null
             )
 
-            repository.getNextEvents(currentNextUrl).fold(
+            repository.getNextEvents(
+                url = currentNextUrl,
+                category = currentCategory.ifEmpty { "all" }
+            ).fold(
                 onSuccess = { eventData ->
                     nextUrl = eventData.nextUrl
                     val currentEvents = _homeState.value.events
