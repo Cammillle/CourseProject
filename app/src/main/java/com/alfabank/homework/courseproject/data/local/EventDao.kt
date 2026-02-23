@@ -36,8 +36,11 @@ interface EventDao {
     @Query("SELECT nextUrl FROM categories WHERE id = :categoryId")
     fun observeNextUrl(categoryId: String): Flow<String?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCategory(category: CategoryEntity)
+
+    @Update
+    suspend fun updateCategory(category: CategoryEntity)
 
 
     // ---------- Items ----------
@@ -45,7 +48,7 @@ interface EventDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertItems(items: List<ItemEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCrossRefs(refs: List<ItemCategoryCrossRef>)
 
     @Query("""

@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class EventViewModel : ViewModel() {
-    private val repository = EventRepositoryImpl()
+    private val repository = EventRepositoryImpl
 
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()

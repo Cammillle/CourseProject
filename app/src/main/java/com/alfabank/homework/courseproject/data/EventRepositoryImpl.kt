@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class EventRepositoryImpl {
+object EventRepositoryImpl {
     private val api = EventsApi()
     private val db = DatabaseProvider.getDatabase()
     private val dao = db.eventDao()
@@ -65,7 +65,10 @@ class EventRepositoryImpl {
             val response = api.getNextEvents(nextUrl)
             val events = response.toListEvent() ?: emptyList()
 
-            savePage(events, effectiveCategory, response.next)
+            savePage(
+                events, effectiveCategory, response.next,
+                updateTimestamp = true
+            )
 
             Result.success(Unit)
 
@@ -149,17 +152,24 @@ class EventRepositoryImpl {
     ) {
         val itemEntities = events.map { it.toItemEntity() }
 
-        val lastUpdated = if (updateTimestamp)
-            System.currentTimeMillis()
-        else
-            dao.getLastUpdated(category) ?: System.currentTimeMillis()
+        val now = System.currentTimeMillis()
+        val existingLastUpdated = dao.getLastUpdated(category)
 
         val categoryEntity = CategoryEntity(
             id = category,
             name = category,
             nextUrl = nextUrl,
-            lastUpdated = lastUpdated
+            lastUpdated = if (updateTimestamp || existingLastUpdated == null)
+                now
+            else
+                existingLastUpdated
         )
+
+        if (existingLastUpdated == null) {
+            dao.insertCategory(categoryEntity)
+        } else {
+            dao.updateCategory(categoryEntity)
+        }
 
         val refs = events.map {
             ItemCategoryCrossRef(
@@ -168,7 +178,8 @@ class EventRepositoryImpl {
             )
         }
 
-        dao.insertPageData(itemEntities, categoryEntity, refs)
+        dao.insertItems(itemEntities)
+        dao.insertCrossRefs(refs)
     }
 
     private suspend fun shouldFetch(category: String): Boolean {

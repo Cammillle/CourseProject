@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class EventDetailsViewModel(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val repository = EventRepositoryImpl()
+    private val repository = EventRepositoryImpl
 
     private val _state = MutableStateFlow(EventState())
     val eventState = _state.asStateFlow()
