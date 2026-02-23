@@ -8,12 +8,33 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    // Основной акцентный цвет
+    primary = ProjectYellow,
+    onPrimary = Color.Black,                  // чёрный текст на жёлтом фоне
+
+    // Вторичный акцент (можно использовать Grey2)
+    secondary = Grey2,
+    onSecondary = Grey1,
+
+    // Третичный цвет (например, для менее важных элементов)
+    tertiary = Grey4,
+    onTertiary = Grey1,
+
+    // Фон всего приложения
+    background = BackgroundGrey,
+    onBackground = Grey1,                      // основной текст на фоне
+
+    // Поверхности (карточки, диалоги)
+    surface = Grey3,
+    onSurface = Grey1,                         // текст на поверхности
+
+    // Вариант поверхности (например, для разделителей)
+    surfaceVariant = Grey4,
+    onSurfaceVariant = Grey2,                   // текст на варианте поверхности
 )
 
 private val LightColorScheme = lightColorScheme(

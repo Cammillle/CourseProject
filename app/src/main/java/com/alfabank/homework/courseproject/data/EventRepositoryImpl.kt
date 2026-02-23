@@ -62,6 +62,8 @@ object EventRepositoryImpl {
         val nextUrl = dao.getNextUrl(effectiveCategory)
             ?: return Result.success(Unit)
 
+        Log.d("TAGATaAG","$category")
+        Log.d("TAGATaAG","$nextUrl")
         return try {
             val response = api.getNextEvents(nextUrl)
             val events = response.toListEvent() ?: emptyList()
