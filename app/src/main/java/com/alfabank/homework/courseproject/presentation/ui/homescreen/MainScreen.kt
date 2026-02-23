@@ -33,7 +33,7 @@ import com.alfabank.homework.courseproject.presentation.ui.profilescreen.Profile
 @Composable
 fun MainScreen() {
     val viewModel: EventViewModel = viewModel()
-    val homeState = viewModel.homeState.collectAsStateWithLifecycle()
+    val homeState = viewModel.state.collectAsStateWithLifecycle()
 
     val navigationState = rememberNavigationState()
     val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
@@ -105,8 +105,8 @@ fun MainScreen() {
                     onEventClick = { id ->
                         navigationState.navigateToEventDetails(id = id)
                     },
-                    onCategoryChange = { viewModel.loadEventsByCategories(it) },
-                    onCategoryClear = { viewModel.getTodayPopularEvents() }
+                    onCategoryChange = { viewModel.observeCategory(it) },
+                    onCategoryClear = { viewModel.clearCategory() }
                 )
             },
             eventsFeedFiltersScreenContent = {

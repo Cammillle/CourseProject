@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.alfabank.homework.courseproject.data.EventRepositoryImpl
 import com.alfabank.homework.courseproject.domain.Item
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.FeedScreenEvent
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
@@ -14,155 +15,82 @@ import kotlinx.coroutines.launch
 class EventViewModel : ViewModel() {
     private val repository = EventRepositoryImpl()
 
-    private val _homeState = MutableStateFlow(HomeState())
-    val homeState = _homeState.asStateFlow()
+    private val _state = MutableStateFlow(HomeState())
+    val state = _state.asStateFlow()
 
-    private var nextUrl: String? = null
+    private var observeJob: Job? = null
+    private var currentCategory = "all"
+
+    private val categoryMap = mapOf(
+        "Концерты" to "concert",
+        "Спектакли" to "theater",
+        "Экскурсии" to "tour",
+        "Ярмарки" to "yarmarki-razvlecheniya-yarmarki",
+        "Активный отдых" to "recreation",
+        "Выставки" to "exhibition",
+        "Фестивали" to "festival"
+    )
 
     init {
-        getTodayPopularEvents()
+        observeCategory("all")
     }
 
-    fun onEvent(event: FeedScreenEvent) {
-        when (event) {
-            is FeedScreenEvent.onCategoryChange -> {
-                _homeState.value = _homeState.value.copy(
-                    searchQuery = event.category
-                )
+    fun observeCategory(categoryUi: String) {
 
+        val category = categoryMap[categoryUi] ?: "all"
+        currentCategory = category
 
-            }
+        observeJob?.cancel()
 
-            is FeedScreenEvent.onSearchQueryChange -> TODO()
-            FeedScreenEvent.onLoadNextData -> TODO()
+        observeJob = viewModelScope.launch {
+
+            _state.value = _state.value.copy(
+                isLoading = true,
+                error = null,
+                category = category
+            )
+
+            repository.observeEvents(category)
+                .collect { result ->
+                    result.fold(
+                        onSuccess = {
+                            _state.value = _state.value.copy(
+                                events = it.events,
+                                isLoading = false
+                            )
+                        },
+                        onFailure = {
+                            _state.value = _state.value.copy(
+                                error = it.message,
+                                isLoading = false
+                            )
+                        }
+                    )
+                }
         }
     }
 
-    fun getTodayPopularEvents(
-        query: String = _homeState.value.searchQuery.lowercase()
-    ) {
-        viewModelScope.launch {
-            _homeState.value =
-                _homeState.value.copy(
-                    isLoading = true,
-                    error = null,
-                    nextDataIsLoading = false,
-                    category = ""
-                )
-            repository.getEventsWithoutFilters().collect { result ->
-                result.fold(
-                    onSuccess = { eventsData ->
-                        _homeState.value = _homeState.value.copy(
-                            isLoading = false,
-                            events = eventsData.events,
-                            nextDataIsLoading = false
-                        )
-                        nextUrl = eventsData.nextUrl
-                    },
-                    onFailure = { error ->
-                        _homeState.value = _homeState.value.copy(
-                            isLoading = false,
-                            error = error.message ?: "Unknown error",
-                            nextDataIsLoading = false
-                        )
-                        Log.e("TAGATG", homeState.value.error.toString())
-                    }
-                )
-            }
-        }
-    }
-
-    fun loadEventsByCategories(
-        category: String,
-        query: String = ""
-    ) {
-        val categoryMap = mapOf(
-            "Концерты" to "concert",
-            "Спектакли" to "theater",
-            "Экскурсии" to "tour",
-            "Ярмарки" to "yarmarki-razvlecheniya-yarmarki",
-            "Активный отдых" to "recreation",
-            "Выставки" to "exhibition",
-            "Фестивали" to "festival"
-        )
-
-        val category = categoryMap.getValue(category)
-
-        viewModelScope.launch {
-            _homeState.value =
-                _homeState.value.copy(
-                    isLoading = true,
-                    error = null,
-                    nextDataIsLoading = false,
-                    category = category
-                )
-            repository.getTodayPopularEventsByCategory(
-                category = category,
-                query = query
-            ).collect { result ->
-                result.fold(
-                    onSuccess = { eventsData ->
-                        _homeState.value = _homeState.value.copy(
-                            isLoading = false,
-                            events = eventsData.events,
-                            nextDataIsLoading = false
-                        )
-                        nextUrl = eventsData.nextUrl
-                    },
-                    onFailure = { error ->
-                        _homeState.value = _homeState.value.copy(
-                            isLoading = false,
-                            error = error.message ?: "Unknown error",
-                            nextDataIsLoading = false
-                        )
-                        Log.e("TAGATG", homeState.value.error.toString())
-                    }
-                )
-            }
-        }
+    fun clearCategory() {
+        observeCategory("all")
     }
 
     fun loadNextEvents() {
-        Log.e("TAGATG", "Load Next")
 
-        val currentNextUrl = nextUrl
-        val currentCategory = _homeState.value.category
-
-        if (currentNextUrl == null || _homeState.value.nextDataIsLoading) {
-            Log.e("TAGATG", "Load Next return")
-            return
-        }
+        if (_state.value.nextDataIsLoading) return
 
         viewModelScope.launch {
-            _homeState.value = _homeState.value.copy(
-                nextDataIsLoading = true,
-                error = null
+
+            _state.value = _state.value.copy(
+                nextDataIsLoading = true
             )
 
-            repository.getNextEvents(
-                url = currentNextUrl,
-                category = currentCategory.ifEmpty { "all" }
-            ).fold(
-                onSuccess = { eventData ->
-                    nextUrl = eventData.nextUrl
-                    val currentEvents = _homeState.value.events
-                    val updatedEvents = currentEvents + eventData.events
+            repository.loadNextPage(currentCategory)
 
-                    _homeState.value = _homeState.value.copy(
-                        events = updatedEvents,
-                        nextDataIsLoading = false
-                    )
-                },
-                onFailure = { error ->
-                    _homeState.value = _homeState.value.copy(
-                        error = error.message ?: "Failed to load more events",
-                        nextDataIsLoading = false
-                    )
-                }
+            _state.value = _state.value.copy(
+                nextDataIsLoading = false
             )
         }
     }
-
 }
 
 data class HomeState(

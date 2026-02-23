@@ -1,6 +1,5 @@
 package com.alfabank.homework.courseproject.data
 
-import coil.network.HttpException
 import com.alfabank.homework.courseproject.DatabaseProvider
 import com.alfabank.homework.courseproject.data.local.CategoryEntity
 import com.alfabank.homework.courseproject.data.local.ItemCategoryCrossRef
@@ -12,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -25,157 +25,165 @@ class EventRepositoryImpl {
     private val db = DatabaseProvider.getDatabase()
     private val dao = db.eventDao()
 
-    fun getTodayPopularEventsByCategory(
-        query: String,
-        category: String
-    ): Flow<Result<EventData>> = flow {
+    private val ttl = 24 * 60 * 60 * 1000L
+
+    fun observeEvents(category: String): Flow<Result<EventData>> {
+
         val effectiveCategory = category.ifEmpty { "all" }
 
-        // Проверяем наличие кеша
-        val hasCached = dao.getItemsByCategory(effectiveCategory).isNotEmpty()
-        if (!hasCached) {
-            fetchAndCache(effectiveCategory, query)
-        }
+        return flow {
 
-        // Комбинируем Flow элементов и Flow nextUrl
-        combine(
-            dao.observeItemsByCategoryWithCategories(effectiveCategory),
-            dao.observeNextUrlForCategory(effectiveCategory)
-        ) { entities, nextUrl ->
-            Result.success(
-                EventData(
-                    events = entities.map { it.toItem() },
-                    nextUrl = nextUrl
-                )
+            val shouldFetch = shouldFetch(effectiveCategory)
+
+            if (shouldFetch) {
+                fetchFirstPage(effectiveCategory)
+            }
+
+            emitAll(
+                combine(
+                    dao.observeItemsWithCategories(effectiveCategory),
+                    dao.observeNextUrl(effectiveCategory)
+                ) { items, nextUrl ->
+                    Result.success(
+                        EventData(
+                            events = items.map { it.toItem() },
+                            nextUrl = nextUrl
+                        )
+                    )
+                }
             )
-        }.collect { emit(it) }
-    }.catch { emit(Result.failure(it)) }
+        }.catch { emit(Result.failure(it)) }
+    }
 
+    suspend fun loadNextPage(category: String): Result<Unit> {
+        val effectiveCategory = category.ifEmpty { "all" }
 
-    fun getEventById(id: Long): Flow<Result<Item>> = flow {
-        combine(
-            dao.observeEventWithCategories(id),
-            flow { emit(dao.getEventById(id)) } // начальная загрузка, если нужно
-        ) { entity, _ ->
-            if (entity != null) {
-                Result.success(entity.toItem())
-            } else {
-                Result.failure(Exception("Event not found in cache"))
-            }
-        }.collect { emit(it) }
-    }.onStart {
-        val cached = dao.getEventById(id)
-        if (cached == null) {
-            try {
-                val response = api.getEventById(id)
-                val event = response.toItem()
-                saveItemsWithCategories(listOf(event), requestCategoryId = null)
-            } catch (e: Exception) {
-                emit(Result.failure(e))
-            }
-        }
-    }.catch { emit(Result.failure(it)) }
+        val nextUrl = dao.getNextUrl(effectiveCategory)
+            ?: return Result.success(Unit)
 
-
-    fun getEventsWithoutFilters(): Flow<Result<EventData>> = flow {
-        val category = "all"
-        val hasCached = dao.getItemsByCategory(category).isNotEmpty()
-        if (!hasCached) {
-            try {
-                val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-                val response = api.getEventsWithoutFilters(actualSince = today)
-                val events = response.toListEvent() ?: emptyList()
-                val nextUrl = response.next
-
-                saveItemsWithCategories(events, category)
-                dao.updateCategory(CategoryEntity(id = category, name = category, nextUrl = nextUrl))
-            } catch (e: Exception) {
-                emit(Result.failure(e))
-                return@flow
-            }
-        }
-
-        combine(
-            dao.observeItemsByCategoryWithCategories(category),
-            dao.observeNextUrlForCategory(category)
-        ) { entities, nextUrl ->
-            Result.success(EventData(entities.map { it.toItem() }, nextUrl))
-        }.collect { emit(it) }
-    }.catch { emit(Result.failure(it)) }
-
-
-    suspend fun getNextEvents(category: String, url: String): Result<EventData> {
         return try {
-            val response = api.getNextEvents(url)
+            val response = api.getNextEvents(nextUrl)
             val events = response.toListEvent() ?: emptyList()
-            val nextUrl = response.next
 
-            saveItemsWithCategories(events, category)
-            dao.updateCategory(CategoryEntity(id = category, name = category, nextUrl = nextUrl))
+            savePage(events, effectiveCategory, response.next)
 
-            Result.success(EventData(events, nextUrl))
+            Result.success(Unit)
+
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    private suspend fun fetchAndCache(category: String, query: String) {
-        try {
-            val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-            val response = if (category == "all") {
-                api.getEventsWithoutFilters(actualSince = today)
-            } else {
-                api.getPopularEventsByCategory1(category, actualSince = today)
+    fun observeEventById(id: Long): Flow<Result<Item>> {
+
+        return flow {
+
+            val cached = dao.getEventById(id)
+
+            if (cached == null) {
+                fetchAndCacheEvent(id)
             }
-            val events = response.toListEvent() ?: emptyList()
-            val nextUrl = response.next
 
-            // Сохраняем данные
-            saveItemsWithCategories(events, category)
+            emitAll(
+                dao.observeEventWithCategories(id)
+                    .map { entity ->
+                        if (entity != null) {
+                            Result.success(entity.toItem())
+                        } else {
+                            Result.failure(Exception("Event not found"))
+                        }
+                    }
+            )
+        }.catch { emit(Result.failure(it)) }
+    }
 
-            // Обновляем nextUrl для категории
-            dao.updateCategory(CategoryEntity(id = category, name = category, nextUrl = nextUrl))
+    private suspend fun fetchAndCacheEvent(id: Long) {
+
+        try {
+            val response = api.getEventById(id)
+            val event = response.toItem()
+
+            val entity = event.toItemEntity()
+
+            dao.insertItems(listOf(entity))
+
+            val refs = (event.categories ?: emptyList()).map { categoryId ->
+                ItemCategoryCrossRef(
+                    itemId = event.id,
+                    categoryId = categoryId
+                )
+            }
+
+            dao.insertCrossRefs(refs)
+
         } catch (e: Exception) {
-            e.printStackTrace()
+            throw e
         }
     }
 
-    private suspend fun saveItemsWithCategories(
-        items: List<Item>,
-        requestCategoryId: String? = null
+    private suspend fun fetchFirstPage(category: String) {
+
+        val today = today()
+
+        val response = if (category == "all") {
+            api.getEventsWithoutFilters(today)
+        } else {
+            api.getPopularEventsByCategory1(category, today)
+        }
+
+        val events = response.toListEvent() ?: emptyList()
+
+        savePage(
+            events = events,
+            category = category,
+            nextUrl = response.next,
+            updateTimestamp = true
+        )
+    }
+
+    private suspend fun savePage(
+        events: List<Item>,
+        category: String,
+        nextUrl: String?,
+        updateTimestamp: Boolean = false
     ) {
-        // 1. Сохраняем элементы (ItemEntity)
-        val itemEntities = items.map { it.toItemEntity() } // toItemEntity теперь без category
-        dao.insertItems(itemEntities)
+        val itemEntities = events.map { it.toItemEntity() }
 
-        // 2. Собираем все уникальные категории из элементов и добавляем категорию запроса (если есть)
-        val allCategoryIds = items.flatMap { it.categories ?: emptyList() }.toMutableSet()
-        requestCategoryId?.let { allCategoryIds.add(it) }
+        val lastUpdated = if (updateTimestamp)
+            System.currentTimeMillis()
+        else
+            dao.getLastUpdated(category) ?: System.currentTimeMillis()
 
-        // 3. Сохраняем категории (игнорируем существующие)
-        val categoryEntities = allCategoryIds.map {
-            CategoryEntity(
-                id = it,
-                name = it,
-                nextUrl = null
+        val categoryEntity = CategoryEntity(
+            id = category,
+            name = category,
+            nextUrl = nextUrl,
+            lastUpdated = lastUpdated
+        )
+
+        val refs = events.map {
+            ItemCategoryCrossRef(
+                itemId = it.id,
+                categoryId = category
             )
         }
-        dao.insertCategories(categoryEntities)
 
-        // 4. Создаём связи
-        val crossRefs = mutableListOf<ItemCategoryCrossRef>()
-        items.forEach { item ->
-            val itemCategories = item.categories ?: emptyList()
-            // Связи для всех категорий элемента
-            itemCategories.forEach { catId ->
-                crossRefs.add(ItemCategoryCrossRef(item.id, catId))
-            }
-            // Если категория запроса отсутствует в списке элемента, добавляем отдельную связь
-            if (requestCategoryId != null && !itemCategories.contains(requestCategoryId)) {
-                crossRefs.add(ItemCategoryCrossRef(item.id, requestCategoryId))
-            }
-        }
-        dao.insertItemCategoryCrossRefs(crossRefs)
+        dao.insertPageData(itemEntities, categoryEntity, refs)
     }
+
+    private suspend fun shouldFetch(category: String): Boolean {
+
+        val items = dao.getItemsByCategory(category)
+        if (items.isEmpty()) return true
+
+        val lastUpdated = dao.getLastUpdated(category)
+            ?: return true
+
+        return System.currentTimeMillis() - lastUpdated > ttl
+    }
+
+    private fun today(): String =
+        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            .format(Date())
 }
 
