@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.presentation.ui.homescreen.eventScreen
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,6 +31,7 @@ class EventDetailsViewModel(
                 .collect { result ->
                     result.fold(
                         onSuccess = { item ->
+                            Log.d("TAGTAG", "Success $item ")
                             _state.value = _state.value.copy(
                                 selectedEvent = item,
                                 isLoading = false

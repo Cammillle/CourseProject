@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.data
 
+import android.util.Log
 import com.alfabank.homework.courseproject.DatabaseProvider
 import com.alfabank.homework.courseproject.data.local.CategoryEntity
 import com.alfabank.homework.courseproject.data.local.ItemCategoryCrossRef
@@ -79,9 +80,11 @@ object EventRepositoryImpl {
 
     fun observeEventById(id: Long): Flow<Result<Item>> {
 
+        Log.d("TAGTAG", "Event by id ")
         return flow {
 
             val cached = dao.getEventById(id)
+            Log.d("TAGTAG", "Cached $cached ")
 
             if (cached == null) {
                 fetchAndCacheEvent(id)
@@ -90,7 +93,9 @@ object EventRepositoryImpl {
             emitAll(
                 dao.observeEventWithCategories(id)
                     .map { entity ->
+                        Log.d("TAGTAG", "Item $entity ")
                         if (entity != null) {
+                            Log.d("TAGTAG", "Item ${entity.toItem()} ")
                             Result.success(entity.toItem())
                         } else {
                             Result.failure(Exception("Event not found"))

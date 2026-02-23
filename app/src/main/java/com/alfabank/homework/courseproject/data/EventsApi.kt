@@ -23,7 +23,7 @@ interface EventsApi {
         @Query("expand") expand: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
         @Query("location") location: String = "spb",
         @Query("text_format") textFormat: String = "text",
-        @Query("page_size") pageSize: Int = 10,
+        @Query("page_size") pageSize: Int = 30,
         @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories"),
     ): ListOfEventsResponseDTO
 
@@ -35,7 +35,7 @@ interface EventsApi {
         @Query("expand") expand: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
         @Query("location") location: String = "spb",
         @Query("text_format") textFormat: String = "text",
-        @Query("page_size") pageSize: Int = 10,
+        @Query("page_size") pageSize: Int = 30,
         @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories"),
     ): ListOfEventsResponseDTO
 

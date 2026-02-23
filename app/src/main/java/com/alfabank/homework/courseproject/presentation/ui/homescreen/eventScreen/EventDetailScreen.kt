@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.presentation.ui.homescreen.eventScreen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -71,6 +72,8 @@ fun EventDetailScreen(
 
     var isLiked by remember { mutableStateOf(false) }
 
+    Log.d("TAGTAG", "State screen $state ")
+
     if (state.error == null) {
         Column(
             modifier = Modifier
@@ -78,7 +81,7 @@ fun EventDetailScreen(
                 .background(BackgroundGrey)
                 .verticalScroll(rememberScrollState())
         ) {
-            state.event?.let { event ->
+            state.selectedEvent?.let { event ->
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
