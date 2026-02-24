@@ -26,7 +26,7 @@ object EventRepositoryImpl {
     private val db = DatabaseProvider.getDatabase()
     private val dao = db.eventDao()
 
-    private val ttl = 24 * 60 * 60 * 1000L
+    private const val ttl = 24 * 60 * 60 * 1000L
 
     fun observeEvents(category: String): Flow<Result<EventData>> {
 

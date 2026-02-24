@@ -54,8 +54,9 @@ class EventViewModel : ViewModel() {
                 .collect { result ->
                     result.fold(
                         onSuccess = {
+                            val eventsWithPlace = it.events.filter { it.placeTitle != null }
                             _state.value = _state.value.copy(
-                                events = it.events,
+                                events = eventsWithPlace,
                                 isLoading = false
                             )
                         },
