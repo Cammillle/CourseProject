@@ -26,15 +26,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.alfabank.homework.courseproject.data.dto.lists.ListItem
+import com.alfabank.homework.courseproject.domain.Item
+import com.alfabank.homework.courseproject.navigation.MapScreenArgs
 
 @Suppress("NonSkippableComposable")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
-    item: ListItem,
+    mapArgs: MapScreenArgs,
     onBack: () -> Unit
 ) {
-    Log.d("MapScreen", "Items ${item.items?.get(0)}")
+    Log.d("MapScreen", "map args $mapArgs")
 
     val viewModel: MapScreenViewModel = viewModel()
     val screenState = viewModel.screenState.collectAsStateWithLifecycle()
@@ -72,7 +74,7 @@ fun MapScreen(
             YandexMapComponent(
                 modifier = Modifier.fillMaxSize(),
                 cameraPosition = currentState.cameraPosition,
-                events = item.items ?: emptyList(),
+                events = listItem.items ?: emptyList(),
                 selectedEventId = currentState.selectedEvent?.id,
                 onEventSelected = {
                     viewModel.selectEvent(it)

@@ -26,10 +26,10 @@ class NavigationState(
         navHostController.navigate(route = Screen.Event.getRouteWithArgs(id = id))
     }
 
-    fun navigateToYandexMap(listItem: ListItem) {
-        val json = Json.encodeToString(listItem)
+    fun navigateToYandexMap(mapArgs: MapScreenArgs) {
+        val json = Json.encodeToString(mapArgs)
         val encodedJson = java.net.URLEncoder.encode(json, "UTF-8")
-        navHostController.navigate(route = Screen.YandexMap.getRouteWithListItemId(encodedJson))
+        navHostController.navigate(route = Screen.YandexMap.getRouteWithMapArgs(encodedJson))
     }
 }
 

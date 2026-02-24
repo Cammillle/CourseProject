@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.presentation.ui.mapScreen
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.alfabank.homework.courseproject.domain.Item
 import com.yandex.mapkit.geometry.Point
@@ -8,7 +9,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class MapScreenViewModel : ViewModel() {
+class MapScreenViewModel(
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     private val _screenState = MutableStateFlow(MapScreenState())
     val screenState = _screenState.asStateFlow()
@@ -29,6 +32,7 @@ class MapScreenViewModel : ViewModel() {
             )
         }
     }
+
     fun clearSelection() {
         _screenState.update { it.copy(selectedEvent = null) }
     }
@@ -43,6 +47,7 @@ data class MapScreenState(
     ),
     var events: List<Item> = emptyList(),
     var selectedEvent: Item? = null,
+    var event: Item? = null,
     var isLoading: Boolean = false,
     var isError: Boolean = false
 )

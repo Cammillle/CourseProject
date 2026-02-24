@@ -20,14 +20,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.alfabank.homework.courseproject.data.dto.lists.ListItem
+import com.alfabank.homework.courseproject.navigation.MapScreenArgs
 import com.alfabank.homework.courseproject.presentation.ui.guidscreen.composable.ListItemCard
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.eventScreen.firstUppercase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuidScreen(
-    onMapNavigate: (ListItem) -> Unit
+    onMapNavigate: (MapScreenArgs) -> Unit
 ) {
     val viewModel: GuidViewModel = viewModel()
     val guidState = viewModel.guidScreenState.collectAsStateWithLifecycle()
@@ -67,7 +67,7 @@ fun GuidScreen(
                         description = item.description!!.firstUppercase(),
                         imageUrls = item.images ?: emptyList(),
                         onMapNavigate = {
-                            onMapNavigate(item)
+                            onMapNavigate(MapScreenArgs.ListData(item))
                         },
                     )
                 }

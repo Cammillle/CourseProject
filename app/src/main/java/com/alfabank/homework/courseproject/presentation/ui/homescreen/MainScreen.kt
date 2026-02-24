@@ -132,20 +132,24 @@ fun MainScreen() {
             profileScreenContent = { ProfileScreen() },
             guidsScreenContent = {
                 GuidScreen(
-                    onMapNavigate = { item ->
-                        navigationState.navigateToYandexMap(item)
+                    onMapNavigate = { mapArgs ->
+                        navigationState.navigateToYandexMap(mapArgs)
                     }
                 )
             },
             feedScreenContent = { id ->
                 EventDetailScreen(
                     onBackClick = { navigationState.navHostController.popBackStack() },
+                    onAddFavourite = {},
+                    onMapNavigate = { mapArgs ->
+                        navigationState.navigateToYandexMap(mapArgs)
+                    }
                 )
             },
-            yandexMapScreenContent = { item ->
+            yandexMapScreenContent = { mapArgs ->
                 MapScreen(
-                    item,
-                    onBack = {navigationState.navHostController.popBackStack()}
+                    mapArgs,
+                    onBack = { navigationState.navHostController.popBackStack() }
                 )
             }
         )

@@ -54,6 +54,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.alfabank.homework.courseproject.R
+import com.alfabank.homework.courseproject.domain.Item
+import com.alfabank.homework.courseproject.navigation.MapScreenArgs
 import com.alfabank.homework.courseproject.presentation.ui.theme.BackgroundGrey
 import com.alfabank.homework.courseproject.presentation.ui.theme.Grey1
 import com.alfabank.homework.courseproject.presentation.ui.theme.Grey2
@@ -63,7 +65,9 @@ import com.alfabank.homework.courseproject.presentation.ui.theme.ProjectYellow
 
 @Composable
 fun EventDetailScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onAddFavourite: (Long) -> Unit,
+    onMapNavigate: (MapScreenArgs) -> Unit
 ) {
     //передача id ивента через SavedStateHandle, достаем из вьюмодели
     val viewModel: EventDetailsViewModel = viewModel()
@@ -122,7 +126,10 @@ fun EventDetailScreen(
                     }
 
                     IconButton(
-                        onClick = { isLiked = !isLiked },
+                        onClick = {
+                            isLiked = !isLiked
+                            onAddFavourite(event.id)
+                        },
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 52.dp)
                             .align(Alignment.TopEnd)
@@ -154,8 +161,10 @@ fun EventDetailScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        val price = if (event.price.isNullOrEmpty()) "" else
-                            event.price.replace("рублей", "₽")
+                        val price = if (event.price.isNullOrEmpty()) "" else event.price.replace(
+                            "рублей",
+                            "₽"
+                        )
                         Text(
                             text = if (price.isEmpty()) "Уточняйте цену на сайте"
                             else price.firstUppercase(),
@@ -244,8 +253,9 @@ fun EventDetailScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { }
-                    ) {
+                            .clickable {
+                                onMapNavigate(MapScreenArgs.SingleItem(event))
+                            }) {
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
@@ -313,9 +323,7 @@ fun EventDetailScreen(
                         fontSize = 14.sp,
                         color = Grey1,
                         fontWeight = FontWeight.Normal,
-                        text = "${event.title?.firstUppercase()} \n" +
-                                "${event.description?.firstUppercase()} \n " +
-                                bodyText
+                        text = "${event.title?.firstUppercase()} \n" + "${event.description?.firstUppercase()} \n " + bodyText
                     )
                 }
             }
@@ -323,15 +331,13 @@ fun EventDetailScreen(
         }
     }
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
         if (state.isLoading) {
             CircularProgressIndicator()
         } else if (state.error != null) {
             Text(
-                text = state.error.toString(),
-                color = MaterialTheme.colorScheme.error
+                text = state.error.toString(), color = MaterialTheme.colorScheme.error
             )
         }
     }

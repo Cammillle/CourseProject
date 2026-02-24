@@ -18,7 +18,7 @@ fun AppNavGraph(
     favouriteScreenContent: @Composable () -> Unit,
     profileScreenContent: @Composable () -> Unit,
     guidsScreenContent: @Composable () -> Unit,
-    yandexMapScreenContent: @Composable (ListItem) -> Unit
+    yandexMapScreenContent: @Composable (MapScreenArgs) -> Unit
 ) {
     NavHost(
         navController = navHostController,
@@ -40,15 +40,15 @@ fun AppNavGraph(
         }
         composable(
             route = Screen.YandexMap.route,
-            arguments = listOf(navArgument(Screen.KEY_LIST_ITEM_ID) {
+            arguments = listOf(navArgument(Screen.KEY_MAP_ARGS) {
                 type = NavType.StringType
             })
         ) {
             val json =
-                it.arguments?.getString(Screen.KEY_LIST_ITEM_ID)
+                it.arguments?.getString(Screen.KEY_MAP_ARGS)
                     ?: throw RuntimeException("Args is null")
-            val listItem = Json.decodeFromString<ListItem>(json)
-            yandexMapScreenContent(listItem)
+            val mapArgs = Json.decodeFromString<MapScreenArgs>(json)
+            yandexMapScreenContent(mapArgs)
         }
     }
 
