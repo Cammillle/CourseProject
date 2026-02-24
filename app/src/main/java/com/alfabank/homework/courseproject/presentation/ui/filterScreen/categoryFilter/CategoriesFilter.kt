@@ -59,7 +59,7 @@ fun CategoriesFilter() {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
@@ -84,7 +84,7 @@ fun CategoriesFilter() {
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp
                     else Icons.Default.KeyboardArrowDown,
                     contentDescription = if (expanded) "Свернуть" else "Развернуть",
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 

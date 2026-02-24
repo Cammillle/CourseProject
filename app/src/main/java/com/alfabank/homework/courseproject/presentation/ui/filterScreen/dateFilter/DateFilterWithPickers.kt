@@ -46,7 +46,7 @@ fun DateFilterWithPickers() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
@@ -70,7 +70,7 @@ fun DateFilterWithPickers() {
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp
                     else Icons.Default.KeyboardArrowDown,
                     contentDescription = if (expanded) "Свернуть" else "Развернуть",
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 

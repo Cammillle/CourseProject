@@ -26,12 +26,11 @@ fun QuickFilterChipSimple(
         colors = FilterChipDefaults.filterChipColors(
             selectedContainerColor = MaterialTheme.colorScheme.primary,
             selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+            containerColor = MaterialTheme.colorScheme.surface,
+            labelColor = MaterialTheme.colorScheme.onSurface
         ),
         border = FilterChipDefaults.filterChipBorder(
-            borderColor = if (selected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.outline,
+            borderColor = MaterialTheme.colorScheme.background,
             borderWidth = 1.dp,
             enabled = true,
             selected = selected

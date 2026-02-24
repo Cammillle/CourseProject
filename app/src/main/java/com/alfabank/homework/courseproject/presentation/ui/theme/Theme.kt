@@ -4,8 +4,6 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -14,33 +12,44 @@ import androidx.compose.ui.platform.LocalContext
 private val DarkColorScheme = darkColorScheme(
     // Основной акцентный цвет
     primary = ProjectYellow,
-    onPrimary = Color.Black,                  // чёрный текст на жёлтом фоне
+    onPrimary = BackgroundGrey,
 
-    // Вторичный акцент (можно использовать Grey2)
     secondary = Grey2,
     onSecondary = Grey1,
 
-    // Третичный цвет (например, для менее важных элементов)
     tertiary = Grey4,
     onTertiary = Grey1,
 
-    // Фон всего приложения
     background = BackgroundGrey,
-    onBackground = Grey1,                      // основной текст на фоне
+    onBackground = Grey1,
 
     // Поверхности (карточки, диалоги)
     surface = Grey3,
-    onSurface = Grey1,                         // текст на поверхности
+    onSurface = Grey1,
 
-    // Вариант поверхности (например, для разделителей)
+    // Вариант поверхности
     surfaceVariant = Grey4,
-    onSurfaceVariant = Grey2,                   // текст на варианте поверхности
+    onSurfaceVariant = Grey2,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = ProjectYellow,
+    onPrimary = Color.Black,
+
+    secondary = Grey2,
+    onSecondary = Grey1,
+
+    tertiary = Grey4,
+    onTertiary = Grey1,
+
+    background = BackgroundGrey,
+    onBackground = Grey1,
+
+    surface = Grey3,
+    onSurface = Grey1,
+
+    surfaceVariant = Grey4,
+    onSurfaceVariant = Grey2,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -63,7 +72,7 @@ fun CourseProjectTheme(
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (darkTheme) DarkColorScheme else LightColorScheme
         }
 
         darkTheme -> DarkColorScheme

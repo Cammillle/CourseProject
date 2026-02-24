@@ -43,6 +43,7 @@ fun AgeRatingFilter() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
@@ -67,7 +68,7 @@ fun AgeRatingFilter() {
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp
                     else Icons.Default.KeyboardArrowDown,
                     contentDescription = if (expanded) "Свернуть" else "Развернуть",
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 
@@ -114,6 +115,6 @@ fun AgeRatingFilter() {
 
 @Composable
 @Preview
-private fun Preview(){
+private fun Preview() {
     AgeRatingFilter()
 }

@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.alfabank.homework.courseproject.R
 import com.alfabank.homework.courseproject.domain.Item
+import com.alfabank.homework.courseproject.presentation.ui.homescreen.eventScreen.firstUppercase
 
 @Suppress("NonSkippableComposable")
 @Composable
@@ -54,7 +56,7 @@ fun EventCard(
             .clickable(onClick = { onClick(event.id) })
             .padding(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp
@@ -93,51 +95,24 @@ fun EventCard(
                     )
                 }
 
-                // Градиент внизу для лучшей читаемости текста
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp)
-                        .align(Alignment.BottomCenter)
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.Black.copy(alpha = 0.7f)
-                                )
-                            )
-                        )
-                )
-
                 // Кнопка цены на фото (внизу слева)
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(16.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color.White)
-                        .padding(horizontal = 20.dp, vertical = 10.dp)
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
                 ) {
                     val price = event.price
-                    if (price.isNullOrEmpty()) {
-                        Text(
-                            text = "Бесплатно",
-                            style = TextStyle(
-                                color = Color.Black,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                    Text(
+                        text = if (price.isNullOrEmpty()) "Бесплатно" else formatPrice(price),
+                        style = TextStyle(
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
                         )
-                    } else {
-                        Text(
-                            text = price,
-                            style = TextStyle(
-                                color = Color.Black,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                    }
+                    )
                 }
 
                 // Иконка сердечка в правом верхнем углу
@@ -146,7 +121,7 @@ fun EventCard(
                         .align(Alignment.TopEnd)
                         .padding(12.dp)
                         .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.9f))
+                        .background(Color.Transparent)
                         .clickable {
                             isFavorite.value = !isFavorite.value
                         }
@@ -155,7 +130,7 @@ fun EventCard(
                     Icon(
                         imageVector = if (isFavorite.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                         contentDescription = "Добавить в избранное",
-                        tint = if (isFavorite.value) Color.Red else Color.Gray,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -165,30 +140,19 @@ fun EventCard(
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(16.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFFE8F5E9))
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.surface)
                         .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
                     val age = event.ageRestriction
-                    if (age.isNullOrEmpty()) {
-                        Text(
-                            text = "0+",
-                            style = TextStyle(
-                                color = Color(0xFF2E7D32),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                    Text(
+                        text = if (age.isNullOrEmpty()) "0+" else if (age == "0") "0+" else age,
+                        style = TextStyle(
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
                         )
-                    } else {
-                        Text(
-                            text = age,
-                            style = TextStyle(
-                                color = Color(0xFF2E7D32),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                    }
+                    )
                 }
             }
 
@@ -205,9 +169,9 @@ fun EventCard(
 
                 // Заголовок
                 Text(
-                    text = "$title. $description",
+                    text = "${title?.firstUppercase()}. ${description?.firstUppercase()}",
                     style = TextStyle(
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     ),
@@ -225,9 +189,9 @@ fun EventCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "$date $time",
+                                text = if (time == null) date else "$date $time",
                                 style = TextStyle(
-                                    color = Color.Black,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Normal
                                 )
@@ -243,9 +207,9 @@ fun EventCard(
                         val placeTitle = event.placeTitle
                         if (placeTitle != null) {
                             Text(
-                                text = placeTitle,
+                                text = placeTitle.firstUppercase(),
                                 style = TextStyle(
-                                    color = Color.Black,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Normal
                                 )
@@ -259,7 +223,7 @@ fun EventCard(
                     Text(
                         text = "Санкт-Петербург",
                         style = TextStyle(
-                            color = Color.Gray,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Normal
                         )
@@ -267,6 +231,20 @@ fun EventCard(
                 }
             }
         }
+    }
+}
+
+fun formatPrice(original: String): String {
+    val numbers = Regex("\\d+")
+        .findAll(original)
+        .map { it.value.toIntOrNull() }
+        .filterNotNull()
+        .toList()
+    val max = numbers.lastOrNull()
+    return when {
+        max == null -> original
+        max == 0 -> "Бесплатно"
+        else -> "до $max ₽"
     }
 }
 

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -30,13 +31,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.alfabank.homework.courseproject.R
 import com.alfabank.homework.courseproject.presentation.ui.filterScreen.ageFilter.AgeRatingFilter
 import com.alfabank.homework.courseproject.presentation.ui.filterScreen.categoryFilter.CategoriesFilter
 import com.alfabank.homework.courseproject.presentation.ui.filterScreen.dateFilter.DateFilterWithPickers
+import com.alfabank.homework.courseproject.presentation.ui.theme.LightBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +52,8 @@ fun EventsFilterScreen(
 ) {
 
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -69,12 +75,13 @@ fun EventsFilterScreen(
                     TextButton(onClick = onClearAll) {
                         Text(
                             text = "Очистить",
-                            fontSize = 14.sp
+                            fontSize = 16.sp,
+                            color = LightBlue
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
+                    containerColor = MaterialTheme.colorScheme.background
                 )
             )
         },
@@ -94,19 +101,19 @@ fun EventsFilterScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
-                HorizontalDivider()
+                HorizontalDivider(color = DividerDefaults.color.copy(alpha = 0.5f) )
             }
             item {
                 AgeRatingFilter()
             }
             item {
-                HorizontalDivider()
+                HorizontalDivider(color = DividerDefaults.color.copy(alpha = 0.5f) )
             }
             item {
                 CategoriesFilter()
             }
             item {
-                HorizontalDivider()
+                HorizontalDivider(color = DividerDefaults.color.copy(alpha = 0.5f) )
             }
             item {
                 DateFilterWithPickers()
@@ -160,7 +167,6 @@ private fun ButtonsRow(
             }
         }
     }
-
 }
 
 

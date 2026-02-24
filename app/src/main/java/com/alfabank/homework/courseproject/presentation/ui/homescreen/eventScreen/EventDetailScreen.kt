@@ -154,9 +154,11 @@ fun EventDetailScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        val price = event.price
+                        val price = if (event.price.isNullOrEmpty()) "" else
+                            event.price.replace("рублей", "₽")
                         Text(
-                            text = price ?: "Цена неизвестна",
+                            text = if (price.isEmpty()) "Уточняйте цену на сайте"
+                            else price.firstUppercase(),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Grey1
@@ -220,7 +222,9 @@ fun EventDetailScreen(
                             val startDate = event.startDate
                             val startTime = event.startTime
                             Text(
-                                text = "$startDate $startTime",
+                                text = if (startDate.isNullOrEmpty()) "Дату уточняйте на сайте"
+                                else if (startTime.isNullOrEmpty()) startDate
+                                else "$startDate $startTime",
                                 fontSize = 14.sp,
                                 color = Grey1,
                                 fontWeight = FontWeight.Normal,
@@ -264,13 +268,13 @@ fun EventDetailScreen(
                             val placeTitle = event.placeTitle
                             placeTitle?.let { title ->
                                 Text(
-                                    text = title,
+                                    text = title.firstUppercase(),
                                     fontSize = 14.sp,
                                     color = Grey1,
                                     fontWeight = FontWeight.Normal,
                                 )
                                 Text(
-                                    text = event.address ?: "Адрес неизвестен",
+                                    text = event.address?.firstUppercase() ?: "Адрес неизвестен",
                                     fontSize = 12.sp,
                                     color = Grey2,
                                     fontWeight = FontWeight.Normal,
@@ -303,11 +307,15 @@ fun EventDetailScreen(
                         color = Grey2,
                         fontWeight = FontWeight.Normal
                     )
+                    val bodyText =
+                        if (event.bodyText.isNullOrEmpty()) "" else event.bodyText.firstUppercase()
                     Text(
                         fontSize = 14.sp,
                         color = Grey1,
                         fontWeight = FontWeight.Normal,
-                        text = "${event.title} ${event.description} ${event.bodyText}"
+                        text = "${event.title?.firstUppercase()} \n" +
+                                "${event.description?.firstUppercase()} \n " +
+                                bodyText
                     )
                 }
             }
@@ -329,3 +337,8 @@ fun EventDetailScreen(
     }
 }
 
+fun String.firstUppercase(): String {
+    return this.replaceFirstChar {
+        it.uppercaseChar().toString()
+    }
+}

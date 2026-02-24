@@ -100,11 +100,11 @@ fun FilterChip(
             selectedContainerColor = MaterialTheme.colorScheme.primary,
             selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+            labelColor = MaterialTheme.colorScheme.onSurface
         ),
         border = FilterChipDefaults.filterChipBorder(
             borderColor = if (selected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.outline,
+            else MaterialTheme.colorScheme.surfaceVariant,
             borderWidth = 1.dp,
             enabled = true,
             selected = selected

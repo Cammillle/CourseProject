@@ -1,6 +1,7 @@
 package com.alfabank.homework.courseproject.presentation.ui.homescreen
 
 import android.util.Log
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -10,6 +11,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,6 +44,8 @@ fun MainScreen() {
     Log.d("MainScreen", "$navBackStackEntry")
 
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             if (
                 currentDestination == Screen.EventsListFeed.route
@@ -57,7 +62,10 @@ fun MainScreen() {
                 if (currentDestination != Screen.EventsFeedFilters.route
                     && (currentDestination != Screen.Event.route) && (currentDestination != Screen.YandexMap.route)
                 ) {
-                    NavigationBar {
+                    NavigationBar(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    ) {
                         val items = listOf(
                             NavigationItem.Home,
                             NavigationItem.Map,
@@ -84,8 +92,11 @@ fun MainScreen() {
                                 },
                                 label = { Text(text = stringResource(item.titleResId)) },
                                 colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = MaterialTheme.colorScheme.onBackground,
-                                    selectedTextColor = MaterialTheme.colorScheme.onBackground
+                                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    indicatorColor = Color.Transparent
                                 )
                             )
                         }

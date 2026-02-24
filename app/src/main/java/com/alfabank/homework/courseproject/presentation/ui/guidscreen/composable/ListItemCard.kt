@@ -1,7 +1,5 @@
 package com.alfabank.homework.courseproject.presentation.ui.guidscreen.composable
 
-import androidx.compose.foundation.Image
-import com.alfabank.homework.courseproject.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Card
@@ -18,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,16 +28,15 @@ fun ListItemCard(
     description: String,
     imageUrls: List<String> = emptyList(),
     onMapNavigate: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .clickable {
                 onMapNavigate()
             },
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Grey3),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(
@@ -68,22 +64,7 @@ fun ListItemCard(
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
-
-            if (imageUrls.isEmpty()) {
-                Image(
-                    painter = painterResource(R.drawable.ic_launcher_background),
-                    contentDescription = null
-                )
-            }
-
             when (imageUrls.size) {
-                0 -> {
-                    Image(
-                        painter = painterResource(R.drawable.ic_launcher_background),
-                        contentDescription = null
-                    )
-                }
-
                 1 -> {
                     AsyncImage(
                         model = imageUrls[0],
@@ -93,7 +74,6 @@ fun ListItemCard(
                             .height(200.dp)
                             .clip(RoundedCornerShape(8.dp)),
                         contentScale = ContentScale.Crop,
-                        placeholder = painterResource(R.drawable.ic_launcher_background)
                     )
                 }
 
