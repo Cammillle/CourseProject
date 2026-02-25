@@ -16,8 +16,9 @@ import retrofit2.http.Url
 interface EventsApi {
 
     @GET("events")
-    suspend fun getPopularEventsByCategory1(
+    suspend fun getPopularEventsByCategories(
         @Query("categories") categories: String,
+        @Query("page") page: Int,
         @Query("actual_since") actualSince: String,
         @Query("order_by") orderBy: String = "-publication_date",
         @Query("expand") expand: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
@@ -27,10 +28,10 @@ interface EventsApi {
         @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories"),
     ): ListOfEventsResponseDTO
 
-    //Актуальные события сортировка по favorites_count
     @GET("events")
     suspend fun getEventsWithoutFilters(
         @Query("actual_since") actualSince: String,
+        @Query("page") page: Int,
         @Query("order_by") orderBy: String = "-publication_date",
         @Query("expand") expand: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
         @Query("location") location: String = "spb",

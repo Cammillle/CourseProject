@@ -61,7 +61,6 @@ data class ItemDTO(
 
 fun ItemDTO.toItem(): Item {
     return Item(
-        ctype = ctype,
         description = description,
         id = id,
         startDate = year.toString(),

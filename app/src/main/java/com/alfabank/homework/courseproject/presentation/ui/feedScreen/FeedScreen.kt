@@ -21,95 +21,72 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.alfabank.homework.courseproject.domain.Item
+import com.alfabank.homework.courseproject.presentation.ui.EventViewModel
 import com.alfabank.homework.courseproject.presentation.ui.HomeState
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.components.FeedFilters
 
-@Suppress("NonSkippableComposable")
 @Composable
 fun FeedScreen(
     paddingValues: PaddingValues,
-    state: HomeState,
-    loadNextEvents: () -> Unit,
     onEventClick: (Long) -> Unit,
-    onCategoryChange: (String) -> Unit,
-    onCategoryClear: () -> Unit
 ) {
-    if (state.error == null) {
-        val events = state.events
-        val nextDataIsLoading = state.nextDataIsLoading
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            FeedFilters(
-                onCategoryChange = onCategoryChange,
-                onCategoryClear = onCategoryClear
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            if (!state.isLoading) {
-                EventsList(
-                    events = events,
-                    nextDataIsLoading = nextDataIsLoading,
-                    loadNextEvents = loadNextEvents,
-                    onClick = onEventClick
-                )
-            }
-        }
-    }
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+    val viewModel: EventViewModel = viewModel()
+    val lazyPagingItems = viewModel.events.collectAsLazyPagingItems()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
     ) {
-        if (state.isLoading) {
-            CircularProgressIndicator()
-        } else if (state.error != null) {
-            Text(
-                text = state.error.toString(),
-                color = MaterialTheme.colorScheme.error
-            )
-        }
+
+        FeedFilters(
+            onCategoryChange = { viewModel.observeCategory(it) },
+            onCategoryClear = { viewModel.clearCategory() }
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        EventsList(
+            items = lazyPagingItems,
+            onClick = onEventClick
+        )
     }
 }
 
 @Composable
 fun EventsList(
-    events: List<Item> = emptyList(),
-    nextDataIsLoading: Boolean,
-    loadNextEvents: () -> Unit,
+    items: LazyPagingItems<Item>,
     onClick: (Long) -> Unit
 ) {
-    val listState = rememberLazyListState()
-
-    val loadMore = remember {
-        derivedStateOf {
-            val layoutInfo = listState.layoutInfo
-            val totalItemsCount = layoutInfo.totalItemsCount
-            val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
-
-            totalItemsCount > 0 && lastVisibleItemIndex >= (totalItemsCount - 3) && !nextDataIsLoading
-        }
-    }
-
-    LaunchedEffect(loadMore.value) {
-        if (loadMore.value) {
-            loadNextEvents()
-        }
-    }
 
     LazyColumn(
-        state = listState, modifier = Modifier
+        modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
     ) {
-        items(items = events, key = { it.id }) {
-            EventCard(event = it, onClick = onClick)
+
+        items(
+            count = items.itemCount,
+            key = { index -> items[index]?.id ?: index }
+        ) { index ->
+            items[index]?.let { item ->
+                EventCard(
+                    event = item,
+                    onClick = onClick
+                )
+            }
         }
-        if (nextDataIsLoading) {
+
+        // Нижний лоадер
+        if (items.loadState.append is LoadState.Loading) {
             item {
                 Box(
-                    modifier = Modifier
+                    Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
                     contentAlignment = Alignment.Center
@@ -118,5 +95,32 @@ fun EventsList(
                 }
             }
         }
+    }
+
+    // Глобальный лоадер
+    when (items.loadState.refresh) {
+        is LoadState.Loading -> {
+            Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is LoadState.Error -> {
+            val error = (items.loadState.refresh as LoadState.Error).error
+            Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = error.localizedMessage ?: "Ошибка",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        }
+
+        else -> Unit
     }
 }

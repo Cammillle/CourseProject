@@ -1,86 +1,46 @@
 package com.alfabank.homework.courseproject.data.local
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Update
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EventDao {
 
     @Transaction
-    suspend fun insertPageData(
-        items: List<ItemEntity>,
-        category: CategoryEntity,
-        refs: List<ItemCategoryCrossRef>
-    ) {
-        // 1. Insert the category first so the foreign key exists
-        insertCategory(category)
-        // 2. Insert items
-        insertItems(items)
-        // 3. Insert refs (now the categoryId and itemId both exist)
-        insertCrossRefs(refs)
-    }
-
-    // ---------- Category ----------
-
-    @Query("SELECT lastUpdated FROM categories WHERE id = :categoryId")
-    suspend fun getLastUpdated(categoryId: String): Long?
-
-    @Query("SELECT nextUrl FROM categories WHERE id = :categoryId")
-    suspend fun getNextUrl(categoryId: String): String?
-
-    @Query("SELECT nextUrl FROM categories WHERE id = :categoryId")
-    fun observeNextUrl(categoryId: String): Flow<String?>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertCategory(category: CategoryEntity)
-
-    @Update
-    suspend fun updateCategory(category: CategoryEntity)
-
-
-    // ---------- Items ----------
+    @Query("""
+        SELECT events.* FROM events
+        INNER JOIN dataset_event_cross_ref
+        ON events.id = dataset_event_cross_ref.eventId
+        WHERE dataset_event_cross_ref.datasetKey = :datasetKey
+        ORDER BY startDate
+    """)
+    fun pagingSource(datasetKey: String): PagingSource<Int, EventWithRelations>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertItems(items: List<ItemEntity>)
+    suspend fun insertEvents(events: List<EventEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCrossRefs(refs: List<ItemCategoryCrossRef>)
+    suspend fun insertCategories(refs: List<EventCategoryCrossRef>)
 
-    @Query("""
-        SELECT items.* FROM items
-        INNER JOIN item_category_cross_ref
-        ON items.id = item_category_cross_ref.itemId
-        WHERE item_category_cross_ref.categoryId = :categoryId
-        ORDER BY items.startDate ASC
-    """)
-    fun observeItemsByCategory(categoryId: String): Flow<List<ItemEntity>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertImages(images: List<EventImageEntity>)
 
-    @Query("""
-        SELECT items.* FROM items
-        INNER JOIN item_category_cross_ref
-        ON items.id = item_category_cross_ref.itemId
-        WHERE item_category_cross_ref.categoryId = :categoryId
-    """)
-    suspend fun getItemsByCategory(categoryId: String): List<ItemEntity>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDatasetRefs(refs: List<DatasetEventCrossRef>)
 
-    @Transaction
-    @Query("""
-        SELECT * FROM items
-    INNER JOIN item_category_cross_ref ON items.id = item_category_cross_ref.itemId
-    WHERE item_category_cross_ref.categoryId = :categoryId
-    ORDER BY items.id DESC 
-    """)
-    fun observeItemsWithCategories(categoryId: String): Flow<List<ItemWithCategories>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertRemoteKeys(keys: List<RemoteKeys>)
 
-    @Transaction
-    @Query("SELECT * FROM items WHERE id = :id")
-    fun observeEventWithCategories(id: Long): Flow<ItemWithCategories?>
+    @Query("DELETE FROM dataset_event_cross_ref WHERE datasetKey = :datasetKey")
+    suspend fun clearDataset(datasetKey: String)
 
-    @Query("SELECT * FROM items WHERE id = :id")
-    suspend fun getEventById(id: Long): ItemEntity?
+    @Query("DELETE FROM remote_keys WHERE datasetKey = :datasetKey")
+    suspend fun clearRemoteKeys(datasetKey: String)
+
+    @Query("SELECT * FROM events WHERE id = :id")
+    suspend fun getEventById(id: Long): EventEntity?
 }

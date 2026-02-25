@@ -2,6 +2,7 @@ package com.alfabank.homework.courseproject.data
 
 import com.alfabank.homework.courseproject.data.dto.EventDTO
 import com.alfabank.homework.courseproject.data.dto.ListOfEventsResponseDTO
+import com.alfabank.homework.courseproject.data.local.EventEntity
 import com.alfabank.homework.courseproject.domain.Item
 
 
@@ -12,7 +13,6 @@ fun ListOfEventsResponseDTO.toListEvent(): List<Item>? {
 fun EventDTO.toItem(): Item {
     return Item(
         id = id,
-        ctype = "event",
         startDate = dates?.get(dates.size - 1)?.startDate,
         startTime = dates?.get(dates.size - 1)?.startTime,
         address = place?.address,

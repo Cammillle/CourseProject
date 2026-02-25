@@ -1,48 +1,57 @@
 package com.alfabank.homework.courseproject.data.local
 
+import com.alfabank.homework.courseproject.data.dto.EventDTO
 import com.alfabank.homework.courseproject.domain.Item
 
-fun Item.toItemEntity(): ItemEntity {
-    return ItemEntity(
-        id = id,
-        listId = null,
-        title = title,
-        placeTitle = placeTitle,
-        description = description,
-        bodyText = bodyText,
-        ageRestriction = ageRestriction,
-        address = address,
-        lat = lat,
-        lon = lon,
-        images = images?.map { it.toString() },
-        price = price,
-        siteUrl = itemUrl,
-        startDate = startDate,
-        startTime = startTime,
-        isEndless = isEndless
-    )
-}
+fun EventDTO.toEventEntity() = EventEntity(
+    id = id,
+    title = title,
+    description = description,
+    bodyText = bodyText,
+    price = price,
+    ageRestriction = ageRestriction,
+    address = place?.address,
+    lat = place?.coords?.lat ?: location?.coords?.lat,
+    lon = place?.coords?.lon ?: location?.coords?.lon,
+    placeTitle = place?.title,
+    startDate = dates?.last()?.startDate,
+    startTime = dates?.last()?.startTime,
+    isEndless = dates?.last()?.isEndless,
+    itemUrl = siteUrl,
+    cachedAt = System.currentTimeMillis()
+)
+
+fun EventDTO.toCategoryRefs() =
+    categories?.map {
+        EventCategoryCrossRef(id, it)
+    } ?: emptyList()
+
+fun EventDTO.toImageEntities() =
+    images?.mapNotNull {
+        it.thumbnails?.x384?.let { url ->
+            EventImageEntity(id, url)
+        }
+    } ?: emptyList()
 
 
-fun ItemWithCategories.toItem(): Item {
-    return Item(
-        id = item.id,
-        title = item.title,
-        placeTitle = item.placeTitle,
-        description = item.description,
-        bodyText = item.bodyText,
-        ageRestriction = item.ageRestriction,
-        address = item.address,
-        lat = item.lat,
-        lon = item.lon,
-        images = item.images,
-        price = item.price,
-        startDate = item.startDate,
-        startTime = item.startTime,
-        isEndless = item.isEndless,
-        categories = categories.map { it.id },
-        itemUrl = item.siteUrl,
-        ctype = "event"
-    )
-}
+fun EventDTO.toDatasetRef(datasetKey: String) =
+    DatasetEventCrossRef(id, datasetKey)
 
+fun EventWithRelations.toDomain() = Item(
+    id = event.id,
+    startDate = event.startDate,
+    startTime = event.startTime,
+    isEndless = event.isEndless,
+    address = event.address,
+    ageRestriction = event.ageRestriction,
+    description = event.description,
+    bodyText = event.bodyText,
+    images = images,
+    categories = categories,
+    price = event.price,
+    itemUrl = event.itemUrl,
+    title = event.title,
+    placeTitle = event.placeTitle,
+    lat = event.lat,
+    lon = event.lon
+)

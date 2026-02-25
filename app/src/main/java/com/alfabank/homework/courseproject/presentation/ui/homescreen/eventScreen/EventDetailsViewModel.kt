@@ -21,31 +21,31 @@ class EventDetailsViewModel(
     init {
         viewModelScope.launch {
             val eventId = savedStateHandle.get<Long>(Screen.KEY_EVENT_ID) ?: return@launch
-            observeEventDetails(id = eventId)
+            //observeEventDetails(id = eventId)
         }
     }
 
-    fun observeEventDetails(id: Long) {
-        viewModelScope.launch {
-            repository.observeEventById(id)
-                .collect { result ->
-                    result.fold(
-                        onSuccess = { item ->
-                            Log.d("TAGTAG", "Success $item ")
-                            _state.value = _state.value.copy(
-                                selectedEvent = item,
-                                isLoading = false
-                            )
-                        },
-                        onFailure = {
-                            _state.value = _state.value.copy(
-                                error = it.message,
-                                isLoading = false
-                            )
-                        }
-                    )
-                }
-        }
-    }
+//    fun observeEventDetails(id: Long) {
+//        viewModelScope.launch {
+//            repository.observeEventById(id)
+//                .collect { result ->
+//                    result.fold(
+//                        onSuccess = { item ->
+//                            Log.d("TAGTAG", "Success $item ")
+//                            _state.value = _state.value.copy(
+//                                selectedEvent = item,
+//                                isLoading = false
+//                            )
+//                        },
+//                        onFailure = {
+//                            _state.value = _state.value.copy(
+//                                error = it.message,
+//                                isLoading = false
+//                            )
+//                        }
+//                    )
+//                }
+//        }
+//    }
 
 }

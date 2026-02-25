@@ -57,6 +57,15 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    val paging_version = "3.4.1"
+
+    implementation("androidx.paging:paging-runtime:$paging_version")
+
+    implementation("androidx.room:room-paging:2.8.2")
+
+    // optional - Jetpack Compose integration
+    implementation("androidx.paging:paging-compose:3.4.1")
+
     // Navigation
     implementation(libs.androidx.navigation.compose)
 

@@ -10,5 +10,5 @@ data class ListWithItems(
         parentColumn = "id",
         entityColumn = "listId"
     )
-    val items: List<ItemEntity>
+    val items: List<EventEntity>
 )

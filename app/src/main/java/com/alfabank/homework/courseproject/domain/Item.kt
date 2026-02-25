@@ -6,8 +6,6 @@ import kotlinx.serialization.Serializable
 data class Item(
     val id: Long,
 
-    val ctype: String?, //event place
-
     val startDate: String?,
     val startTime: String?,
     val isEndless: Boolean?,
