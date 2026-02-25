@@ -34,7 +34,9 @@ data class EventDTO(
     @SerialName("body_text")
     val bodyText: String?,
     @SerialName("site_url")
-    val siteUrl: String?
+    val siteUrl: String?,
+    @SerialName("publication_date")
+    val publicationDate:String?
 ){
     val ageRestriction: String?
         get() = ageRestrictionRaw?.let { element ->

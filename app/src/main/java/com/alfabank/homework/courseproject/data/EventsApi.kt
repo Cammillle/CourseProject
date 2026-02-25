@@ -25,7 +25,7 @@ interface EventsApi {
         @Query("location") location: String = "spb",
         @Query("text_format") textFormat: String = "text",
         @Query("page_size") pageSize: Int = 20,
-        @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories"),
+        @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories,publication_date "),
     ): ListOfEventsResponseDTO
 
     @GET("events")
@@ -37,7 +37,7 @@ interface EventsApi {
         @Query("location") location: String = "spb",
         @Query("text_format") textFormat: String = "text",
         @Query("page_size") pageSize: Int = 20,
-        @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories"),
+        @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories,publication_date "),
     ): ListOfEventsResponseDTO
 
     @GET("events/{event_id}")

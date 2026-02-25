@@ -18,7 +18,8 @@ fun EventDTO.toEventEntity() = EventEntity(
     startTime = dates?.last()?.startTime,
     isEndless = dates?.last()?.isEndless,
     itemUrl = siteUrl,
-    cachedAt = System.currentTimeMillis()
+    cachedAt = System.currentTimeMillis(),
+    publicationDate = publicationDate ?: ""
 )
 
 fun EventDTO.toCategoryRefs() =

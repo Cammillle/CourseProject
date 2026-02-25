@@ -22,6 +22,7 @@ data class EventEntity(
     val startTime: String?,
     val isEndless: Boolean?,
     val itemUrl: String?,
-    val cachedAt: Long
+    val cachedAt: Long,
+    val publicationDate: String
 )
 

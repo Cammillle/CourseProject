@@ -22,11 +22,16 @@ object EventRepositoryImpl {
 
     @OptIn(ExperimentalPagingApi::class)
     fun getEvents(datasetKey: String): Flow<PagingData<Item>> {
+
         return Pager(
-            config = PagingConfig(pageSize = 20),
+            config = PagingConfig(
+                pageSize = 20,
+                enablePlaceholders = false
+            ),
             remoteMediator = EventsRemoteMediator(
-                api, db, datasetKey,
-                eventDao = dao
+                api = api,
+                db = db,
+                datasetKey = datasetKey
             ),
             pagingSourceFactory = {
                 db.eventDao().pagingSource(datasetKey)

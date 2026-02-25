@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.presentation.ui.feedScreen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -74,6 +75,8 @@ fun EventCard(
                     .height(200.dp)
             ) {
                 val images = event.images
+                Log.d("ViewModel","images $images")
+                Log.d("ViewModel","item $event")
                 if (!images.isNullOrEmpty()) {
                     // Фоновое изображение
                     AsyncImage(

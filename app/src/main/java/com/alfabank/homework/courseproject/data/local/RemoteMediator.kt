@@ -15,8 +15,7 @@ import java.util.Locale
 class EventsRemoteMediator(
     private val api: EventsApi,
     private val db: EventDatabase,
-    private val datasetKey: String,
-    private val eventDao: EventDao
+    private val datasetKey: String
 ) : RemoteMediator<Int, EventWithRelations>() {
 
     override suspend fun load(
@@ -25,39 +24,85 @@ class EventsRemoteMediator(
     ): MediatorResult {
 
         val page = when (loadType) {
-            LoadType.REFRESH -> 1
-            LoadType.APPEND -> state.pages.size + 1
-            LoadType.PREPEND -> return MediatorResult.Success(true)
-        }
 
-        val response = api.getPopularEventsByCategories(
-            categories = if (datasetKey == "NO_FILTER") "" else datasetKey,
-            page = page,
-            actualSince = today()
-        )
-
-        val events = response.results.orEmpty()
-
-        db.withTransaction {
-
-            if (loadType == LoadType.REFRESH) {
-                // 💥 очищаем ТОЛЬКО этот dataset
-                eventDao.clearDataset(datasetKey)
-                eventDao.clearRemoteKeys(datasetKey)
+            LoadType.REFRESH -> {
+                val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
+                remoteKeys?.nextKey?.minus(1) ?: 1
             }
 
-            eventDao.insertEvents(events.map { it.toEventEntity() })
-            eventDao.insertCategories(events.flatMap { it.toCategoryRefs() })
-            eventDao.insertImages(events.flatMap { it.toImageEntities() })
-            eventDao.insertDatasetRefs(events.map { it.toDatasetRef(datasetKey) })
+            LoadType.APPEND -> {
+                val remoteKeys = getRemoteKeyForLastItem(state)
+                    ?: return MediatorResult.Success(true)
+
+                remoteKeys.nextKey
+                    ?: return MediatorResult.Success(true)
+            }
+
+            LoadType.PREPEND -> {
+                return MediatorResult.Success(true)
+            }
         }
 
-        return MediatorResult.Success(
-            endOfPaginationReached = events.isEmpty()
-        )
-    }
-}
+        try {
+            val response = api.getPopularEventsByCategories(
+                categories = if (datasetKey == "NO_FILTER") "" else datasetKey,
+                page = page,
+                actualSince = today()
+            )
 
-private fun today(): String =
-    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        .format(Date())
+            val events = response.results.orEmpty()
+            val endOfPaginationReached = events.isEmpty()
+
+            db.withTransaction {
+
+                if (loadType == LoadType.REFRESH) {
+                    db.eventDao().clearDataset(datasetKey)
+                    db.remoteKeysDao().clearRemoteKeys(datasetKey)
+                }
+
+                val keys = events.map {
+                    RemoteKeys(
+                        eventId = it.id,
+                        datasetKey = datasetKey,
+                        prevKey = if (page == 1) null else page - 1,
+                        nextKey = if (endOfPaginationReached) null else page + 1
+                    )
+                }
+
+                db.remoteKeysDao().insertAll(keys)
+                db.eventDao().insertEvents(events.map { it.toEventEntity() })
+                db.eventDao().insertDatasetRefs(
+                    events.map { it.toDatasetRef(datasetKey) }
+                )
+            }
+
+            return MediatorResult.Success(endOfPaginationReached)
+
+        } catch (e: Exception) {
+            return MediatorResult.Error(e)
+        }
+    }
+
+    private suspend fun getRemoteKeyForLastItem(
+        state: PagingState<Int, EventWithRelations>
+    ): RemoteKeys? {
+        return state.pages
+            .lastOrNull { it.data.isNotEmpty() }
+            ?.data?.lastOrNull()
+            ?.let { db.remoteKeysDao().remoteKeys(it.event.id, datasetKey) }
+    }
+
+    private suspend fun getRemoteKeyClosestToCurrentPosition(
+        state: PagingState<Int, EventWithRelations>
+    ): RemoteKeys? {
+        return state.anchorPosition?.let { position ->
+            state.closestItemToPosition(position)?.event?.id?.let { id ->
+                db.remoteKeysDao().remoteKeys(id, datasetKey)
+            }
+        }
+    }
+
+    private fun today(): String =
+        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            .format(Date())
+}

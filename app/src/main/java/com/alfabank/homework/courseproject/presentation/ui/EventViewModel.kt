@@ -31,20 +31,22 @@ class EventViewModel : ViewModel() {
 
     private val selectedCategory = MutableStateFlow("NO_FILTER")
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     val events = selectedCategory
         .flatMapLatest { datasetKey ->
             repository.getEvents(datasetKey)
         }
         .cachedIn(viewModelScope)
 
-    fun observeCategory(uiCategory: String) {
-        val mapped = categoryMap[uiCategory] ?: "NO_FILTER"
-        selectedCategory.value = mapped
+    fun observeCategory(category: String) {
+        if (selectedCategory.value != category) {
+            selectedCategory.value = category
+        }
     }
 
     fun clearCategory() {
-        selectedCategory.value = "NO_FILTER"
+        if (selectedCategory.value != "NO_FILTER") {
+            selectedCategory.value = "NO_FILTER"
+        }
     }
 
 }
