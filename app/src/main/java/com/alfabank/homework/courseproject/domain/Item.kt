@@ -24,4 +24,6 @@ data class Item(
     val placeTitle: String?,
     val lat: Double?,
     val lon: Double?,
+
+    val publicationDate: String? // для сортировки
 )

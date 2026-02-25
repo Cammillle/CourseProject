@@ -22,7 +22,17 @@ data class EventEntity(
     val startTime: String?,
     val isEndless: Boolean?,
     val itemUrl: String?,
-    val cachedAt: Long,
-    val publicationDate: String
+    val publicationDate: String?,
+    val imagesJson: String?, // JSON-строка списка URL
+    val categoriesJson: String?, // JSON-строка списка категорий
+    val queryId: String // идентификатор текущего фильтра
+)
+
+@Entity(tableName = "paging_metadata")
+data class PagingMetadataEntity(
+    @PrimaryKey
+    val queryId: String,
+    val nextUrl: String?,
+    val isEndReached: Boolean
 )
 

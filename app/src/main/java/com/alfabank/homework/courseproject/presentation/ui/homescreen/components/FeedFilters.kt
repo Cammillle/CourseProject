@@ -37,6 +37,16 @@ fun FeedFilters(
     )
     var selectedFilter by rememberSaveable { mutableStateOf<String?>(null) }
 
+    val categoryMap = mapOf(
+        "Концерты" to "concert",
+        "Спектакли" to "theater",
+        "Экскурсии" to "tour",
+        "Ярмарки" to "yarmarki-razvlecheniya-yarmarki",
+        "Активный отдых" to "recreation",
+        "Выставки" to "exhibition",
+        "Фестивали" to "festival"
+    )
+
     Column {
         LazyRow(
             modifier = Modifier.padding(horizontal = 10.dp),
@@ -52,7 +62,7 @@ fun FeedFilters(
                             onCategoryClear()
                         } else {
                             selectedFilter = filter
-                            onCategoryChange(filter)
+                            onCategoryChange(categoryMap[filter]!!)
                         }
                     }
                 )

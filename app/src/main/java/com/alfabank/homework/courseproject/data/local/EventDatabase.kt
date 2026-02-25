@@ -7,11 +7,8 @@ import androidx.room.RoomDatabase
 
 
 @Database(
-    entities = [EventEntity::class, CategoryEntity::class,
-        EventImageEntity::class,PagingKeys::class,
-        RemoteKeys::class,
-        DatasetEventCrossRef::class,
-        EventCategoryCrossRef::class], version = 1
+    entities = [EventEntity::class,
+        PagingMetadataEntity::class], version = 1
 )
 abstract class EventDatabase : RoomDatabase() {
     abstract fun eventDao(): EventDao

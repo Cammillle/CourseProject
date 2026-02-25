@@ -89,6 +89,8 @@ dependencies {
     // Image Loading
     implementation(libs.coil.compose)
     implementation("com.google.accompanist:accompanist-pager:0.35.0-alpha")
+    implementation("androidx.compose.material3:material3-pullrefresh:1.3.0")
+    implementation("androidx.compose.material3:material3:1.3.0")
 
 
     //Room
