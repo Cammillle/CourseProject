@@ -25,6 +25,7 @@ import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 
+@Suppress("NonSkippableComposable")
 @Composable
 fun YandexMapComponent(
     modifier: Modifier = Modifier,
@@ -120,7 +121,7 @@ private fun updateMarkers(
         if (event.lat != null && event.lon != null) {
 
             val placemark = collection.addPlacemark(
-                Point(event.lat,event.lon)
+                Point(event.lat, event.lon)
             )
 
             placemark.setIcon(

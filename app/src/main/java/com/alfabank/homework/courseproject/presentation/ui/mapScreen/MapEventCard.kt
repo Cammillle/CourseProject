@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -60,7 +61,7 @@ fun MapEventCard(
             ) {
                 val title = event.placeTitle ?: event.title ?: ""
                 Text(
-                    text = title.replace("+"," "),
+                    text = title.replace("+", " "),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
@@ -110,7 +111,7 @@ fun MapEventCard(
                 )
                 event.address?.let { address ->
                     Text(
-                        text = address.replace("+"," "),
+                        text = address.replace("+", " "),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -138,37 +139,39 @@ fun MapEventCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Жанры и возраст
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-//                Column {
-//                    Text(
-//                        text = "Жанры",
-//                        style = MaterialTheme.typography.bodySmall,
-//                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-//                    )
-//                    Text(
-//                        text = event.categories.joinToString(", "),
-//                        style = MaterialTheme.typography.bodyMedium,
-//                        maxLines = 2
-//                    )
-//                }
-//
-//                Column(horizontalAlignment = Alignment.End) {
-//                    Text(
-//                        text = "Возраст",
-//                        style = MaterialTheme.typography.bodySmall,
-//                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-//                    )
-//                    Text(
-//                        text = event.ageRestriction,
-//                        style = MaterialTheme.typography.bodyMedium,
-//                        fontWeight = FontWeight.Bold
-//                    )
-//                }
-//            }
+            //Жанры и возраст
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                event.categories?.let {
+                    Column {
+                        Text(
+                            text = "Категории",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                        Text(
+                            text = event.categories.joinToString(", "),
+                            style = MaterialTheme.typography.bodyMedium,
+                            maxLines = 2
+                        )
+                    }
+                }
+
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "Возраст",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                    Text(
+                        text = event.ageRestriction ?: "0+",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -183,12 +186,12 @@ fun MapEventCard(
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.ShoppingCart,
+                    imageVector = Icons.Default.Place,
                     contentDescription = null,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Купить билеты")
+                Text("Перейти на сайт")
             }
         }
     }

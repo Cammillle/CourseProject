@@ -38,7 +38,10 @@ fun MapScreen(
 ) {
     Log.d("MapScreen", "map args $mapArgs")
 
-    val viewModel: MapScreenViewModel = viewModel()
+    val viewModel: MapScreenViewModel = viewModel(
+        factory = MapScreenViewModelFactory(mapArgs)
+    )
+
     val screenState = viewModel.screenState.collectAsStateWithLifecycle()
     val currentState = screenState.value
 
@@ -74,7 +77,7 @@ fun MapScreen(
             YandexMapComponent(
                 modifier = Modifier.fillMaxSize(),
                 cameraPosition = currentState.cameraPosition,
-                events = listItem.items ?: emptyList(),
+                events = currentState.events,
                 selectedEventId = currentState.selectedEvent?.id,
                 onEventSelected = {
                     viewModel.selectEvent(it)
@@ -82,13 +85,23 @@ fun MapScreen(
             )
 
             AnimatedVisibility(
-                visible = currentState.selectedEvent != null,
+                visible = (currentState.selectedEvent != null) || (currentState.events.size == 1),
                 enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
                 exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(16.dp)
             ) {
+                if (currentState.events.size == 1) {
+                    val event = currentState.events[0]
+                    MapEventCard(
+                        event = event,
+                        onClose = { viewModel.clearSelection() },
+                        onBuyTickets = {
+                            // openUrl(...)
+                        }
+                    )
+                }
                 currentState.selectedEvent?.let { event ->
                     MapEventCard(
                         event = event,
