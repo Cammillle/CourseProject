@@ -35,19 +35,6 @@ fun EventDTO.toEventEntity(dto: EventDTO, queryId: String): EventEntity {
     )
 }
 
-fun EventDTO.toCategoryRefs() = categories?.map {
-    EventCategoryCrossRef(id, it)
-} ?: emptyList()
-
-fun EventDTO.toImageEntities() = images?.mapNotNull {
-    it.thumbnails?.x384?.let { url ->
-        EventImageEntity(id, url)
-    }
-} ?: emptyList()
-
-
-fun EventDTO.toDatasetRef(datasetKey: String) = DatasetEventCrossRef(id, datasetKey)
-
 fun EventEntity.toItem(): Item {
     val images = imagesJson?.let { Json.decodeFromString<List<String>>(it) }
     val categories = categoriesJson?.let { Json.decodeFromString<List<String>>(it) }

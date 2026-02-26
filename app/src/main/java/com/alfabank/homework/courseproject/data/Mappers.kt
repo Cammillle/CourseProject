@@ -28,6 +28,7 @@ fun EventDTO.toItem(): Item {
         lon = place?.coords?.lon ?: location?.coords?.lon,
         isEndless = dates?.get(dates.size - 1)?.isEndless,
         bodyText = bodyText,
+        publicationDate = publicationDate,
     )
 }
 
