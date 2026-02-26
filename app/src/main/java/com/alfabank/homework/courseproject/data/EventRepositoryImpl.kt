@@ -19,10 +19,9 @@ object EventRepositoryImpl {
     private val api = EventsApi()
     private val database = DatabaseProvider.getDatabase()
     private val dao = database.eventDao()
-
     @OptIn(ExperimentalPagingApi::class)
     fun getEventsPagingData(queryId: String, categories: List<String>): Flow<PagingData<Item>> {
-        val pagingSourceFactory = { database.eventDao().getEventsByQueryId(queryId) }
+        val pagingSourceFactory = { dao.getEventsByQueryId(queryId) }
         val remoteMediator = EventsRemoteMediator(
             db = database,
             api = api,
@@ -35,12 +34,12 @@ object EventRepositoryImpl {
             remoteMediator = remoteMediator,
             pagingSourceFactory = pagingSourceFactory
         ).flow.map { pagingData ->
-            pagingData.map { entity -> entity.toItem() }
+            pagingData.map { it.toItem() }
         }
     }
 
     suspend fun clearQueryData(queryId: String) {
-        database.eventDao().clearQueryData(queryId)
+        dao.clearQueryData(queryId)
     }
 
     private fun today(): String =

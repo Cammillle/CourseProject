@@ -18,6 +18,7 @@ class EventsRemoteMediator(
     private val queryId: String,
     private val categories: List<String>
 ) : RemoteMediator<Int, EventEntity>() {
+    private val dao = db.eventDao()
 
     override suspend fun load(
         loadType: LoadType,
@@ -26,18 +27,23 @@ class EventsRemoteMediator(
         return try {
             when (loadType) {
                 LoadType.REFRESH -> {
-                    db.eventDao().clearQueryData(queryId)
-                    loadPage(1)
+                    // Проверяем, есть ли уже данные в БД для этого queryId
+                    val hasData = dao.hasEventsForQueryId(queryId)
+                    if (!hasData) {
+                        // Нет данных – грузим первую страницу из сети
+                        loadPage(1)
+                    } else {
+                        // Данные уже есть – ничего не делаем, считаем что кеш актуален
+                        MediatorResult.Success(endOfPaginationReached = true)
+                    }
                 }
-
                 LoadType.APPEND -> {
-                    val metadata = db.eventDao().getMetadata(queryId)
+                    val metadata = dao.getMetadata(queryId)
                     if (metadata?.isEndReached == true || metadata?.nextUrl == null) {
                         return MediatorResult.Success(endOfPaginationReached = true)
                     }
                     loadPageFromUrl(metadata.nextUrl)
                 }
-
                 LoadType.PREPEND -> MediatorResult.Success(endOfPaginationReached = true)
             }
         } catch (e: Exception) {
@@ -69,7 +75,9 @@ class EventsRemoteMediator(
     private suspend fun savePage(response: ListOfEventsResponseDTO) {
         val events = response.results ?: emptyList()
         val entities = events.mapNotNull { dto -> dto.toEventEntity(dto, queryId) }
-        db.eventDao().savePage(queryId, entities, response.next)
+        db.withTransaction {
+            dao.savePage(queryId, entities, response.next)
+        }
     }
 
     private fun getCurrentDate(): String =

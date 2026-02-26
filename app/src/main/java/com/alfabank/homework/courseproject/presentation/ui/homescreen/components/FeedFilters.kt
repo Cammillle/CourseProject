@@ -82,7 +82,7 @@ fun FeedFilters(
                             onCategoryClear()
                         } else {
                             selectedFilter = filter
-                            onCategoryChange(filter)
+                            onCategoryChange(categoryMap[filter]!!)
                         }
                     }
                 )

@@ -41,7 +41,9 @@ data class ItemDTO(
     @SerialName("title")
     val title: String?,
     @SerialName("year")
-    val year: Int?
+    val year: Int?,
+    @SerialName("publication_date")
+    val publicationDate:String?
 ){
     val ageRestriction: String?
         get() = ageRestrictionRaw?.let { element ->
@@ -77,5 +79,6 @@ fun ItemDTO.toItem(): Item {
         lon = place?.coords?.lon ?: coords?.lon,
         isEndless = null,
         bodyText = bodyText,
+        publicationDate = publicationDate,
     )
 }

@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.presentation.ui.feedScreen
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -58,18 +59,18 @@ fun FeedScreen(
             onCategoryChange = { viewModel.observeCategory(it) },
             onCategoryClear = { viewModel.clearCategory() }
         )
-        Spacer(modifier = Modifier.height(8.dp))
 
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = { viewModel.refresh() },
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .weight(1f) // занимает оставшееся место
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 10.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(
                     count = events.itemCount,
@@ -83,24 +84,24 @@ fun FeedScreen(
                     }
                 }
 
+                // Индикаторы загрузки и ошибок
                 events.apply {
-                    when (val refreshState = loadState.refresh) {
+                    when (val refresh = loadState.refresh) {
                         is LoadState.Loading -> {
                             item { LoadingItem() }
                         }
                         is LoadState.Error -> {
                             item {
                                 ErrorItem(
-                                    message = "Ошибка загрузки: ${refreshState.error.message}",
+                                    message = "Ошибка загрузки",
                                     onRetry = { retry() }
                                 )
                             }
                         }
-
                         else -> {}
                     }
 
-                    when (val appendState = loadState.append) {
+                    when (val append = loadState.append) {
                         is LoadState.Loading -> {
                             item { LoadingItem() }
                         }
@@ -112,13 +113,24 @@ fun FeedScreen(
                                 )
                             }
                         }
-
                         else -> {}
+                    }
+
+                    if (loadState.append is LoadState.NotLoading && events.itemCount == 0) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("Нет событий")
+                            }
+                        }
                     }
                 }
             }
         }
-
     }
 }
 

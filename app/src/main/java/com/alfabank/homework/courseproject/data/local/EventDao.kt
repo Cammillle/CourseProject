@@ -46,6 +46,8 @@ interface EventDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEvents(events: List<EventEntity>)
 
+    @Query("SELECT EXISTS(SELECT 1 FROM events WHERE queryId = :queryId LIMIT 1)")
+    suspend fun hasEventsForQueryId(queryId: String): Boolean
 
     @Query("SELECT * FROM events WHERE id = :id")
     suspend fun getEventById(id: Long): EventEntity?

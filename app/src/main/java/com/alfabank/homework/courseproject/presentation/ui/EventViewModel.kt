@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import java.lang.reflect.Array.set
 
 class EventViewModel : ViewModel() {
     private val repository = EventRepositoryImpl
@@ -36,18 +37,20 @@ class EventViewModel : ViewModel() {
     private val _selectedCategories = MutableStateFlow<Set<String>>(emptySet())
     val selectedCategories: StateFlow<Set<String>> = _selectedCategories.asStateFlow()
 
+
     val eventsPagingData: Flow<PagingData<Item>> = _selectedCategories.flatMapLatest { categories ->
+        Log.d("EventViewModel", "categories ${_selectedCategories.value}")
         val queryId = buildQueryId(categories)
         repository.getEventsPagingData(queryId, categories.toList())
     }.cachedIn(viewModelScope)
 
 
     fun observeCategory(category: String) {
-        val current = _selectedCategories.value
+        var current = _selectedCategories.value
         _selectedCategories.value = if (category in current) {
-            current - category
+            current
         } else {
-            current + category
+            setOf(category)
         }
     }
 
@@ -63,7 +66,7 @@ class EventViewModel : ViewModel() {
         viewModelScope.launch {
             val currentQueryId = buildQueryId(_selectedCategories.value)
             repository.clearQueryData(currentQueryId)
-            // Тригге перезапуск потока
+            // Триггер перезапуск потока
             _selectedCategories.value = _selectedCategories.value
         }
     }
