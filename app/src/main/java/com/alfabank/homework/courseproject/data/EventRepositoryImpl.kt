@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.alfabank.homework.courseproject.DatabaseProvider
+import com.alfabank.homework.courseproject.data.local.EventEntity
 import com.alfabank.homework.courseproject.data.local.EventsRemoteMediator
 import com.alfabank.homework.courseproject.data.local.toItem
 import com.alfabank.homework.courseproject.domain.Item
@@ -18,28 +19,29 @@ import java.util.Locale
 object EventRepositoryImpl {
     private val api = EventsApi()
     private val database = DatabaseProvider.getDatabase()
-    private val dao = database.eventDao()
+    private val dao = database.eventsDao()
+
     @OptIn(ExperimentalPagingApi::class)
-    fun getEventsPagingData(queryId: String, categories: List<String>): Flow<PagingData<Item>> {
-        val pagingSourceFactory = { dao.getEventsByQueryId(queryId) }
-        val remoteMediator = EventsRemoteMediator(
-            db = database,
-            api = api,
-            queryId = queryId,
-            categories = categories
-        )
+    fun getEvents(category: String?): Flow<PagingData<EventEntity>> {
 
         return Pager(
-            config = PagingConfig(pageSize = 20, enablePlaceholders = false),
-            remoteMediator = remoteMediator,
-            pagingSourceFactory = pagingSourceFactory
-        ).flow.map { pagingData ->
-            pagingData.map { it.toItem() }
-        }
-    }
-
-    suspend fun clearQueryData(queryId: String) {
-        dao.clearQueryData(queryId)
+            config = PagingConfig(
+                pageSize = 20,
+                enablePlaceholders = false
+            ),
+            remoteMediator = EventsRemoteMediator(
+                category = category,
+                api = api,
+                db = database
+            ),
+            pagingSourceFactory = {
+                if (category == null) {
+                    database.eventsDao().pagingSourceAll()
+                } else {
+                    database.eventsDao().pagingSourceByCategory(category)
+                }
+            }
+        ).flow
     }
 
     private fun today(): String =

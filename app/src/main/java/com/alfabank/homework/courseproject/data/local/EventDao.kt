@@ -10,45 +10,49 @@ import androidx.room.Transaction
 @Dao
 interface EventDao {
 
-    @Query("SELECT * FROM events WHERE queryId = :queryId ORDER BY publicationDate DESC")
-    fun getEventsByQueryId(queryId: String): PagingSource<Int, EventEntity>
+    // ---------- Paging ----------
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertEvent(event: EventEntity)
+    @Query("""
+        SELECT * FROM events
+        ORDER BY publicationDate DESC
+    """)
+    fun pagingSourceAll(): PagingSource<Int, EventEntity>
 
-    @Query("DELETE FROM events WHERE queryId = :queryId")
-    suspend fun deleteEventsByQueryId(queryId: String)
+    @Query("""
+        SELECT e.* FROM events e
+        INNER JOIN event_category_cross_ref c
+        ON e.id = c.eventId
+        WHERE c.category = :category
+        ORDER BY e.publicationDate DESC
+    """)
+    fun pagingSourceByCategory(category: String): PagingSource<Int, EventEntity>
 
-    @Query("DELETE FROM paging_metadata WHERE queryId = :queryId")
-    suspend fun deleteMetadata(queryId: String)
 
-    @Query("SELECT * FROM paging_metadata WHERE queryId = :queryId")
-    suspend fun getMetadata(queryId: String): PagingMetadataEntity?
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMetadata(metadata: PagingMetadataEntity)
-
-    @Transaction
-    suspend fun savePage(queryId: String, events: List<EventEntity>, nextUrl: String?) {
-        events.forEach { insertEvent(it) }
-        val metadata = getMetadata(queryId) ?: PagingMetadataEntity(queryId, nextUrl, nextUrl == null)
-        if (metadata.nextUrl != nextUrl) {
-            insertMetadata(metadata.copy(nextUrl = nextUrl, isEndReached = nextUrl == null))
-        }
-    }
-
-    @Transaction
-    suspend fun clearQueryData(queryId: String) {
-        deleteEventsByQueryId(queryId)
-        deleteMetadata(queryId)
-    }
+    // ---------- Insert ----------
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEvents(events: List<EventEntity>)
 
-    @Query("SELECT EXISTS(SELECT 1 FROM events WHERE queryId = :queryId LIMIT 1)")
-    suspend fun hasEventsForQueryId(queryId: String): Boolean
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCategoryCrossRefs(refs: List<EventCategoryCrossRef>)
 
+
+    // ---------- Clear ----------
+
+    @Query("DELETE FROM events")
+    suspend fun clearAll()
+
+    @Query("""
+        DELETE FROM events 
+        WHERE id IN (
+            SELECT eventId FROM event_category_cross_ref 
+            WHERE category = :category
+        )
+    """)
+    suspend fun clearByCategory(category: String)
+
+    @Query("DELETE FROM event_category_cross_ref")
+    suspend fun clearCrossRefs()
     @Query("SELECT * FROM events WHERE id = :id")
     suspend fun getEventById(id: Long): EventEntity?
 }

@@ -3,9 +3,12 @@ package com.alfabank.homework.courseproject.presentation.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.alfabank.homework.courseproject.data.EventRepositoryImpl
+import com.alfabank.homework.courseproject.data.local.EventsRemoteMediator
 import com.alfabank.homework.courseproject.domain.Item
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.FeedScreenEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,47 +36,18 @@ class EventViewModel : ViewModel() {
         "Фестивали" to "festival"
     )
 
+    val selectedCategory = MutableStateFlow<String?>(null)
 
-    private val _selectedCategories = MutableStateFlow<Set<String>>(emptySet())
-    val selectedCategories: StateFlow<Set<String>> = _selectedCategories.asStateFlow()
-
-
-    val eventsPagingData: Flow<PagingData<Item>> = _selectedCategories.flatMapLatest { categories ->
-        Log.d("EventViewModel", "categories ${_selectedCategories.value}")
-        val queryId = buildQueryId(categories)
-        repository.getEventsPagingData(queryId, categories.toList())
-    }.cachedIn(viewModelScope)
-
-
-    fun observeCategory(category: String) {
-        var current = _selectedCategories.value
-        _selectedCategories.value = if (category in current) {
-            current
-        } else {
-            setOf(category)
+    val events = selectedCategory
+        .flatMapLatest { category ->
+            repository.getEvents(category)
         }
+        .cachedIn(viewModelScope)
+
+    fun selectCategory(category: String?) {
+        selectedCategory.value = categoryMap[category]
     }
 
-    fun clearCategory() {
-        _selectedCategories.value = emptySet()
-    }
-
-    fun updateCategories(categories: Set<String>) {
-        _selectedCategories.value = categories
-    }
-
-    fun refresh() {
-        viewModelScope.launch {
-            val currentQueryId = buildQueryId(_selectedCategories.value)
-            repository.clearQueryData(currentQueryId)
-            // Триггер перезапуск потока
-            _selectedCategories.value = _selectedCategories.value
-        }
-    }
-
-    private fun buildQueryId(categories: Set<String>): String {
-        return if (categories.isEmpty()) "no_filters" else categories.sorted().joinToString(",")
-    }
 
 }
 

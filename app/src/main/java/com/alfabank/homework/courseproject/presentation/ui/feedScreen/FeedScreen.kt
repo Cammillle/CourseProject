@@ -23,6 +23,7 @@ import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.alfabank.homework.courseproject.data.local.toItem
 import com.alfabank.homework.courseproject.domain.Item
 import com.alfabank.homework.courseproject.presentation.ui.EventViewModel
 import com.alfabank.homework.courseproject.presentation.ui.HomeState
@@ -46,9 +48,11 @@ fun FeedScreen(
     onEventClick: (Long) -> Unit,
 ) {
     val viewModel: EventViewModel = viewModel()
-    val selectedCategories by viewModel.selectedCategories.collectAsStateWithLifecycle()
-    val events = viewModel.eventsPagingData.collectAsLazyPagingItems()
-    val isRefreshing = events.loadState.refresh is LoadState.Loading
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
+
+    val lazyPagingItems = viewModel.events.collectAsLazyPagingItems()
+
+    val isRefreshing = lazyPagingItems.loadState.refresh is LoadState.Loading
 
     Column(
         modifier = Modifier
@@ -56,16 +60,18 @@ fun FeedScreen(
             .padding(paddingValues)
     ) {
         FeedFilters(
-            onCategoryChange = { viewModel.observeCategory(it) },
-            onCategoryClear = { viewModel.clearCategory() }
+            selectedCategory = selectedCategory,
+            onCategorySelected = { category ->
+                viewModel.selectCategory(category)
+            }
         )
 
         PullToRefreshBox(
             isRefreshing = isRefreshing,
-            onRefresh = { viewModel.refresh() },
+            onRefresh = { lazyPagingItems.refresh() },
             modifier = Modifier
                 .fillMaxSize()
-                .weight(1f) // занимает оставшееся место
+                .weight(1f)
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -73,63 +79,84 @@ fun FeedScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(
-                    count = events.itemCount,
-                    key = { index -> events[index]?.id ?: index }
+                    count = lazyPagingItems.itemCount
                 ) { index ->
-                    events[index]?.let { event ->
+                    val event = lazyPagingItems[index]?.toItem()
+                    event?.let { event ->
                         EventCard(
                             event = event,
                             onClick = { onEventClick(event.id) }
                         )
                     }
                 }
-
-                // Индикаторы загрузки и ошибок
-                events.apply {
-                    when (val refresh = loadState.refresh) {
-                        is LoadState.Loading -> {
-                            item { LoadingItem() }
-                        }
-                        is LoadState.Error -> {
-                            item {
-                                ErrorItem(
-                                    message = "Ошибка загрузки",
-                                    onRetry = { retry() }
-                                )
-                            }
-                        }
-                        else -> {}
-                    }
-
-                    when (val append = loadState.append) {
-                        is LoadState.Loading -> {
-                            item { LoadingItem() }
-                        }
-                        is LoadState.Error -> {
-                            item {
-                                ErrorItem(
-                                    message = "Ошибка пагинации",
-                                    onRetry = { retry() }
-                                )
-                            }
-                        }
-                        else -> {}
-                    }
-
-                    if (loadState.append is LoadState.NotLoading && events.itemCount == 0) {
+                // ---------- Append Loader ----------
+                when (lazyPagingItems.loadState.append) {
+                    is LoadState.Loading -> {
                         item {
                             Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp),
+                                modifier = Modifier.fillMaxWidth(),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("Нет событий")
+                                CircularProgressIndicator()
                             }
                         }
                     }
+
+                    is LoadState.Error -> {
+                        item {
+                            RetryItem {
+                                lazyPagingItems.retry()
+                            }
+                        }
+                    }
+
+                    else -> Unit
                 }
             }
+
+            // ---------- Empty State ----------
+            if (lazyPagingItems.itemCount == 0 &&
+                lazyPagingItems.loadState.refresh is LoadState.NotLoading
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No events found")
+                }
+            }
+
+            // ---------- First Load Error ----------
+            if (lazyPagingItems.loadState.refresh is LoadState.Error) {
+                val error = lazyPagingItems.loadState.refresh as LoadState.Error
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    RetryItem(
+                        message = error.error.message,
+                        onRetry = { lazyPagingItems.retry() }
+                    )
+                }
+            }
+
+
+        }
+    }
+}
+
+@Composable
+fun RetryItem(
+    message: String? = "Something went wrong",
+    onRetry: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(message.orEmpty())
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = onRetry) {
+            Text("Retry")
         }
     }
 }

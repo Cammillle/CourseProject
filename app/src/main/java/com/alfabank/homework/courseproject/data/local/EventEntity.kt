@@ -1,10 +1,11 @@
 package com.alfabank.homework.courseproject.data.local
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.Index
+import androidx.room.Junction
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room.Relation
 
 @Entity(tableName = "events")
 data class EventEntity(
@@ -24,15 +25,35 @@ data class EventEntity(
     val itemUrl: String?,
     val publicationDate: String?,
     val imagesJson: String?, // JSON-строка списка URL
-    val categoriesJson: String?, // JSON-строка списка категорий
-    val queryId: String // идентификатор текущего фильтра
 )
 
-@Entity(tableName = "paging_metadata")
-data class PagingMetadataEntity(
-    @PrimaryKey
-    val queryId: String,
-    val nextUrl: String?,
-    val isEndReached: Boolean
+@Entity(tableName = "remote_keys")
+data class RemoteKeys(
+    @PrimaryKey val eventId: Long,
+    val prevKey: Int?,
+    val nextKey: Int?,
+    val category: String?
 )
 
+@Entity(
+    tableName = "event_category_cross_ref",
+    primaryKeys = ["eventId", "category"]
+)
+data class EventCategoryCrossRef(
+    val eventId: Long,
+    val category: String
+)
+
+data class EventWithCategories(
+    @Embedded val event: EventEntity,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "category",
+        associateBy = Junction(
+            value = EventCategoryCrossRef::class,
+            parentColumn = "eventId",
+            entityColumn = "category"
+        )
+    )
+    val categories: List<String>
+)

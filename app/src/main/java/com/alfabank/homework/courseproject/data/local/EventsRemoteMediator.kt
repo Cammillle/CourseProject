@@ -13,80 +13,111 @@ import java.util.Locale
 
 @OptIn(ExperimentalPagingApi::class)
 class EventsRemoteMediator(
+    private val category: String?,
     private val api: EventsApi,
-    private val db: EventDatabase,
-    private val queryId: String,
-    private val categories: List<String>
+    private val db: EventDatabase
 ) : RemoteMediator<Int, EventEntity>() {
-    private val dao = db.eventDao()
+
+    private val eventsDao = db.eventsDao()
+    private val remoteKeysDao = db.remoteKeysDao()
 
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, EventEntity>
     ): MediatorResult {
-        return try {
-            when (loadType) {
-                LoadType.REFRESH -> {
-                    // Проверяем, есть ли уже данные в БД для этого queryId
-                    val hasData = dao.hasEventsForQueryId(queryId)
-                    if (!hasData) {
-                        // Нет данных – грузим первую страницу из сети
-                        loadPage(1)
-                    } else {
-                        // Данные уже есть – ничего не делаем, считаем что кеш актуален
-                        MediatorResult.Success(endOfPaginationReached = true)
-                    }
+
+        try {
+            val page = when (loadType) {
+                LoadType.REFRESH -> 1
+
+                LoadType.PREPEND -> {
+                    return MediatorResult.Success(
+                        endOfPaginationReached = true
+                    )
                 }
+
                 LoadType.APPEND -> {
-                    val metadata = dao.getMetadata(queryId)
-                    if (metadata?.isEndReached == true || metadata?.nextUrl == null) {
-                        return MediatorResult.Success(endOfPaginationReached = true)
-                    }
-                    loadPageFromUrl(metadata.nextUrl)
+                    val lastItem = state.lastItemOrNull()
+                        ?: return MediatorResult.Success(true)
+
+                    val remoteKeys = remoteKeysDao
+                        .remoteKeysEventId(lastItem.id, category)
+
+                    remoteKeys?.nextKey
+                        ?: return MediatorResult.Success(true)
                 }
-                LoadType.PREPEND -> MediatorResult.Success(endOfPaginationReached = true)
             }
-        } catch (e: Exception) {
-            MediatorResult.Error(e)
-        }
-    }
 
-    private suspend fun loadPage(page: Int): MediatorResult {
-        val actualSince = getCurrentDate()
-        val response = if (categories.isEmpty()) {
-            api.getEventsWithoutFilters(actualSince = actualSince, page = page)
-        } else {
-            api.getPopularEventsByCategories(
-                categories = categories.joinToString(","),
-                page = page,
-                actualSince = actualSince
+            // ---------- API ----------
+
+            val response = if (category == null) {
+                api.getEventsWithoutFilters(
+                    actualSince = today(),
+                    page = page
+                )
+            } else {
+                api.getPopularEventsByCategories(
+                    categories = category,
+                    actualSince = today(),
+                    page = page
+                )
+            }
+
+            val events = response.results.orEmpty()
+            val endOfPaginationReached = response.next == null
+
+            db.withTransaction {
+
+                if (loadType == LoadType.REFRESH) {
+
+                    if (category == null) {
+                        remoteKeysDao.clearAll()
+                        eventsDao.clearAll()
+                        eventsDao.clearCrossRefs()
+                    } else {
+                        remoteKeysDao.clearByCategory(category)
+                        eventsDao.clearByCategory(category)
+                    }
+                }
+
+                val entities = events.map { dto ->
+                    dto.toEventEntity()
+                }
+
+                eventsDao.insertEvents(entities)
+
+                val crossRefs = events.flatMap { dto ->
+                    dto.categories.orEmpty().map { cat ->
+                        EventCategoryCrossRef(
+                            eventId = dto.id,
+                            category = cat
+                        )
+                    }
+                }
+
+                eventsDao.insertCategoryCrossRefs(crossRefs)
+
+                val keys = events.map { dto ->
+                    RemoteKeys(
+                        eventId = dto.id,
+                        prevKey = if (page == 1) null else page - 1,
+                        nextKey = if (endOfPaginationReached) null else page + 1,
+                        category = category
+                    )
+                }
+
+                remoteKeysDao.insertAll(keys)
+            }
+
+            return MediatorResult.Success(
+                endOfPaginationReached = endOfPaginationReached
             )
-        }
-        savePage(response)
-        return MediatorResult.Success(endOfPaginationReached = response.next == null)
-    }
 
-    private suspend fun loadPageFromUrl(url: String): MediatorResult {
-        val response = api.getNextEvents(url)
-        savePage(response)
-        return MediatorResult.Success(endOfPaginationReached = response.next == null)
-    }
-
-    private suspend fun savePage(response: ListOfEventsResponseDTO) {
-        val events = response.results ?: emptyList()
-        val entities = events.mapNotNull { dto -> dto.toEventEntity(dto, queryId) }
-        db.withTransaction {
-            dao.savePage(queryId, entities, response.next)
+        } catch (e: Exception) {
+            return MediatorResult.Error(e)
         }
     }
-
-    private fun getCurrentDate(): String =
-        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-
-    private fun formatDate(timestamp: Long): String =
-        SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date(timestamp * 1000))
-
-    private fun formatTime(timestamp: Long): String =
-        SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(timestamp * 1000))
-
+    private fun today(): String =
+        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            .format(Date())
 }

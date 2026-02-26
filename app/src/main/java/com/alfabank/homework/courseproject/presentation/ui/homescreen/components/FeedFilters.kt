@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun FeedFilters(
-    onCategoryChange: (String) -> Unit,
-    onCategoryClear: () -> Unit
+    selectedCategory: String?,
+    onCategorySelected: (String?) -> Unit,
 ) {
     val filters1 = listOf(
         "Концерты",
@@ -35,7 +35,7 @@ fun FeedFilters(
         "Выставки",
         "Фестивали"
     )
-    var selectedFilter by rememberSaveable { mutableStateOf<String?>(null) }
+    var selectedFilter by rememberSaveable { mutableStateOf<String?>(selectedCategory) }
 
     val categoryMap = mapOf(
         "Концерты" to "concert",
@@ -59,10 +59,10 @@ fun FeedFilters(
                     onClick = {
                         if (selectedFilter == filter) {
                             selectedFilter = null
-                            onCategoryClear()
+                            onCategorySelected(filter)
                         } else {
                             selectedFilter = filter
-                            onCategoryChange(categoryMap[filter]!!)
+                            onCategorySelected(filter)
                         }
                     }
                 )
@@ -79,10 +79,10 @@ fun FeedFilters(
                     onClick = {
                         if (selectedFilter == filter) {
                             selectedFilter = null
-                            onCategoryClear()
+                            onCategorySelected(null)
                         } else {
                             selectedFilter = filter
-                            onCategoryChange(categoryMap[filter]!!)
+                            onCategorySelected(filter)
                         }
                     }
                 )
