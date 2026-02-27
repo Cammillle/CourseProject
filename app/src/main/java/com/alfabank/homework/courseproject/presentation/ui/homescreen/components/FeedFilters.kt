@@ -1,13 +1,19 @@
 package com.alfabank.homework.courseproject.presentation.ui.homescreen.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,8 +22,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.alfabank.homework.courseproject.R
 
 @Composable
 fun FeedFilters(
@@ -35,6 +44,15 @@ fun FeedFilters(
         "Выставки",
         "Фестивали"
     )
+    val mapImages = mapOf(
+        "Концерты" to R.drawable.concert,
+        "Спектакли" to R.drawable.theater,
+        "Экскурсии" to R.drawable.tour,
+        "Ярмарки" to R.drawable.yarmarki,
+        "Активный отдых" to R.drawable.recreation,
+        "Выставки" to R.drawable.exhibition,
+        "Фестивали" to R.drawable.festival
+    )
     var selectedFilter by rememberSaveable { mutableStateOf(selectedCategory) }
 
     Column {
@@ -45,6 +63,7 @@ fun FeedFilters(
             items(filters1) { filter ->
                 FilterChip(
                     text = filter,
+                    imageId = mapImages[filter] ?: R.drawable.concert,
                     selected = selectedFilter == filter,
                     onClick = {
                         if (selectedFilter == filter) {
@@ -65,6 +84,7 @@ fun FeedFilters(
             items(filters2) { filter ->
                 FilterChip(
                     text = filter,
+                    imageId = mapImages[filter] ?: R.drawable.concert,
                     selected = selectedFilter == filter,
                     onClick = {
                         if (selectedFilter == filter) {
@@ -85,6 +105,7 @@ fun FeedFilters(
 @Composable
 fun FilterChip(
     text: String,
+    imageId: Int,
     selected: Boolean,
     onClick: () -> Unit
 ) {
@@ -92,10 +113,22 @@ fun FilterChip(
         selected = selected,
         onClick = onClick,
         label = {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Absolute.spacedBy(4.dp)
+            ) {
+                Image(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(imageId),
+                    contentDescription = null
+                )
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
         },
         colors = FilterChipDefaults.filterChipColors(
             selectedContainerColor = MaterialTheme.colorScheme.primary,

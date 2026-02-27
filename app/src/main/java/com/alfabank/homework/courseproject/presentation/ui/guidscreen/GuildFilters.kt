@@ -41,7 +41,8 @@ fun GuildFilters(
                     onClick = {
                         selectedFilter = guid
                         onGuidChange(guid)
-                    }
+                    },
+                    imageId = 0
                 )
             }
         }

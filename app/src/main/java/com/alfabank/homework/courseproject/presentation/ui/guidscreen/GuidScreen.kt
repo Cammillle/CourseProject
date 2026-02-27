@@ -43,7 +43,7 @@ fun GuidScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = "Гиды",
+                            text = "Гиды и подборки",
                             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                         )
                     },

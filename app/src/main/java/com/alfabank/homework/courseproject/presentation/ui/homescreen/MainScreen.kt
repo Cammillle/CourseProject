@@ -146,7 +146,9 @@ fun MainScreen() {
                     onResetFilters = { navigationState.navHostController.popBackStack() }
                 )
             },
-            favouriteScreenContent = { FavouriteScreen() },
+            favouriteScreenContent = { FavouriteScreen(
+                categories = listOf("Театры","Фестивали","Концерты")
+            ) },
             profileScreenContent = { ProfileScreen() },
             guidsScreenContent = {
                 GuidScreen(
