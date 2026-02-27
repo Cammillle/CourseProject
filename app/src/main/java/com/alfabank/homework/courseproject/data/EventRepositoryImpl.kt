@@ -69,5 +69,13 @@ object EventRepositoryImpl {
             }
         }.flowOn(Dispatchers.IO)
     }
+
+    // Search (Local Only)
+    fun searchEvent(query: String): Flow<List<Item>> {
+        return dao.searchEvent(query).map { list ->
+            list.map { entity -> entity.toItem() }
+        }
+    }
+
 }
 

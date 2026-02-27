@@ -26,7 +26,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -46,13 +48,12 @@ import com.alfabank.homework.courseproject.presentation.ui.homescreen.components
 fun FeedScreen(
     paddingValues: PaddingValues,
     onEventClick: (Long) -> Unit,
+    selectedCategory: String,
+    onSelectCategory: (String) -> Unit,
+    isRefreshing: Boolean,
+    currentPagingFlow: LazyPagingItems<Item>,
+    searchList: List<Item> = emptyList()
 ) {
-    val viewModel: EventViewModel = viewModel()
-    val selectedCategory by viewModel.selectedCategory.collectAsStateWithLifecycle()
-
-    val currentPagingFlow = viewModel.currentPagingFlow.collectAsLazyPagingItems()
-    val isRefreshing = currentPagingFlow.loadState.refresh is LoadState.Loading
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,7 +62,7 @@ fun FeedScreen(
         FeedFilters(
             selectedCategory = selectedCategory,
             onCategorySelected = { category ->
-                viewModel.selectCategory(category)
+                onSelectCategory(category)
             }
         )
 
@@ -77,6 +78,14 @@ fun FeedScreen(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                if (searchList.isNotEmpty()) {
+                    items(items = searchList, key = { it.id }) { event ->
+                        EventCard(
+                            event = event,
+                            onClick = { onEventClick(event.id) }
+                        )
+                    }
+                }
                 items(
                     count = currentPagingFlow.itemCount
                 ) { index ->

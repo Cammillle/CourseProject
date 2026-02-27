@@ -11,6 +11,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -19,6 +22,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.room.util.query
 import com.alfabank.homework.courseproject.navigation.AppNavGraph
 import com.alfabank.homework.courseproject.navigation.NavigationItem
 import com.alfabank.homework.courseproject.navigation.Screen
@@ -35,7 +41,14 @@ import com.alfabank.homework.courseproject.presentation.ui.profilescreen.Profile
 
 @Composable
 fun MainScreen() {
+    val viewModel: EventViewModel = viewModel()
+    val selectedCategory by viewModel.selectedCategory.collectAsStateWithLifecycle()
 
+    val currentPagingFlow = viewModel.currentPagingFlow.collectAsLazyPagingItems()
+    val isRefreshing = currentPagingFlow.loadState.refresh is LoadState.Loading
+    val searchList by viewModel.searchResults.collectAsStateWithLifecycle(
+        initialValue = emptyList()
+    )
     val navigationState = rememberNavigationState()
     val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination?.route
@@ -51,7 +64,11 @@ fun MainScreen() {
                 FeedTopBar(
                     navigateOnFilterScreen = {
                         navigationState.navigateTo(Screen.EventsFeedFilters.route)
-                    }
+                    },
+                    onSearchQueryChanged = { query ->
+                        viewModel.searchEvent(query)
+                    },
+                    onRefreshSearch = { viewModel.refreshSearchList() },
                 )
             }
         },
@@ -111,7 +128,14 @@ fun MainScreen() {
                     paddingValues = paddingValues,
                     onEventClick = { id ->
                         navigationState.navigateToEventDetails(id = id)
-                    }
+                    },
+                    selectedCategory = selectedCategory,
+                    onSelectCategory = { category ->
+                        viewModel.selectCategory(category)
+                    },
+                    isRefreshing = isRefreshing,
+                    currentPagingFlow = currentPagingFlow,
+                    searchList = searchList
                 )
             },
             eventsFeedFiltersScreenContent = {

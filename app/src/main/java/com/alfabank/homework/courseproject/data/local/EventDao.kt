@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EventDao {
@@ -57,9 +58,16 @@ interface EventDao {
     @Query("DELETE FROM event_category_cross_ref")
     suspend fun clearCrossRefs()
 
+    //---------------Get--------------
     @Query("""
         SELECT с.* FROM events с
         where id = :id
     """)
     suspend fun getEventById(id: Long): EventEntity?
+
+
+    //------------Search----------------------
+    @Query("SELECT * FROM events WHERE title LIKE '%' || :query || '%'")
+    fun searchEvent(query:String): Flow<List<EventEntity>>
+
 }
