@@ -56,6 +56,10 @@ interface EventDao {
 
     @Query("DELETE FROM event_category_cross_ref")
     suspend fun clearCrossRefs()
-    @Query("SELECT * FROM events WHERE id = :id")
+
+    @Query("""
+        SELECT с.* FROM events с
+        where id = :id
+    """)
     suspend fun getEventById(id: Long): EventEntity?
 }

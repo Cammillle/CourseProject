@@ -8,14 +8,13 @@ import androidx.paging.map
 import com.alfabank.homework.courseproject.DatabaseProvider
 import com.alfabank.homework.courseproject.data.local.AllEventsRemoteMediator
 import com.alfabank.homework.courseproject.data.local.CategoryEventsRemoteMediator
-import com.alfabank.homework.courseproject.data.local.EventEntity
 import com.alfabank.homework.courseproject.data.local.toItem
 import com.alfabank.homework.courseproject.domain.Item
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 object EventRepositoryImpl {
     private val api = EventsApi()
@@ -59,6 +58,16 @@ object EventRepositoryImpl {
         ).flow.map {
             it.map { it.toItem() }
         }
+    }
+
+    fun getEventById(id: Long): Flow<Result<Item>> {
+        return flow {
+            val localEvent = dao.getEventById(id)
+            if (localEvent != null) {
+                emit(Result.success(localEvent.toItem()))
+                return@flow
+            }
+        }.flowOn(Dispatchers.IO)
     }
 }
 

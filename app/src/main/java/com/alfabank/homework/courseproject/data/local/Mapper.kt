@@ -12,6 +12,7 @@ fun EventDTO.toEventEntity(): EventEntity {
     val isEndless = firstDate?.isEndless
 
     val imagesJson = images?.mapNotNull { it.image }?.let { Json.encodeToString(it) }
+    val categoriesJson = categories?.let { Json.encodeToString(it) }
     return EventEntity(
         id = id,
         title = title,
@@ -29,11 +30,13 @@ fun EventDTO.toEventEntity(): EventEntity {
         lat = place?.coords?.lat ?: location?.coords?.lat,
         lon = place?.coords?.lon ?: location?.coords?.lon,
         publicationDate = publicationDate,
+        categories = categoriesJson
     )
 }
 
 fun EventEntity.toItem(): Item {
     val images = imagesJson?.let { Json.decodeFromString<List<String>>(it) }
+    val categories = categories?.let { Json.decodeFromString<List<String>>(it) }
 
     return Item(
         id = id,
@@ -52,6 +55,6 @@ fun EventEntity.toItem(): Item {
         lat = lat,
         lon = lon,
         publicationDate = publicationDate,
-        categories = listOf("")
+        categories = categories
     )
 }

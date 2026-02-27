@@ -1,11 +1,7 @@
 package com.alfabank.homework.courseproject.data.local
 
-import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Junction
 import androidx.room.PrimaryKey
-import androidx.room.Relation
 
 @Entity(tableName = "events")
 data class EventEntity(
@@ -25,6 +21,7 @@ data class EventEntity(
     val itemUrl: String?,
     val publicationDate: String?,
     val imagesJson: String?, // JSON-строка списка URL
+    val categories: String?, // JSON-строка
 )
 
 @Entity(
@@ -45,18 +42,4 @@ data class RemoteKeys(
 data class EventCategoryCrossRef(
     val eventId: Long,
     val category: String
-)
-
-data class EventWithCategories(
-    @Embedded val event: EventEntity,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "category",
-        associateBy = Junction(
-            value = EventCategoryCrossRef::class,
-            parentColumn = "eventId",
-            entityColumn = "category"
-        )
-    )
-    val categories: List<String>
 )

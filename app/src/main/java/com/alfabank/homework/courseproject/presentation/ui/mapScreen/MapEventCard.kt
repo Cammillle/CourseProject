@@ -115,26 +115,6 @@ fun MapEventCard(
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
-
-//                // Метро
-//                event.place?.subway?.let { subway ->
-//                    Row(
-//                        verticalAlignment = Alignment.CenterVertically
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Default.Subway,
-//                            contentDescription = null,
-//                            modifier = Modifier.size(14.dp),
-//                            tint = Color(0xFF2196F3)
-//                        )
-//                        Spacer(modifier = Modifier.width(4.dp))
-//                        Text(
-//                            text = subway,
-//                            style = MaterialTheme.typography.bodySmall,
-//                            color = Color(0xFF2196F3)
-//                        )
-//                    }
-//                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -152,7 +132,7 @@ fun MapEventCard(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                         Text(
-                            text = event.categories.joinToString(", "),
+                            text = event.categories.mapCategories().joinToString(", "),
                             style = MaterialTheme.typography.bodyMedium,
                             maxLines = 2
                         )
@@ -195,4 +175,23 @@ fun MapEventCard(
             }
         }
     }
+}
+
+
+private fun List<String>.mapCategories(): List<String> {
+    val categoryMap = mapOf(
+        "concert" to "Концерты",
+        "theater" to "Спектакли",
+        "tour" to "Экскурсии",
+        "yarmarki-razvlecheniya-yarmarki" to "Ярмарки",
+        "recreation" to "Активный отдых",
+        "exhibition" to "Выставки",
+        "festival" to "Фестивали",
+        "education" to "Образование"
+    )
+    val result = mutableListOf<String>()
+    this.forEach { category ->
+        result.add(categoryMap[category] ?: category)
+    }
+    return result
 }
