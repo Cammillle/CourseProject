@@ -27,12 +27,15 @@ data class EventEntity(
     val imagesJson: String?, // JSON-строка списка URL
 )
 
-@Entity(tableName = "remote_keys")
+@Entity(
+    tableName = "remote_keys",
+    primaryKeys = ["eventId", "category"]
+)
 data class RemoteKeys(
-    @PrimaryKey val eventId: Long,
+    val eventId: Long,
     val prevKey: Int?,
     val nextKey: Int?,
-    val category: String?
+    val category: String
 )
 
 @Entity(

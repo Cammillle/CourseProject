@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun FeedFilters(
     selectedCategory: String?,
-    onCategorySelected: (String?) -> Unit,
+    onCategorySelected: (String) -> Unit,
 ) {
     val filters1 = listOf(
         "Концерты",
@@ -35,17 +35,7 @@ fun FeedFilters(
         "Выставки",
         "Фестивали"
     )
-    var selectedFilter by rememberSaveable { mutableStateOf<String?>(selectedCategory) }
-
-    val categoryMap = mapOf(
-        "Концерты" to "concert",
-        "Спектакли" to "theater",
-        "Экскурсии" to "tour",
-        "Ярмарки" to "yarmarki-razvlecheniya-yarmarki",
-        "Активный отдых" to "recreation",
-        "Выставки" to "exhibition",
-        "Фестивали" to "festival"
-    )
+    var selectedFilter by rememberSaveable { mutableStateOf(selectedCategory) }
 
     Column {
         LazyRow(
@@ -58,8 +48,8 @@ fun FeedFilters(
                     selected = selectedFilter == filter,
                     onClick = {
                         if (selectedFilter == filter) {
-                            selectedFilter = null
-                            onCategorySelected(filter)
+                            selectedFilter = "all"
+                            onCategorySelected("all")
                         } else {
                             selectedFilter = filter
                             onCategorySelected(filter)
@@ -78,8 +68,8 @@ fun FeedFilters(
                     selected = selectedFilter == filter,
                     onClick = {
                         if (selectedFilter == filter) {
-                            selectedFilter = null
-                            onCategorySelected(null)
+                            selectedFilter = "all"
+                            onCategorySelected("all")
                         } else {
                             selectedFilter = filter
                             onCategorySelected(filter)

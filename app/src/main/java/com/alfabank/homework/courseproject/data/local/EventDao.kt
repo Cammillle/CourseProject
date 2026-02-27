@@ -13,8 +13,11 @@ interface EventDao {
     // ---------- Paging ----------
 
     @Query("""
-        SELECT * FROM events
-        ORDER BY publicationDate DESC
+        SELECT e.* FROM events e
+        INNER JOIN event_category_cross_ref c
+        ON e.id = c.eventId
+        WHERE c.category = "all"
+        ORDER BY e.publicationDate DESC
     """)
     fun pagingSourceAll(): PagingSource<Int, EventEntity>
 

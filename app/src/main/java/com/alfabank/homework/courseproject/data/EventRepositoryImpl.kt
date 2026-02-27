@@ -6,8 +6,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.alfabank.homework.courseproject.DatabaseProvider
+import com.alfabank.homework.courseproject.data.local.AllEventsRemoteMediator
+import com.alfabank.homework.courseproject.data.local.CategoryEventsRemoteMediator
 import com.alfabank.homework.courseproject.data.local.EventEntity
-import com.alfabank.homework.courseproject.data.local.EventsRemoteMediator
 import com.alfabank.homework.courseproject.data.local.toItem
 import com.alfabank.homework.courseproject.domain.Item
 import kotlinx.coroutines.flow.Flow
@@ -22,30 +23,42 @@ object EventRepositoryImpl {
     private val dao = database.eventsDao()
 
     @OptIn(ExperimentalPagingApi::class)
-    fun getEvents(category: String?): Flow<PagingData<EventEntity>> {
-
+    fun getEventsWithCategory(category: String): Flow<PagingData<Item>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 20,
-                enablePlaceholders = false
+                initialLoadSize = 20,
             ),
-            remoteMediator = EventsRemoteMediator(
+            remoteMediator = CategoryEventsRemoteMediator(
                 category = category,
                 api = api,
                 db = database
             ),
             pagingSourceFactory = {
-                if (category == null) {
-                    database.eventsDao().pagingSourceAll()
-                } else {
-                    database.eventsDao().pagingSourceByCategory(category)
-                }
+                database.eventsDao().pagingSourceByCategory(category)
             }
-        ).flow
+        ).flow.map {
+            it.map { it.toItem() }
+        }
     }
 
-    private fun today(): String =
-        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            .format(Date())
+    @OptIn(ExperimentalPagingApi::class)
+    fun getEventsWithoutCategory(): Flow<PagingData<Item>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                initialLoadSize = 20,
+            ),
+            remoteMediator = AllEventsRemoteMediator(
+                api = api,
+                db = database
+            ),
+            pagingSourceFactory = {
+                database.eventsDao().pagingSourceAll()
+            }
+        ).flow.map {
+            it.map { it.toItem() }
+        }
+    }
 }
 

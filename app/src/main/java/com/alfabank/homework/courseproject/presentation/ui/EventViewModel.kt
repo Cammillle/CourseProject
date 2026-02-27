@@ -8,7 +8,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.alfabank.homework.courseproject.data.EventRepositoryImpl
-import com.alfabank.homework.courseproject.data.local.EventsRemoteMediator
+import com.alfabank.homework.courseproject.data.local.EventEntity
 import com.alfabank.homework.courseproject.domain.Item
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.FeedScreenEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,12 +20,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.lang.reflect.Array.set
 
 class EventViewModel : ViewModel() {
     private val repository = EventRepositoryImpl
-
     private val categoryMap = mapOf(
         "Концерты" to "concert",
         "Спектакли" to "theater",
@@ -36,16 +36,56 @@ class EventViewModel : ViewModel() {
         "Фестивали" to "festival"
     )
 
-    val selectedCategory = MutableStateFlow<String?>(null)
+    init{
+        Log.d("ViewModel", "Instance created: ${hashCode()}")
+    }
 
-    val events = selectedCategory
-        .flatMapLatest { category ->
-            repository.getEvents(category)
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("ViewModel", "Instance cleared: ${hashCode()}")
+
+    }
+
+    val selectedCategory = MutableStateFlow("all")
+
+    private val pagingDataCache = mutableMapOf<String, Flow<PagingData<Item>>>()
+
+    val currentPagingFlow: Flow<PagingData<Item>> = selectedCategory.flatMapLatest { category ->
+        Log.d("ViewModel", "Accessing category: $category")
+        pagingDataCache.getOrPut(category) {
+            Log.d("ViewModel", "Creating new flow for category: $category")
+            // Создаём поток для этой категории и кэшируем его в scope ViewModel
+            val flow = if (category == "all") {
+                repository.getEventsWithoutCategory()
+            } else {
+                repository.getEventsWithCategory(category)
+            }
+            flow.cachedIn(viewModelScope)
         }
+    }
+
+
+    private val eventsWithoutCategory = repository.getEventsWithoutCategory()
         .cachedIn(viewModelScope)
 
-    fun selectCategory(category: String?) {
-        selectedCategory.value = categoryMap[category]
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val eventsWithCategory = selectedCategory.flatMapLatest { category ->
+        repository.getEventsWithCategory(category)
+    }.cachedIn(viewModelScope)
+
+//    @OptIn(ExperimentalCoroutinesApi::class)
+//    val currentPagingFlow: Flow<PagingData<Item>> = selectedCategory
+//        .flatMapLatest { category ->
+//            if (category == "all") eventsWithoutCategory else eventsWithCategory
+//        }
+//        .cachedIn(viewModelScope)
+
+    fun selectCategory(category: String) {
+        if(category!="all"){
+            selectedCategory.value = categoryMap[category]!!
+        }else{
+            selectedCategory.value = category
+        }
     }
 
 

@@ -48,11 +48,10 @@ fun FeedScreen(
     onEventClick: (Long) -> Unit,
 ) {
     val viewModel: EventViewModel = viewModel()
-    val selectedCategory by viewModel.selectedCategory.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsStateWithLifecycle()
 
-    val lazyPagingItems = viewModel.events.collectAsLazyPagingItems()
-
-    val isRefreshing = lazyPagingItems.loadState.refresh is LoadState.Loading
+    val currentPagingFlow = viewModel.currentPagingFlow.collectAsLazyPagingItems()
+    val isRefreshing = currentPagingFlow.loadState.refresh is LoadState.Loading
 
     Column(
         modifier = Modifier
@@ -68,7 +67,7 @@ fun FeedScreen(
 
         PullToRefreshBox(
             isRefreshing = isRefreshing,
-            onRefresh = { lazyPagingItems.refresh() },
+            onRefresh = { currentPagingFlow.refresh() },
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)
@@ -79,9 +78,9 @@ fun FeedScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(
-                    count = lazyPagingItems.itemCount
+                    count = currentPagingFlow.itemCount
                 ) { index ->
-                    val event = lazyPagingItems[index]?.toItem()
+                    val event = currentPagingFlow[index]
                     event?.let { event ->
                         EventCard(
                             event = event,
@@ -90,7 +89,7 @@ fun FeedScreen(
                     }
                 }
                 // ---------- Append Loader ----------
-                when (lazyPagingItems.loadState.append) {
+                when (currentPagingFlow.loadState.append) {
                     is LoadState.Loading -> {
                         item {
                             Box(
@@ -105,7 +104,7 @@ fun FeedScreen(
                     is LoadState.Error -> {
                         item {
                             RetryItem {
-                                lazyPagingItems.retry()
+                                currentPagingFlow.retry()
                             }
                         }
                     }
@@ -115,8 +114,8 @@ fun FeedScreen(
             }
 
             // ---------- Empty State ----------
-            if (lazyPagingItems.itemCount == 0 &&
-                lazyPagingItems.loadState.refresh is LoadState.NotLoading
+            if (currentPagingFlow.itemCount == 0 &&
+                currentPagingFlow.loadState.refresh is LoadState.NotLoading
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -127,20 +126,18 @@ fun FeedScreen(
             }
 
             // ---------- First Load Error ----------
-            if (lazyPagingItems.loadState.refresh is LoadState.Error) {
-                val error = lazyPagingItems.loadState.refresh as LoadState.Error
+            if (currentPagingFlow.loadState.refresh is LoadState.Error) {
+                val error = currentPagingFlow.loadState.refresh as LoadState.Error
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     RetryItem(
                         message = error.error.message,
-                        onRetry = { lazyPagingItems.retry() }
+                        onRetry = { currentPagingFlow.retry() }
                     )
                 }
             }
-
-
         }
     }
 }
