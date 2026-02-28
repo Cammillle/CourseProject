@@ -26,7 +26,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -38,12 +37,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.alfabank.homework.courseproject.R
+import com.alfabank.homework.courseproject.domain.Item
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavouriteScreen(
-    categories: List<String> = emptyList()
+    items: List<Item> = emptyList(),
 ) {
+    val categories = mutableListOf<String>()
+    val map = mutableMapOf<String, List<Item>>()
+    items.forEach { item ->
+        val category = item.categories?.getOrNull(0) ?: "null"
+        categories.add(category)
+        map.getOrPut(category) { mutableListOf() }.plus(item)
+    }
+
     val mapImages = mapOf(
         "Концерты" to R.drawable.concert,
         "Спектакли" to R.drawable.theater,
@@ -82,17 +90,20 @@ fun FavouriteScreen(
             items(categories) { category ->
                 CategoryRow(
                     categoryName = category,
-                    imageId = mapImages[category] ?: R.drawable.festival
+                    imageId = mapImages[category] ?: R.drawable.festival,
+                    items = map[category] ?: emptyList()
                 )
             }
         }
     }
 }
 
+@Suppress("NonSkippableComposable")
 @Composable
 fun CategoryRow(
     categoryName: String,
-    imageId: Int
+    imageId: Int,
+    items: List<Item>
 ) {
     Column(
         modifier = Modifier
@@ -122,15 +133,18 @@ fun CategoryRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(5) { index ->
-                CategoryItemCard()
+            items(items) { item ->
+                CategoryItemCard(item)
             }
         }
     }
 }
 
+@Suppress("NonSkippableComposable")
 @Composable
-fun CategoryItemCard() {
+fun CategoryItemCard(
+    item: Item
+) {
     Card(
         modifier = Modifier
             .width(160.dp)
@@ -148,7 +162,6 @@ fun CategoryItemCard() {
                 .fillMaxSize()
                 .padding(12.dp)
         ) {
-            // Плейсхолдер изображения
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -168,9 +181,8 @@ fun CategoryItemCard() {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Заголовок элемента
             Text(
-                text = "Название",
+                text = item.title ?: "",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
@@ -179,7 +191,7 @@ fun CategoryItemCard() {
 
             // Описание
             Text(
-                text = "Описание элемента",
+                text = item.description ?: "",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 2,

@@ -25,5 +25,7 @@ data class Item(
     val lat: Double?,
     val lon: Double?,
 
+    var isBookmarked: Boolean = false,
+
     val publicationDate: String? // для сортировки
 )

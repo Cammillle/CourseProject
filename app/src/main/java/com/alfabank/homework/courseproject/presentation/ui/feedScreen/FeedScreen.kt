@@ -11,36 +11,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
-import androidx.compose.material3.pulltorefresh.pullToRefresh
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
-import com.alfabank.homework.courseproject.data.local.toItem
 import com.alfabank.homework.courseproject.domain.Item
-import com.alfabank.homework.courseproject.presentation.ui.EventViewModel
-import com.alfabank.homework.courseproject.presentation.ui.HomeState
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.components.FeedFilters
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,6 +30,8 @@ import com.alfabank.homework.courseproject.presentation.ui.homescreen.components
 fun FeedScreen(
     paddingValues: PaddingValues,
     onEventClick: (Long) -> Unit,
+    onBookmarkClick: (Item) -> Unit,
+    isBookmark:Boolean,
     selectedCategory: String,
     onSelectCategory: (String) -> Unit,
     isRefreshing: Boolean,
@@ -82,7 +66,9 @@ fun FeedScreen(
                     items(items = searchList, key = { it.id }) { event ->
                         EventCard(
                             event = event,
-                            onClick = { onEventClick(event.id) }
+                            onClick = { onEventClick(event.id) },
+                            onBookmarkClick = onBookmarkClick,
+                            isBookmark = isBookmark,
                         )
                     }
                 }
@@ -93,7 +79,9 @@ fun FeedScreen(
                     event?.let { event ->
                         EventCard(
                             event = event,
-                            onClick = { onEventClick(event.id) }
+                            onClick = { onEventClick(event.id) },
+                            onBookmarkClick = onBookmarkClick,
+                            isBookmark = isBookmark
                         )
                     }
                 }

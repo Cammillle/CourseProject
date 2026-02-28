@@ -58,3 +58,26 @@ fun EventEntity.toItem(): Item {
         categories = categories
     )
 }
+fun Item.toBookmarkEntity(): BookmarkEntity {
+    val imagesJson = images?.let { Json.encodeToString(it) }
+    val categoriesJson = categories?.let { Json.encodeToString(it) }
+    return BookmarkEntity(
+        id = id,
+        title = title,
+        description = description,
+        bodyText = bodyText,
+        price = price,
+        ageRestriction = ageRestriction,
+        address = address,
+        lat = lat,
+        lon = lon,
+        placeTitle = placeTitle,
+        startDate = startDate,
+        startTime = startTime,
+        isEndless = isEndless,
+        itemUrl = itemUrl,
+        publicationDate = publicationDate,
+        imagesJson = imagesJson,
+        categories = categoriesJson
+    )
+}

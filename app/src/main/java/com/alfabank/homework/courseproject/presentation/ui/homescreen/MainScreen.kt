@@ -11,9 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -24,13 +21,13 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.room.util.query
 import com.alfabank.homework.courseproject.navigation.AppNavGraph
 import com.alfabank.homework.courseproject.navigation.NavigationItem
 import com.alfabank.homework.courseproject.navigation.Screen
 import com.alfabank.homework.courseproject.navigation.rememberNavigationState
 import com.alfabank.homework.courseproject.presentation.ui.EventViewModel
 import com.alfabank.homework.courseproject.presentation.ui.favouritescreen.FavouriteScreen
+import com.alfabank.homework.courseproject.presentation.ui.favouritescreen.FavouriteViewModel
 import com.alfabank.homework.courseproject.presentation.ui.filterScreen.EventsFilterScreen
 import com.alfabank.homework.courseproject.presentation.ui.feedScreen.FeedScreen
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.components.FeedTopBar
@@ -43,6 +40,9 @@ import com.alfabank.homework.courseproject.presentation.ui.profilescreen.Profile
 fun MainScreen() {
     val viewModel: EventViewModel = viewModel()
     val selectedCategory by viewModel.selectedCategory.collectAsStateWithLifecycle()
+
+    val favouriteViewModel: FavouriteViewModel = viewModel()
+    val favouriteState = favouriteViewModel.state.collectAsStateWithLifecycle()
 
     val currentPagingFlow = viewModel.currentPagingFlow.collectAsLazyPagingItems()
     val isRefreshing = currentPagingFlow.loadState.refresh is LoadState.Loading
@@ -135,7 +135,19 @@ fun MainScreen() {
                     },
                     isRefreshing = isRefreshing,
                     currentPagingFlow = currentPagingFlow,
-                    searchList = searchList
+                    searchList = searchList,
+                    onBookmarkClick = { event ->
+                        val dd = favouriteViewModel.isBookmarked(event.id)
+                        if (dd) {
+                            favouriteViewModel.addBookmark(event)
+                        } else {
+                            favouriteViewModel.removeBookmark(event.id)
+                        }
+                    },
+                    isBookmark = {
+                        val fav = favouriteState.value.items.orEmpty().any { it.id == it.id }
+                        fav
+                    }
                 )
             },
             eventsFeedFiltersScreenContent = {
@@ -146,9 +158,12 @@ fun MainScreen() {
                     onResetFilters = { navigationState.navHostController.popBackStack() }
                 )
             },
-            favouriteScreenContent = { FavouriteScreen(
-                categories = listOf("Театры","Фестивали","Концерты")
-            ) },
+            favouriteScreenContent = {
+
+                FavouriteScreen(
+                    items = favouriteState.value.items ?: emptyList()
+                )
+            },
             profileScreenContent = { ProfileScreen() },
             guidsScreenContent = {
                 GuidScreen(

@@ -7,6 +7,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.alfabank.homework.courseproject.data.EventRepositoryImpl
 import com.alfabank.homework.courseproject.data.local.EventEntity
 import com.alfabank.homework.courseproject.domain.Item
@@ -73,7 +74,6 @@ class EventViewModel : ViewModel() {
             flow.cachedIn(viewModelScope)
         }
     }
-
 
     private val eventsWithoutCategory = repository.getEventsWithoutCategory()
         .cachedIn(viewModelScope)
