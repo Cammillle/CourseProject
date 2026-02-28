@@ -1,9 +1,5 @@
 package com.alfabank.homework.courseproject.presentation.ui.feedScreen
 
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,19 +23,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -56,9 +48,9 @@ fun EventCard(
     event: Item,
     onClick: (Long) -> Unit,
     onBookmarkClick: (Item) -> Unit,
-    isBookmark: Boolean
 ) {
-    val isFavorite by rememberSaveable { mutableStateOf(isBookmark) }
+    val isFavorite = event.isFavourite
+   // val isFavorite by rememberSaveable { mutableStateOf(event.isFavourite) }
 
     Card(
         modifier = Modifier

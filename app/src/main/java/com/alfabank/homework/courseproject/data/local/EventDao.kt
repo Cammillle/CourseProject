@@ -5,7 +5,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -31,6 +30,16 @@ interface EventDao {
     """)
     fun pagingSourceByCategory(category: String): PagingSource<Int, EventEntity>
 
+    @Query("SELECT COUNT(*) FROM events")
+    suspend fun getEventsCount(): Int
+
+    @Query("""
+        SELECT COUNT(*) FROM events e
+        INNER JOIN event_category_cross_ref c
+        ON e.id = c.eventId
+        WHERE c.category = :category
+    """)
+    suspend fun getEventsCountByCategory(category:String): Int
 
     // ---------- Insert ----------
 
@@ -69,5 +78,13 @@ interface EventDao {
     //------------Search----------------------
     @Query("SELECT * FROM events WHERE title LIKE '%' || :query || '%'")
     fun searchEvent(query:String): Flow<List<EventEntity>>
+
+
+    //---Favorite----
+    @Query("UPDATE events SET isFavourite = :isFavorite WHERE id = :eventId")
+    suspend fun updateFavorite(eventId: Long, isFavorite: Boolean)
+
+    @Query("select * from events where isFavourite = 1")
+     fun getFavouriteEvents(): Flow<List<EventEntity>>
 
 }

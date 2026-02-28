@@ -19,6 +19,16 @@ class CategoryEventsRemoteMediator(
 ) : RemoteMediator<Int, EventEntity>() {
     private val eventsDao = db.eventsDao()
     private val remoteKeysDao = db.remoteKeysDao()
+
+//    override suspend fun initialize(): InitializeAction {
+//        val hasData = eventsDao.getEventsCountByCategory(category) > 0
+//        return if (hasData) {
+//            InitializeAction.SKIP_INITIAL_REFRESH
+//        } else {
+//            InitializeAction.LAUNCH_INITIAL_REFRESH
+//        }
+//    }
+
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, EventEntity>
@@ -54,7 +64,9 @@ class CategoryEventsRemoteMediator(
                 categories = category
             )
             val events = response.results?.let {
-                it.map { it.toEventEntity() }
+                it.map {
+                    it.toEventEntity()
+                }
             } ?: emptyList()
             val endOfPaginationReached = events.isEmpty() || response.next == null
 

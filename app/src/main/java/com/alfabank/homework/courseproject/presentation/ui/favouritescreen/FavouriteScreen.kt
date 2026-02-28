@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.presentation.ui.favouritescreen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,10 +33,14 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.alfabank.homework.courseproject.R
 import com.alfabank.homework.courseproject.domain.Item
 
@@ -44,13 +49,12 @@ import com.alfabank.homework.courseproject.domain.Item
 fun FavouriteScreen(
     items: List<Item> = emptyList(),
 ) {
-    val categories = mutableListOf<String>()
-    val map = mutableMapOf<String, List<Item>>()
-    items.forEach { item ->
-        val category = item.categories?.getOrNull(0) ?: "null"
-        categories.add(category)
-        map.getOrPut(category) { mutableListOf() }.plus(item)
+    Log.d("Favoruite screen", "Items $items")
+    val itemsByCategory = items.groupBy { item ->
+        item.categories?.getOrNull(0)?.convertCategory() ?: "Другое"
     }
+    Log.d("Favoruite screen", "Map $itemsByCategory")
+
 
     val mapImages = mapOf(
         "Концерты" to R.drawable.concert,
@@ -87,11 +91,11 @@ fun FavouriteScreen(
                 .padding(bottom = 100.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            items(categories) { category ->
+            items(itemsByCategory.entries.toList()) { (category, categoryItem) ->
                 CategoryRow(
                     categoryName = category,
                     imageId = mapImages[category] ?: R.drawable.festival,
-                    items = map[category] ?: emptyList()
+                    items = categoryItem
                 )
             }
         }
@@ -105,6 +109,8 @@ fun CategoryRow(
     imageId: Int,
     items: List<Item>
 ) {
+    Log.d("Favoruite screen", "Items $items")
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -134,6 +140,7 @@ fun CategoryRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(items) { item ->
+                Log.d("Favoruite screen", "Item $item")
                 CategoryItemCard(item)
             }
         }
@@ -162,22 +169,20 @@ fun CategoryItemCard(
                 .fillMaxSize()
                 .padding(12.dp)
         ) {
-            Box(
+            val imageRequest = ImageRequest.Builder(LocalContext.current)
+                .data(item.images?.getOrNull(0))
+                .memoryCacheKey("list-image-${item.id}")
+                .placeholderMemoryCacheKey("list-image-${item.id}")
+                .build()
+
+            AsyncImage(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                        shape = RoundedCornerShape(8.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
+                    .height(100.dp),
+                model = imageRequest,
+                contentDescription = "",
+                contentScale = ContentScale.Crop
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -199,4 +204,18 @@ fun CategoryItemCard(
             )
         }
     }
+}
+
+private fun String.convertCategory(): String {
+    val categoryMap = mapOf(
+        "concert" to "Концерты",
+        "theater" to "Спектакли",
+        "tour" to "Экскурсии",
+        "yarmarki-razvlecheniya-yarmarki" to "Ярмарки",
+        "recreation" to "Активный отдых",
+        "exhibition" to "Выставки",
+        "festival" to "Фестивали",
+        "kids" to "Для детей"
+    )
+    return categoryMap[this] ?: "Концерты"
 }

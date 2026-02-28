@@ -30,7 +30,7 @@ fun EventDTO.toEventEntity(): EventEntity {
         lat = place?.coords?.lat ?: location?.coords?.lat,
         lon = place?.coords?.lon ?: location?.coords?.lon,
         publicationDate = publicationDate,
-        categories = categoriesJson
+        categories = categoriesJson,
     )
 }
 
@@ -55,29 +55,7 @@ fun EventEntity.toItem(): Item {
         lat = lat,
         lon = lon,
         publicationDate = publicationDate,
-        categories = categories
-    )
-}
-fun Item.toBookmarkEntity(): BookmarkEntity {
-    val imagesJson = images?.let { Json.encodeToString(it) }
-    val categoriesJson = categories?.let { Json.encodeToString(it) }
-    return BookmarkEntity(
-        id = id,
-        title = title,
-        description = description,
-        bodyText = bodyText,
-        price = price,
-        ageRestriction = ageRestriction,
-        address = address,
-        lat = lat,
-        lon = lon,
-        placeTitle = placeTitle,
-        startDate = startDate,
-        startTime = startTime,
-        isEndless = isEndless,
-        itemUrl = itemUrl,
-        publicationDate = publicationDate,
-        imagesJson = imagesJson,
-        categories = categoriesJson
+        categories = categories,
+        isFavourite = isFavourite
     )
 }

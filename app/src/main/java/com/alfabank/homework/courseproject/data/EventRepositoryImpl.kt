@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.data
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -8,6 +9,7 @@ import androidx.paging.map
 import com.alfabank.homework.courseproject.DatabaseProvider
 import com.alfabank.homework.courseproject.data.local.AllEventsRemoteMediator
 import com.alfabank.homework.courseproject.data.local.CategoryEventsRemoteMediator
+import com.alfabank.homework.courseproject.data.local.EventEntity
 import com.alfabank.homework.courseproject.data.local.toItem
 import com.alfabank.homework.courseproject.domain.Item
 import kotlinx.coroutines.Dispatchers
@@ -74,6 +76,18 @@ object EventRepositoryImpl {
     fun searchEvent(query: String): Flow<List<Item>> {
         return dao.searchEvent(query).map { list ->
             list.map { entity -> entity.toItem() }
+        }
+    }
+
+    //Favourite
+    suspend fun toggleFavorite(id: Long, current: Boolean) {
+        dao.updateFavorite(id, !current)
+    }
+
+     fun getFavouriteEvents(): Flow<List<Item>> = flow{
+        val response = dao.getFavouriteEvents()
+        response.collect{
+            emit(it.map { it.toItem() })
         }
     }
 

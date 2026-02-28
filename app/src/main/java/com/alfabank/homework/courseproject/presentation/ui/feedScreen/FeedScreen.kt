@@ -31,7 +31,6 @@ fun FeedScreen(
     paddingValues: PaddingValues,
     onEventClick: (Long) -> Unit,
     onBookmarkClick: (Item) -> Unit,
-    isBookmark:Boolean,
     selectedCategory: String,
     onSelectCategory: (String) -> Unit,
     isRefreshing: Boolean,
@@ -68,12 +67,12 @@ fun FeedScreen(
                             event = event,
                             onClick = { onEventClick(event.id) },
                             onBookmarkClick = onBookmarkClick,
-                            isBookmark = isBookmark,
                         )
                     }
                 }
                 items(
-                    count = currentPagingFlow.itemCount
+                    count = currentPagingFlow.itemCount,
+                    key = { index -> currentPagingFlow[index]?.id ?: index }
                 ) { index ->
                     val event = currentPagingFlow[index]
                     event?.let { event ->
@@ -81,7 +80,6 @@ fun FeedScreen(
                             event = event,
                             onClick = { onEventClick(event.id) },
                             onBookmarkClick = onBookmarkClick,
-                            isBookmark = isBookmark
                         )
                     }
                 }

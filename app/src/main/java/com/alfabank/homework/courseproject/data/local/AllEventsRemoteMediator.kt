@@ -19,6 +19,15 @@ class AllEventsRemoteMediator(
     private val eventsDao = db.eventsDao()
     private val remoteKeysDao = db.remoteKeysDao()
 
+    override suspend fun initialize(): InitializeAction {
+        val hasData = eventsDao.getEventsCount() > 0
+        return if (hasData) {
+            InitializeAction.SKIP_INITIAL_REFRESH
+        } else {
+            InitializeAction.LAUNCH_INITIAL_REFRESH
+        }
+    }
+
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, EventEntity>
@@ -32,13 +41,17 @@ class AllEventsRemoteMediator(
                 }
 
                 LoadType.PREPEND -> {
+                    Log.d("EventsRemoteMediator", "MEDIATOR PREPENd: $loadType")
+
                     val remoteKeys = getRemoteKeyForFirstItemWithoutCategory(state)
                     val prevKey = remoteKeys?.prevKey
-                        ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                        ?: return MediatorResult.Success(endOfPaginationReached = true)
                     prevKey
                 }
 
                 LoadType.APPEND -> {
+                    Log.d("EventsRemoteMediator", "MEDIATOR APPEND: $loadType")
+
                     val remoteKeys = getRemoteKeyForLastItemWithoutCategory(state)
                     val nextKey = remoteKeys?.nextKey
                         ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
@@ -52,14 +65,16 @@ class AllEventsRemoteMediator(
                 page = page
             )
             val events = response.results?.let {
-                it.map { it.toEventEntity() }
+                it.map {
+                    it.toEventEntity()
+                }
             } ?: emptyList()
-            val endOfPaginationReached = events.isEmpty() || response.next == null
+            val endOfPaginationReached =  events.isEmpty() || response.next == null
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     remoteKeysDao.clearByCategory("all") //удаление ключей
-                   // eventsDao.clearCrossRefs() //удаление старых связей
+                    // eventsDao.clearCrossRefs() //удаление старых связей
                 }
                 val prevKey = if (page > 1) page - 1 else null
                 val nextKey = if (endOfPaginationReached) null else page + 1
@@ -81,6 +96,7 @@ class AllEventsRemoteMediator(
                 eventsDao.insertEvents(events)
                 eventsDao.insertCategoryCrossRefs(crossRefs)
             }
+            Log.d("Paging", "loadType=$loadType, page=$page, events.size=${events.size}, next=${response.next}, endOfPaginationReached=$endOfPaginationReached")
             return MediatorResult.Success(
                 endOfPaginationReached = endOfPaginationReached
             )

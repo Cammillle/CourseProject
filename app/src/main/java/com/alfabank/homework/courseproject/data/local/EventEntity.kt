@@ -22,6 +22,7 @@ data class EventEntity(
     val publicationDate: String?,
     val imagesJson: String?, // JSON-строка списка URL
     val categories: String?, // JSON-строка
+    val isFavourite: Boolean = false
 )
 
 @Entity(

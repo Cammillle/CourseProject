@@ -66,7 +66,7 @@ import com.alfabank.homework.courseproject.presentation.ui.theme.ProjectYellow
 @Composable
 fun EventDetailScreen(
     onBackClick: () -> Unit,
-    onAddFavourite: (Long) -> Unit,
+    onAddFavourite: (Item) -> Unit,
     onMapNavigate: (MapScreenArgs) -> Unit
 ) {
     //передача id ивента через SavedStateHandle, достаем из вьюмодели
@@ -74,7 +74,6 @@ fun EventDetailScreen(
     val eventState = viewModel.eventState.collectAsStateWithLifecycle()
     val state = eventState.value
 
-    var isLiked by remember { mutableStateOf(false) }
 
     Log.d("TAGTAG", "State screen $state ")
 
@@ -125,10 +124,11 @@ fun EventDetailScreen(
                         )
                     }
 
+                    var isFavourite by remember { mutableStateOf(event.isFavourite) }
                     IconButton(
                         onClick = {
-                            isLiked = !isLiked
-                            onAddFavourite(event.id)
+                            onAddFavourite(event)
+                            isFavourite = !isFavourite
                         },
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 52.dp)
@@ -136,7 +136,7 @@ fun EventDetailScreen(
                             .size(48.dp)
                     ) {
                         Icon(
-                            imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            imageVector = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                             contentDescription = "Like",
                             tint = ProjectYellow,
                             modifier = Modifier.size(24.dp)

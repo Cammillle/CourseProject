@@ -27,7 +27,6 @@ import com.alfabank.homework.courseproject.navigation.Screen
 import com.alfabank.homework.courseproject.navigation.rememberNavigationState
 import com.alfabank.homework.courseproject.presentation.ui.EventViewModel
 import com.alfabank.homework.courseproject.presentation.ui.favouritescreen.FavouriteScreen
-import com.alfabank.homework.courseproject.presentation.ui.favouritescreen.FavouriteViewModel
 import com.alfabank.homework.courseproject.presentation.ui.filterScreen.EventsFilterScreen
 import com.alfabank.homework.courseproject.presentation.ui.feedScreen.FeedScreen
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.components.FeedTopBar
@@ -41,9 +40,9 @@ fun MainScreen() {
     val viewModel: EventViewModel = viewModel()
     val selectedCategory by viewModel.selectedCategory.collectAsStateWithLifecycle()
 
-    val favouriteViewModel: FavouriteViewModel = viewModel()
-    val favouriteState = favouriteViewModel.state.collectAsStateWithLifecycle()
-
+    val favouriteEvents = viewModel.favouriteItems.collectAsStateWithLifecycle(
+        initialValue = emptyList()
+    )
     val currentPagingFlow = viewModel.currentPagingFlow.collectAsLazyPagingItems()
     val isRefreshing = currentPagingFlow.loadState.refresh is LoadState.Loading
     val searchList by viewModel.searchResults.collectAsStateWithLifecycle(
@@ -137,16 +136,7 @@ fun MainScreen() {
                     currentPagingFlow = currentPagingFlow,
                     searchList = searchList,
                     onBookmarkClick = { event ->
-                        val dd = favouriteViewModel.isBookmarked(event.id)
-                        if (dd) {
-                            favouriteViewModel.addBookmark(event)
-                        } else {
-                            favouriteViewModel.removeBookmark(event.id)
-                        }
-                    },
-                    isBookmark = {
-                        val fav = favouriteState.value.items.orEmpty().any { it.id == it.id }
-                        fav
+                        viewModel.onFavouriteClick(event)
                     }
                 )
             },
@@ -161,7 +151,7 @@ fun MainScreen() {
             favouriteScreenContent = {
 
                 FavouriteScreen(
-                    items = favouriteState.value.items ?: emptyList()
+                    items = favouriteEvents.value
                 )
             },
             profileScreenContent = { ProfileScreen() },
@@ -175,7 +165,9 @@ fun MainScreen() {
             feedScreenContent = { id ->
                 EventDetailScreen(
                     onBackClick = { navigationState.navHostController.popBackStack() },
-                    onAddFavourite = {},
+                    onAddFavourite = { item ->
+                        viewModel.onFavouriteClick(item)
+                    },
                     onMapNavigate = { mapArgs ->
                         navigationState.navigateToYandexMap(mapArgs)
                     }
