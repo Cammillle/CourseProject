@@ -137,16 +137,12 @@ fun MainScreen() {
                     currentPagingFlow = currentPagingFlow,
                     searchList = searchList,
                     onBookmarkClick = { event ->
-                        val dd = favouriteViewModel.isBookmarked(event.id)
-                        if (dd) {
-                            favouriteViewModel.addBookmark(event)
-                        } else {
+                        val isBookmark = favouriteViewModel.isBookmarked(event.id)
+                        if (isBookmark) {
                             favouriteViewModel.removeBookmark(event.id)
+                        } else {
+                            favouriteViewModel.addBookmark(event)
                         }
-                    },
-                    isBookmark = {
-                        val fav = favouriteState.value.items.orEmpty().any { it.id == it.id }
-                        fav
                     }
                 )
             },

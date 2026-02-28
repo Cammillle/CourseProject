@@ -56,9 +56,8 @@ fun EventCard(
     event: Item,
     onClick: (Long) -> Unit,
     onBookmarkClick: (Item) -> Unit,
-    isBookmark: Boolean
 ) {
-    val isFavorite by rememberSaveable { mutableStateOf(isBookmark) }
+    val isFavorite by rememberSaveable { mutableStateOf(event.isBookmarked) }
 
     Card(
         modifier = Modifier

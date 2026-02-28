@@ -3,6 +3,8 @@ package com.alfabank.homework.courseproject.data.local
 import com.alfabank.homework.courseproject.DatabaseProvider
 import com.alfabank.homework.courseproject.data.EventsApi
 import com.alfabank.homework.courseproject.domain.Item
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 object BookmarkRepositoryImpl {
     private val api = EventsApi()
@@ -20,8 +22,8 @@ object BookmarkRepositoryImpl {
 
     suspend fun isBookmarked(id: Long): Boolean = bookmarkDao.isBookmarked(id)
 
-    suspend fun getBookmarks(): List<Item> {
-        return bookmarkDao.getBookmarks().map { it.toItem() }
+    fun getBookmarks(): Flow<List<Item>> = flow {
+        emit(bookmarkDao.getBookmarks().map { it.toItem() })
     }
 
 

@@ -31,7 +31,6 @@ fun FeedScreen(
     paddingValues: PaddingValues,
     onEventClick: (Long) -> Unit,
     onBookmarkClick: (Item) -> Unit,
-    isBookmark:Boolean,
     selectedCategory: String,
     onSelectCategory: (String) -> Unit,
     isRefreshing: Boolean,
@@ -68,7 +67,6 @@ fun FeedScreen(
                             event = event,
                             onClick = { onEventClick(event.id) },
                             onBookmarkClick = onBookmarkClick,
-                            isBookmark = isBookmark,
                         )
                     }
                 }
@@ -81,7 +79,6 @@ fun FeedScreen(
                             event = event,
                             onClick = { onEventClick(event.id) },
                             onBookmarkClick = onBookmarkClick,
-                            isBookmark = isBookmark
                         )
                     }
                 }

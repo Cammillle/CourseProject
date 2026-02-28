@@ -20,20 +20,20 @@ class FavouriteViewModel : ViewModel() {
         _state.update { state ->
             state.copy(isLoading = true)
         }
-        val bookmarks = bookmarkRepository.getBookmarks()
-        _state.update { state ->
-            state.copy(items = bookmarks, isLoading = false)
+        bookmarkRepository.getBookmarks().collect {bookmarks->
+            _state.update { state ->
+                state.copy(items = bookmarks, isLoading = false)
+            }
         }
+
     }
 
     fun addBookmark(item: Item) = viewModelScope.launch {
         bookmarkRepository.addBookmark(item)
-        isBookmarked(item.id)
     }
 
     fun removeBookmark(id: Long) = viewModelScope.launch {
         bookmarkRepository.deleteBookmark(id)
-        isBookmarked(id)
     }
 
     fun isBookmarked(id: Long): Boolean {

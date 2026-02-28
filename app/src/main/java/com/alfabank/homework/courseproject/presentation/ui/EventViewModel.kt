@@ -9,6 +9,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.alfabank.homework.courseproject.data.EventRepositoryImpl
+import com.alfabank.homework.courseproject.data.local.BookmarkRepositoryImpl
 import com.alfabank.homework.courseproject.data.local.EventEntity
 import com.alfabank.homework.courseproject.domain.Item
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.FeedScreenEvent
@@ -35,6 +36,7 @@ import java.lang.reflect.Array.set
 
 class EventViewModel : ViewModel() {
     private val repository = EventRepositoryImpl
+    private val bookmarkRepository = BookmarkRepositoryImpl
     private val categoryMap = mapOf(
         "Концерты" to "concert",
         "Спектакли" to "theater",
@@ -54,6 +56,8 @@ class EventViewModel : ViewModel() {
         Log.d("ViewModel", "Instance cleared: ${hashCode()}")
     }
 
+    private val bookmarkedFlow = bookmarkRepository.getBookmarks()
+
     val selectedCategory = MutableStateFlow("all")
 
     private val pagingDataCache = mutableMapOf<String, Flow<PagingData<Item>>>()
@@ -63,16 +67,22 @@ class EventViewModel : ViewModel() {
 
     val currentPagingFlow: Flow<PagingData<Item>> = selectedCategory.flatMapLatest { category ->
         Log.d("ViewModel", "Accessing category: $category")
-        pagingDataCache.getOrPut(category) {
-            Log.d("ViewModel", "Creating new flow for category: $category")
-            // Создаём поток для этой категории и кэшируем его в scope ViewModel
-            val flow = if (category == "all") {
-                repository.getEventsWithoutCategory()
-            } else {
-                repository.getEventsWithCategory(category)
+
+        Log.d("ViewModel", "Creating new flow for category: $category")
+
+        // Создаём поток для этой категории и кэшируем его в scope ViewModel
+        val baseFlow = if (category == "all") {
+            repository.getEventsWithoutCategory()
+        } else {
+            repository.getEventsWithCategory(category)
+        }.cachedIn(viewModelScope)
+
+        combine(baseFlow, bookmarkedFlow) { pagingData, bookmark ->
+            pagingData.map { item ->
+                item.copy(isBookmarked = item in bookmark)
             }
-            flow.cachedIn(viewModelScope)
         }
+
     }
 
     private val eventsWithoutCategory = repository.getEventsWithoutCategory()
