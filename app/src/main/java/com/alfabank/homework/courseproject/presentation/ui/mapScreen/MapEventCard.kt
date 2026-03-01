@@ -146,7 +146,8 @@ fun MapEventCard(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                     Text(
-                        text = event.ageRestriction ?: "0+",
+                        text = if (event.ageRestriction == "0") "0+" else event.ageRestriction
+                            ?: "0+",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold
                     )

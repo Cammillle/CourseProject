@@ -114,17 +114,17 @@ fun FeedScreen(
             Log.d("Paging","currentPagingFlow itemCount ${currentPagingFlow.itemCount}")
             Log.d("Paging","currentPagingFlow load state refresh ${currentPagingFlow.loadState.refresh}")
 
-//            // ---------- Empty State ----------
-//            if (currentPagingFlow.itemCount == 0 &&
-//                currentPagingFlow.loadState.refresh is LoadState.NotLoading
-//            ) {
-//                Box(
-//                    modifier = Modifier.fillMaxSize(),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    Text("No events found")
-//                }
-//            }
+            // ---------- Empty State ----------
+            if (currentPagingFlow.itemCount == 0 &&
+                currentPagingFlow.loadState.refresh is LoadState.NotLoading
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No events found")
+                }
+            }
 
             // ---------- First Load Error ----------
             if (currentPagingFlow.loadState.refresh is LoadState.Error) {

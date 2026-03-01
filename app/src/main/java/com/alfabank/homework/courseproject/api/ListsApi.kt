@@ -20,8 +20,6 @@ interface ListsApi {
         //@Query("fields") fields: List<String> = listOf("-body_text"),
         @Query("expand") expand: List<String> = listOf("place","images")
     ): ListItemResponseDTO
-
-
 }
 
 

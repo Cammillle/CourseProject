@@ -150,7 +150,8 @@ fun FeedTopBar(
                 selectedCity = city
                 showCityDialog = false
                 Log.d("city","$city")
-                onCitySelected(city.getSlug())
+                val slug = city.getSlug()
+                onCitySelected(slug)
                 Log.d("city","${city.getSlug()}")
             }
         )

@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.presentation.ui.mapScreen
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,7 +24,6 @@ class MapScreenViewModel(
     val screenState = _screenState.asStateFlow()
 
 
-
     private fun createInitialState(args: MapScreenArgs?): MapScreenState {
         return when (args) {
             is MapScreenArgs.ListData -> {
@@ -33,6 +33,7 @@ class MapScreenViewModel(
                     events = items,
                 )
             }
+
             is MapScreenArgs.SingleItem -> {
                 val item = args.item
                 MapScreenState(
@@ -45,6 +46,7 @@ class MapScreenViewModel(
                     events = listOf(item),
                 )
             }
+
             null -> {
                 // Значения по умолчанию, если аргументов нет (маловероятно)
                 MapScreenState(
@@ -58,8 +60,12 @@ class MapScreenViewModel(
     private fun calculateCameraPositionForItems(items: List<Item>): CameraPosition {
         // Реализация: найти среднюю точку или использовать первую точку с подходящим зумом
         return if (items.isNotEmpty()) {
-            val first = items.first()
-            CameraPosition(Point(first.lat ?: 59.939094, first.lon ?: 30.315868), 11f, 0f, 0f)
+            CameraPosition(
+                Point(items.first().lat ?: 59.939094, items.first().lon ?: 30.315868),
+                11f,
+                0f,
+                0f
+            )
         } else {
             CameraPosition(Point(59.9342802, 30.3350986), 11f, 0f, 0f)
         }
