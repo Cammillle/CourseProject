@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class EventEntity(
     @PrimaryKey val id: Long,
     val title: String?,
+    val city: String,
     val description: String?,
     val bodyText: String?,
     val price: String?,
@@ -27,20 +28,22 @@ data class EventEntity(
 
 @Entity(
     tableName = "remote_keys",
-    primaryKeys = ["eventId", "category"]
+    primaryKeys = ["eventId", "category", "city"]
 )
 data class RemoteKeys(
     val eventId: Long,
     val prevKey: Int?,
     val nextKey: Int?,
-    val category: String
+    val category: String,
+    val city: String
 )
 
 @Entity(
     tableName = "event_category_cross_ref",
-    primaryKeys = ["eventId", "category"]
+    primaryKeys = ["eventId", "category", "city"]
 )
 data class EventCategoryCrossRef(
     val eventId: Long,
-    val category: String
+    val category: String,
+    val city: String
 )

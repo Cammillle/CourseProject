@@ -80,5 +80,6 @@ fun ItemDTO.toItem(): Item {
         isEndless = null,
         bodyText = bodyText,
         publicationDate = publicationDate,
+        city = ""
     )
 }

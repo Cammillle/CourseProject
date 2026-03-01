@@ -14,13 +14,14 @@ import java.util.Locale
 @OptIn(ExperimentalPagingApi::class)
 class AllEventsRemoteMediator(
     private val api: EventsApi,
-    private val db: EventDatabase
+    private val db: EventDatabase,
+    private val city: String
 ) : RemoteMediator<Int, EventEntity>() {
     private val eventsDao = db.eventsDao()
     private val remoteKeysDao = db.remoteKeysDao()
 
     override suspend fun initialize(): InitializeAction {
-        val hasData = eventsDao.getEventsCount() > 0
+        val hasData = eventsDao.getEventsCount(city) > 0
         return if (hasData) {
             InitializeAction.SKIP_INITIAL_REFRESH
         } else {
@@ -62,7 +63,8 @@ class AllEventsRemoteMediator(
             // ---------- API ----------
             val response = api.getEventsWithoutFilters(
                 actualSince = today(),
-                page = page
+                page = page,
+                location = city //spb   slug
             )
             val events = response.results?.let {
                 it.map {
@@ -73,7 +75,7 @@ class AllEventsRemoteMediator(
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    remoteKeysDao.clearByCategory("all") //удаление ключей
+                    remoteKeysDao.clearByCategory("all", city) //удаление ключей
                     // eventsDao.clearCrossRefs() //удаление старых связей
                 }
                 val prevKey = if (page > 1) page - 1 else null
@@ -83,13 +85,15 @@ class AllEventsRemoteMediator(
                         eventId = it.id,
                         prevKey = prevKey,
                         nextKey = nextKey,
-                        category = "all"
+                        category = "all",
+                        city = city
                     )
                 }
                 val crossRefs = events.map {
                     EventCategoryCrossRef(
                         eventId = it.id,
-                        category = "all"
+                        category = "all",
+                        city = city
                     )
                 }
                 remoteKeysDao.insertAllKeys(keys)
@@ -111,7 +115,7 @@ class AllEventsRemoteMediator(
     private suspend fun getRemoteKeyForLastItemWithoutCategory(state: PagingState<Int, EventEntity>): RemoteKeys? {
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
             ?.let { event ->
-                remoteKeysDao.getRemoteKeysEventIdNoCategory(event.id)
+                remoteKeysDao.getRemoteKeysEventIdNoCategory(event.id, city)
             }
     }
 
@@ -120,7 +124,7 @@ class AllEventsRemoteMediator(
     ): RemoteKeys? {
         return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
             ?.let { event ->
-                remoteKeysDao.getRemoteKeysEventIdNoCategory(event.id)
+                remoteKeysDao.getRemoteKeysEventIdNoCategory(event.id, city)
             }
     }
 
@@ -129,7 +133,7 @@ class AllEventsRemoteMediator(
     ): RemoteKeys? {
         return state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.id?.let { repoId ->
-                remoteKeysDao.getRemoteKeysEventIdNoCategory(repoId)
+                remoteKeysDao.getRemoteKeysEventIdNoCategory(repoId, city)
             }
         }
     }

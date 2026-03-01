@@ -223,7 +223,7 @@ fun EventCard(
 
                     // Город
                     Text(
-                        text = "Санкт-Петербург",
+                        text = event.city,
                         style = TextStyle(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 14.sp,

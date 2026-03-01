@@ -14,8 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alfabank.homework.courseproject.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,18 +26,8 @@ fun FullScreenCityDialog(
     onDismiss: () -> Unit,
     onCitySelected: (String) -> Unit
 ) {
-    val cities = listOf(
-        "Москва",
-        "Санкт-Петербург",
-        "Новосибирск",
-        "Екатеринбург",
-        "Казань",
-        "Нижний Новгород",
-        "Челябинск",
-        "Самара",
-        "Омск",
-        "Ростов-на-Дону"
-    )
+    val context = LocalContext.current
+    val cities = context.resources.getStringArray(R.array.cities)
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,

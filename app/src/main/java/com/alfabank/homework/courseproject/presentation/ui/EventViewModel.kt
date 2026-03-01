@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class EventViewModel : ViewModel() {
@@ -47,7 +48,15 @@ class EventViewModel : ViewModel() {
         Log.d("ViewModel", "Instance cleared: ${hashCode()}")
     }
 
-    val selectedCategory = MutableStateFlow("all")
+    private val _query = MutableStateFlow(
+        Queries(
+            city = "spb",
+            category = "all"
+        )
+    )
+    val query = _query.asStateFlow()
+
+    //val selectedCategory = MutableStateFlow("all")
 
     val favouriteItems = repository.getFavouriteEvents()
 
@@ -55,19 +64,18 @@ class EventViewModel : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
-    val currentPagingFlow: Flow<PagingData<Item>> = selectedCategory.flatMapLatest { category ->
-        Log.d("ViewModel", "Accessing category: $category")
-        Log.d("ViewModel", "Creating new flow for category: $category")
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val currentPagingFlow: Flow<PagingData<Item>> = _query.flatMapLatest { query ->
+        Log.d("ViewModel", "Accessing category: $query")
+        Log.d("ViewModel", "Creating new flow for category: $query")
+
         // Создаём поток для этой категории и кэшируем его в scope ViewModel
-          if (category == "all") {
-            repository.getEventsWithoutCategory()
+        if (query.category == "all") {
+            repository.getEventsWithoutCategory(query.city)
         } else {
-            repository.getEventsWithCategory(category)
+            repository.getEventsWithCategory(query.category, query.city)
         }
     }.cachedIn(viewModelScope)
-
-    private val eventsWithoutCategory = repository.getEventsWithoutCategory()
-        .cachedIn(viewModelScope)
 
 
     fun onFavouriteClick(item: Item) {
@@ -78,9 +86,19 @@ class EventViewModel : ViewModel() {
 
     fun selectCategory(category: String) {
         if (category != "all") {
-            selectedCategory.value = categoryMap[category]!!
+            _query.update { queries ->
+                queries.copy(category = categoryMap[category]!!)
+            }
         } else {
-            selectedCategory.value = category
+            _query.update { queries ->
+                queries.copy(category = category)
+            }
+        }
+    }
+
+    fun selectCity(city: String) {
+        _query.update { queries ->
+            queries.copy(city = city )
         }
     }
 
@@ -120,6 +138,11 @@ class EventViewModel : ViewModel() {
         }
     }
 }
+
+data class Queries(
+    val city: String,
+    val category: String
+)
 
 data class HomeState(
     var events: List<Item> = emptyList(),

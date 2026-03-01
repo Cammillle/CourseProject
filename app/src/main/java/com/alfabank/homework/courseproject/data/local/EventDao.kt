@@ -12,34 +12,46 @@ interface EventDao {
 
     // ---------- Paging ----------
 
-    @Query("""
+    @Query(
+        """
         SELECT e.* FROM events e
         INNER JOIN event_category_cross_ref c
         ON e.id = c.eventId
         WHERE c.category = "all"
+        and e.city = :city
         ORDER BY e.publicationDate DESC
-    """)
-    fun pagingSourceAll(): PagingSource<Int, EventEntity>
+    """
+    )
+    fun pagingSourceAll(city: String): PagingSource<Int, EventEntity>
 
-    @Query("""
+    @Query(
+        """
         SELECT e.* FROM events e
         INNER JOIN event_category_cross_ref c
         ON e.id = c.eventId
         WHERE c.category = :category
+        and e.city = :city
         ORDER BY e.publicationDate DESC
-    """)
-    fun pagingSourceByCategory(category: String): PagingSource<Int, EventEntity>
+    """
+    )
+    fun pagingSourceByCategory(
+        category: String,
+        city: String
+    ): PagingSource<Int, EventEntity>
 
-    @Query("SELECT COUNT(*) FROM events")
-    suspend fun getEventsCount(): Int
+    @Query("SELECT COUNT(*) FROM events where events.city = :city")
+    suspend fun getEventsCount(city: String): Int
 
-    @Query("""
+    @Query(
+        """
         SELECT COUNT(*) FROM events e
         INNER JOIN event_category_cross_ref c
         ON e.id = c.eventId
         WHERE c.category = :category
-    """)
-    suspend fun getEventsCountByCategory(category:String): Int
+        and e.city =:city
+    """
+    )
+    suspend fun getEventsCountByCategory(category: String, city: String): Int
 
     // ---------- Insert ----------
 
@@ -55,29 +67,33 @@ interface EventDao {
     @Query("DELETE FROM events")
     suspend fun clearAll()
 
-    @Query("""
+    @Query(
+        """
         DELETE FROM events 
         WHERE id IN (
             SELECT eventId FROM event_category_cross_ref 
             WHERE category = :category
-        )
-    """)
-    suspend fun clearByCategory(category: String)
+        ) and events.city = :city
+    """
+    )
+    suspend fun clearByCategory(category: String, city: String)
 
     @Query("DELETE FROM event_category_cross_ref")
     suspend fun clearCrossRefs()
 
     //---------------Get--------------
-    @Query("""
+    @Query(
+        """
         SELECT с.* FROM events с
         where id = :id
-    """)
+    """
+    )
     suspend fun getEventById(id: Long): EventEntity?
 
 
     //------------Search----------------------
     @Query("SELECT * FROM events WHERE title LIKE '%' || :query || '%'")
-    fun searchEvent(query:String): Flow<List<EventEntity>>
+    fun searchEvent(query: String): Flow<List<EventEntity>>
 
 
     //---Favorite----
@@ -85,6 +101,6 @@ interface EventDao {
     suspend fun updateFavorite(eventId: Long, isFavorite: Boolean)
 
     @Query("select * from events where isFavourite = 1")
-     fun getFavouriteEvents(): Flow<List<EventEntity>>
+    fun getFavouriteEvents(): Flow<List<EventEntity>>
 
 }

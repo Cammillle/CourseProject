@@ -9,7 +9,6 @@ import androidx.paging.map
 import com.alfabank.homework.courseproject.DatabaseProvider
 import com.alfabank.homework.courseproject.data.local.AllEventsRemoteMediator
 import com.alfabank.homework.courseproject.data.local.CategoryEventsRemoteMediator
-import com.alfabank.homework.courseproject.data.local.EventEntity
 import com.alfabank.homework.courseproject.data.local.toItem
 import com.alfabank.homework.courseproject.domain.Item
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +23,8 @@ object EventRepositoryImpl {
     private val dao = database.eventsDao()
 
     @OptIn(ExperimentalPagingApi::class)
-    fun getEventsWithCategory(category: String): Flow<PagingData<Item>> {
+    fun getEventsWithCategory(category: String, city: String): Flow<PagingData<Item>> {
+
         return Pager(
             config = PagingConfig(
                 pageSize = 20,
@@ -33,18 +33,23 @@ object EventRepositoryImpl {
             remoteMediator = CategoryEventsRemoteMediator(
                 category = category,
                 api = api,
-                db = database
+                db = database,
+                city = city
             ),
             pagingSourceFactory = {
-                database.eventsDao().pagingSourceByCategory(category)
+                Log.d("CAtegory paging", " $category $city")
+                val paging = database.eventsDao().pagingSourceByCategory(category, city)
+                Log.d("CAtegory paging", " $paging")
+                database.eventsDao().pagingSourceByCategory(category, city)
             }
         ).flow.map {
             it.map { it.toItem() }
         }
+
     }
 
     @OptIn(ExperimentalPagingApi::class)
-    fun getEventsWithoutCategory(): Flow<PagingData<Item>> {
+    fun getEventsWithoutCategory(city: String): Flow<PagingData<Item>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 20,
@@ -52,10 +57,11 @@ object EventRepositoryImpl {
             ),
             remoteMediator = AllEventsRemoteMediator(
                 api = api,
-                db = database
+                db = database,
+                city = city
             ),
             pagingSourceFactory = {
-                database.eventsDao().pagingSourceAll()
+                database.eventsDao().pagingSourceAll(city)
             }
         ).flow.map {
             it.map { it.toItem() }
@@ -84,9 +90,9 @@ object EventRepositoryImpl {
         dao.updateFavorite(id, !current)
     }
 
-     fun getFavouriteEvents(): Flow<List<Item>> = flow{
+    fun getFavouriteEvents(): Flow<List<Item>> = flow {
         val response = dao.getFavouriteEvents()
-        response.collect{
+        response.collect {
             emit(it.map { it.toItem() })
         }
     }

@@ -31,6 +31,7 @@ fun EventDTO.toEventEntity(): EventEntity {
         lon = place?.coords?.lon ?: location?.coords?.lon,
         publicationDate = publicationDate,
         categories = categoriesJson,
+        city = location?.slug ?: "",
     )
 }
 
@@ -56,6 +57,7 @@ fun EventEntity.toItem(): Item {
         lon = lon,
         publicationDate = publicationDate,
         categories = categories,
-        isFavourite = isFavourite
+        isFavourite = isFavourite,
+        city = city
     )
 }

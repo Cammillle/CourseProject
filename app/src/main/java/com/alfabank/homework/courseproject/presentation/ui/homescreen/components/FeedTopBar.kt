@@ -42,10 +42,13 @@ import com.alfabank.homework.courseproject.presentation.ui.homescreen.FeedScreen
 fun FeedTopBar(
     navigateOnFilterScreen: () -> Unit,
     onSearchQueryChanged: (String) -> Unit,
-    onRefreshSearch: () -> Unit
+    onRefreshSearch: () -> Unit,
+    onCitySelected: (String) -> Unit
 ) {
     var showCityDialog by remember { mutableStateOf(false) }
+
     var selectedCity by remember { mutableStateOf("Санкт-Петербург") }
+
     var searchQuery by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
 
@@ -132,7 +135,7 @@ fun FeedTopBar(
     LaunchedEffect(active) {
         if (active) {
             focusRequester.requestFocus()
-        }else{
+        } else {
             onRefreshSearch()
         }
     }
@@ -140,12 +143,36 @@ fun FeedTopBar(
     if (showCityDialog) {
         FullScreenCityDialog(
             currentCity = selectedCity,
-            onDismiss = { showCityDialog = false },
+            onDismiss = {
+                showCityDialog = false
+            },
             onCitySelected = { city ->
                 selectedCity = city
                 showCityDialog = false
+                Log.d("city","$city")
+                onCitySelected(city.getSlug())
+                Log.d("city","${city.getSlug()}")
             }
         )
     }
 }
 
+private fun String.getSlug(): String {
+    val cityToCodeMap = mapOf(
+        "Москва" to "msk",
+        "Санкт-Петербург" to "spb",
+        "Новосибирск" to "nsk",
+        "Екатеринбург" to "ekb",
+        "Нижний Новгород" to "nnv",
+        "Казань" to "kzn",
+        "Выборг" to "vbg",
+        "Самара" to "smr",
+        "Краснодар" to "krd",
+        "Сочи" to "sochi",
+        "Уфа" to "ufa",
+        "Красноярск" to "krasnoyarsk",
+        "Киев" to "kev",
+        "Нью-Йорк" to "new-york"
+    )
+    return cityToCodeMap[this] ?: ""
+}

@@ -11,6 +11,7 @@ data class Item(
     val isEndless: Boolean?,
 
     val address: String?,
+    val city: String,
     val ageRestriction: String?,
     val description: String?,
     val bodyText: String?,

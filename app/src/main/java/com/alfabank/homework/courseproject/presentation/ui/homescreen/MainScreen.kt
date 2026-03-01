@@ -38,7 +38,7 @@ import com.alfabank.homework.courseproject.presentation.ui.profilescreen.Profile
 @Composable
 fun MainScreen() {
     val viewModel: EventViewModel = viewModel()
-    val selectedCategory by viewModel.selectedCategory.collectAsStateWithLifecycle()
+    val queries by viewModel.query.collectAsStateWithLifecycle()
 
     val favouriteEvents = viewModel.favouriteItems.collectAsStateWithLifecycle(
         initialValue = emptyList()
@@ -68,6 +68,9 @@ fun MainScreen() {
                         viewModel.searchEvent(query)
                     },
                     onRefreshSearch = { viewModel.refreshSearchList() },
+                    onCitySelected = { city ->
+                        viewModel.selectCity(city)
+                    },
                 )
             }
         },
@@ -128,7 +131,7 @@ fun MainScreen() {
                     onEventClick = { id ->
                         navigationState.navigateToEventDetails(id = id)
                     },
-                    selectedCategory = selectedCategory,
+                    selectedCategory = queries.category,
                     onSelectCategory = { category ->
                         viewModel.selectCategory(category)
                     },

@@ -15,13 +15,14 @@ import java.util.Locale
 class CategoryEventsRemoteMediator(
     private val api: EventsApi,
     private val db: EventDatabase,
-    private val category: String
+    private val category: String,
+    private val city: String
 ) : RemoteMediator<Int, EventEntity>() {
     private val eventsDao = db.eventsDao()
     private val remoteKeysDao = db.remoteKeysDao()
 
     override suspend fun initialize(): InitializeAction {
-        val hasData = eventsDao.getEventsCountByCategory(category) > 0
+        val hasData = eventsDao.getEventsCountByCategory(category, city) > 0
         return if (hasData) {
             InitializeAction.SKIP_INITIAL_REFRESH
         } else {
@@ -38,19 +39,19 @@ class CategoryEventsRemoteMediator(
             val page = when (loadType) {
                 LoadType.REFRESH -> {
                     val remoteKeys =
-                        getRemoteKeyClosestToCurrentPositionWithCategory(state, category)
+                        getRemoteKeyClosestToCurrentPositionWithCategory(state, category, city)
                     remoteKeys?.nextKey?.minus(1) ?: 1
                 }
 
                 LoadType.PREPEND -> {
-                    val remoteKeys = getRemoteKeyForFirstItemWithCategory(state, category)
+                    val remoteKeys = getRemoteKeyForFirstItemWithCategory(state, category, city)
                     val prevKey = remoteKeys?.prevKey
                         ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
                     prevKey
                 }
 
                 LoadType.APPEND -> {
-                    val remoteKeys = getRemoteKeyForLastItemWithCategory(state, category)
+                    val remoteKeys = getRemoteKeyForLastItemWithCategory(state, category, city)
                     val nextKey = remoteKeys?.nextKey
                         ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
                     nextKey
@@ -72,7 +73,7 @@ class CategoryEventsRemoteMediator(
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    remoteKeysDao.clearByCategory(category) //удаление ключей
+                    remoteKeysDao.clearByCategory(category, city) //удаление ключей
                     //eventsDao.clearCrossRefs() //удаление старых связей
                 }
                 val prevKey = if (page > 1) page - 1 else null
@@ -82,13 +83,15 @@ class CategoryEventsRemoteMediator(
                         eventId = it.id,
                         prevKey = prevKey,
                         nextKey = nextKey,
-                        category = category
+                        category = category,
+                        city = city
                     )
                 }
                 val crossRefs = events.map {
                     EventCategoryCrossRef(
                         eventId = it.id,
-                        category = category
+                        category = category,
+                        city = city
                     )
                 }
                 remoteKeysDao.insertAllKeys(keys)
@@ -106,33 +109,36 @@ class CategoryEventsRemoteMediator(
 
     private suspend fun getRemoteKeyForLastItemWithCategory(
         state: PagingState<Int, EventEntity>,
-        category: String
+        category: String,
+        city: String
     ): RemoteKeys? {
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
             ?.let { event ->
-                remoteKeysDao.getRemoteKeysEventIdWithCategory(event.id, category)
+                remoteKeysDao.getRemoteKeysEventIdWithCategory(event.id, category, city)
             }
     }
 
 
     private suspend fun getRemoteKeyForFirstItemWithCategory(
         state: PagingState<Int, EventEntity>,
-        category: String
+        category: String,
+        city: String
     ): RemoteKeys? {
         return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
             ?.let { event ->
-                remoteKeysDao.getRemoteKeysEventIdWithCategory(event.id, category)
+                remoteKeysDao.getRemoteKeysEventIdWithCategory(event.id, category, city)
             }
     }
 
 
     private suspend fun getRemoteKeyClosestToCurrentPositionWithCategory(
         state: PagingState<Int, EventEntity>,
-        category: String
+        category: String,
+        city: String
     ): RemoteKeys? {
         return state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.id?.let { repoId ->
-                remoteKeysDao.getRemoteKeysEventIdWithCategory(repoId, category)
+                remoteKeysDao.getRemoteKeysEventIdWithCategory(repoId, category, city)
             }
         }
     }

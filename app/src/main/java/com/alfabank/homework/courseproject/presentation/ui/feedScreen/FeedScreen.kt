@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.presentation.ui.feedScreen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -108,18 +109,22 @@ fun FeedScreen(
                     else -> Unit
                 }
             }
+            Log.d("Paging","currentPagingFlow ${currentPagingFlow}")
 
-            // ---------- Empty State ----------
-            if (currentPagingFlow.itemCount == 0 &&
-                currentPagingFlow.loadState.refresh is LoadState.NotLoading
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No events found")
-                }
-            }
+            Log.d("Paging","currentPagingFlow itemCount ${currentPagingFlow.itemCount}")
+            Log.d("Paging","currentPagingFlow load state refresh ${currentPagingFlow.loadState.refresh}")
+
+//            // ---------- Empty State ----------
+//            if (currentPagingFlow.itemCount == 0 &&
+//                currentPagingFlow.loadState.refresh is LoadState.NotLoading
+//            ) {
+//                Box(
+//                    modifier = Modifier.fillMaxSize(),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Text("No events found")
+//                }
+//            }
 
             // ---------- First Load Error ----------
             if (currentPagingFlow.loadState.refresh is LoadState.Error) {
