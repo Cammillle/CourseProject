@@ -20,14 +20,14 @@ class CategoryEventsRemoteMediator(
     private val eventsDao = db.eventsDao()
     private val remoteKeysDao = db.remoteKeysDao()
 
-//    override suspend fun initialize(): InitializeAction {
-//        val hasData = eventsDao.getEventsCountByCategory(category) > 0
-//        return if (hasData) {
-//            InitializeAction.SKIP_INITIAL_REFRESH
-//        } else {
-//            InitializeAction.LAUNCH_INITIAL_REFRESH
-//        }
-//    }
+    override suspend fun initialize(): InitializeAction {
+        val hasData = eventsDao.getEventsCountByCategory(category) > 0
+        return if (hasData) {
+            InitializeAction.SKIP_INITIAL_REFRESH
+        } else {
+            InitializeAction.LAUNCH_INITIAL_REFRESH
+        }
+    }
 
     override suspend fun load(
         loadType: LoadType,
@@ -39,7 +39,7 @@ class CategoryEventsRemoteMediator(
                 LoadType.REFRESH -> {
                     val remoteKeys =
                         getRemoteKeyClosestToCurrentPositionWithCategory(state, category)
-                    remoteKeys?.nextKey ?: 1
+                    remoteKeys?.nextKey?.minus(1) ?: 1
                 }
 
                 LoadType.PREPEND -> {

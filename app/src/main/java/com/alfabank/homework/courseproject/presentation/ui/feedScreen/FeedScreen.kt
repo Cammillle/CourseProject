@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
 import com.alfabank.homework.courseproject.domain.Item
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.components.FeedFilters
 
@@ -72,7 +73,7 @@ fun FeedScreen(
                 }
                 items(
                     count = currentPagingFlow.itemCount,
-                    key = { index -> currentPagingFlow[index]?.id ?: index }
+                    key = currentPagingFlow.itemKey { it.id }
                 ) { index ->
                     val event = currentPagingFlow[index]
                     event?.let { event ->
