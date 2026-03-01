@@ -1,6 +1,7 @@
 package com.alfabank.homework.courseproject.data
 
 import coil.network.HttpException
+import com.alfabank.homework.courseproject.DatabaseProvider
 import com.alfabank.homework.courseproject.api.ListsApi
 import com.alfabank.homework.courseproject.data.dto.lists.ListItem
 import com.alfabank.homework.courseproject.data.dto.lists.toListItem
@@ -9,7 +10,14 @@ import okio.IOException
 class GuidRepositoryImpl {
     private val api = ListsApi()
 
+    private val database = DatabaseProvider.getDatabase()
+    private val dao = database.listsDao()
+
     suspend fun getListsById(id: Int): Result<ListItem> {
+        if(dao.getListsCount() > 1){
+            return Result.success(dao.getListWithItems(id))
+        }
+
         val response = try {
             api.getListItemsById(id)
         } catch (e: IOException) {

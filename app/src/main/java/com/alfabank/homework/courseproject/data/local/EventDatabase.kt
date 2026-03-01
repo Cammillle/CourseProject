@@ -14,6 +14,7 @@ import androidx.room.RoomDatabase
 abstract class EventDatabase : RoomDatabase() {
     abstract fun eventsDao(): EventDao
     abstract fun remoteKeysDao(): RemoteKeysDao
+    abstract fun listsDao(): ListsDao
 }
 
 fun EventDatabase(applicationContext: Context): EventDatabase {
