@@ -1,7 +1,7 @@
 package com.alfabank.homework.courseproject.data.dto.lists
 
 import com.alfabank.homework.courseproject.data.local.ListEntity
-import com.alfabank.homework.courseproject.domain.Item
+import com.alfabank.homework.courseproject.domain.model.Item
 import com.alfabank.homework.courseproject.domain.model.ListItem
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

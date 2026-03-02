@@ -1,7 +1,7 @@
 package com.alfabank.homework.courseproject.data.local
 
-import com.alfabank.homework.courseproject.data.dto.EventDTO
-import com.alfabank.homework.courseproject.domain.Item
+import com.alfabank.homework.courseproject.data.dto.event.EventDTO
+import com.alfabank.homework.courseproject.domain.model.Item
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

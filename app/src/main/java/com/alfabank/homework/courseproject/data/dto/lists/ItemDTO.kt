@@ -1,8 +1,8 @@
 package com.alfabank.homework.courseproject.data.dto.lists
 
-import com.alfabank.homework.courseproject.data.dto.CoordsDTO
-import com.alfabank.homework.courseproject.data.dto.EventPlaceDTO
-import com.alfabank.homework.courseproject.domain.Item
+import com.alfabank.homework.courseproject.data.dto.event.CoordsDTO
+import com.alfabank.homework.courseproject.data.dto.event.EventPlaceDTO
+import com.alfabank.homework.courseproject.domain.model.Item
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement

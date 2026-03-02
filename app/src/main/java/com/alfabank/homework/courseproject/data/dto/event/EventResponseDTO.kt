@@ -1,9 +1,5 @@
 package com.alfabank.homework.courseproject.data.dto.event
 
-import com.alfabank.homework.courseproject.data.dto.DateDTO
-import com.alfabank.homework.courseproject.data.dto.ImageDTO
-import com.alfabank.homework.courseproject.data.dto.LocationDTO
-import com.alfabank.homework.courseproject.data.places.PlaceDTO
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

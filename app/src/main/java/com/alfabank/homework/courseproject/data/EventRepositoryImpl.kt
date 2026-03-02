@@ -7,10 +7,11 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.alfabank.homework.courseproject.DatabaseProvider
+import com.alfabank.homework.courseproject.api.EventsApi
 import com.alfabank.homework.courseproject.data.local.AllEventsRemoteMediator
 import com.alfabank.homework.courseproject.data.local.CategoryEventsRemoteMediator
 import com.alfabank.homework.courseproject.data.local.toItem
-import com.alfabank.homework.courseproject.domain.Item
+import com.alfabank.homework.courseproject.domain.model.Item
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

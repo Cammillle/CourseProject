@@ -6,7 +6,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.alfabank.homework.courseproject.data.EventsApi
+import com.alfabank.homework.courseproject.api.EventsApi
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

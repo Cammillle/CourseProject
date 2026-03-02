@@ -3,7 +3,7 @@ package com.alfabank.homework.courseproject.data.local
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.alfabank.homework.courseproject.data.dto.lists.ItemDTO
-import com.alfabank.homework.courseproject.domain.Item
+import com.alfabank.homework.courseproject.domain.model.Item
 
 @Entity(tableName = "items")
 data class ItemEntity(
