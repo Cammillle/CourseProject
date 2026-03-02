@@ -5,7 +5,10 @@ import com.alfabank.homework.courseproject.domain.Item
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-fun EventDTO.toEventEntity(): EventEntity {
+fun EventDTO.toEventEntity(
+    isFavourite: Boolean?
+): EventEntity {
+
     val firstDate = dates?.last()
     val startDate = firstDate?.startDate
     val startTime = firstDate?.startTime
@@ -32,6 +35,7 @@ fun EventDTO.toEventEntity(): EventEntity {
         publicationDate = publicationDate,
         categories = categoriesJson,
         city = location?.slug ?: "",
+        isFavourite = isFavourite ?: false
     )
 }
 

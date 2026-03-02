@@ -65,8 +65,10 @@ class CategoryEventsRemoteMediator(
                 categories = category
             )
             val events = response.results?.let {
-                it.map {
-                    it.toEventEntity()
+                it.map { dto ->
+                    //При обновлении из сети, чтобы не перезаписывался флаг isFavourite
+                    val isFavourite = eventsDao.getEventById(dto.id)?.isFavourite
+                    dto.toEventEntity(isFavourite)
                 }
             } ?: emptyList()
             val endOfPaginationReached = events.isEmpty() || response.next == null
