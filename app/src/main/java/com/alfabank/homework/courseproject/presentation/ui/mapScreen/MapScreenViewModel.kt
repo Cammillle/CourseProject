@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alfabank.homework.courseproject.domain.Item
+import com.alfabank.homework.courseproject.domain.model.ListItem
 import com.alfabank.homework.courseproject.navigation.MapScreenArgs
 import com.alfabank.homework.courseproject.navigation.Screen
 import com.yandex.mapkit.geometry.Point
@@ -27,11 +28,13 @@ class MapScreenViewModel(
     private fun createInitialState(args: MapScreenArgs?): MapScreenState {
         return when (args) {
             is MapScreenArgs.ListData -> {
+                val listItem = args.listItem.listItem
                 val items = args.listItem.items ?: emptyList()
                 Log.d("MapScreen", "items of listItem $items")
                 MapScreenState(
                     cameraPosition = calculateCameraPositionForItems(items),
                     events = items,
+                    listItem = listItem
                 )
             }
 
@@ -49,7 +52,6 @@ class MapScreenViewModel(
             }
 
             null -> {
-                // Значения по умолчанию, если аргументов нет (маловероятно)
                 MapScreenState(
                     cameraPosition = CameraPosition(Point(59.9342802, 30.3350986), 11f, 0f, 0f),
                     events = emptyList()
@@ -107,6 +109,7 @@ data class MapScreenState(
         0.0f,
         0.0f
     ),
+    val listItem: ListItem? = null,
     val events: List<Item> = emptyList(),
     val selectedEvent: Item? = null,
     val isLoading: Boolean = false,

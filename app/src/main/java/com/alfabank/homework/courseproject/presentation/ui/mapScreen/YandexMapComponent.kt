@@ -147,50 +147,7 @@ private fun configureClusterAppearance(
         }
     )
 }
-private fun configurePlacemark(
-    placemark: PlacemarkMapObject,
-    event: Item,
-    isSelected: Boolean,
-    context: Context
-) {
-    updatePlacemarkStyle(placemark, event, isSelected, context)
-    placemark.userData = event
-}
 
-private fun updatePlacemarkStyle(
-    placemark: PlacemarkMapObject,
-    event: Item,
-    isSelected: Boolean,
-    context: Context
-) {
-    // Иконка
-    placemark.setIcon(
-        ImageProvider.fromResource(
-            context,
-            if (isSelected) R.drawable.circle_24_red else R.drawable.circle_24_green
-        )
-    )
-    placemark.setIconStyle(
-        IconStyle().apply {
-            anchor = PointF(0.5f, 1.0f)
-            scale = 1.0f
-            zIndex = 1000f
-        }
-    )
-    // Текст
-    val title = event.title ?: event.placeTitle ?: ""
-    placemark.setText(
-        title.replace("+", " "),
-        TextStyle().apply {
-            size = if (isSelected) 13.0f else 11.0f
-            color = if (isSelected) Color.RED else Color.BLACK
-            placement = TextStyle.Placement.BOTTOM
-            offset = 5.0f
-            outlineWidth = if (isSelected) 2.0f else 1.0f
-            outlineColor = Color.WHITE
-        }
-    )
-}
 /**
  * Обновляет маркеры в кластеризованной коллекции.
  */

@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.paging.LOG_TAG
 import com.alfabank.homework.courseproject.navigation.MapScreenArgs
 import com.alfabank.homework.courseproject.presentation.ui.guidscreen.composable.ListItemCard
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.eventScreen.firstUppercase
@@ -70,9 +69,9 @@ fun GuidScreen(
             ) {
                 items(items = lists) { item ->
                     ListItemCard(
-                        title = item.listEntity.title!!.firstUppercase(),
-                        description = item.listEntity.description!!.firstUppercase(),
-                        imageUrls = item.listEntity.images ?: emptyList(),
+                        title = item.listItem.title!!.firstUppercase(),
+                        description = item.listItem.description!!.firstUppercase(),
+                        imageUrls = item.listItem.images ?: emptyList(),
                         onMapNavigate = {
                             onMapNavigate(MapScreenArgs.ListData(item))
                         },

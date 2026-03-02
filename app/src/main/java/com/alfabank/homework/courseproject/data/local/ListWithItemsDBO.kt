@@ -21,7 +21,7 @@ data class ListWithItemsDBO(
 
 fun ListWithItemsDBO.toListWithItems(): ListWithItems{
     return ListWithItems(
-        listEntity = listResponse.toListItem(),
+        listItem = listResponse.toListItem(),
         items = items.map { it.toItem() }
     )
 }

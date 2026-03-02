@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ListWithItems(
-    val listEntity: ListItem,
+    val listItem: ListItem,
     val items: List<Item>
 )
