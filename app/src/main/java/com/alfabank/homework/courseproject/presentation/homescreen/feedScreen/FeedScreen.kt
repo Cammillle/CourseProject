@@ -1,6 +1,11 @@
 package com.alfabank.homework.courseproject.presentation.homescreen.feedScreen
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,12 +17,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -26,6 +41,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import com.alfabank.homework.courseproject.domain.model.Item
 import com.alfabank.homework.courseproject.presentation.homescreen.components.FeedFilters
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +55,15 @@ fun FeedScreen(
     currentPagingFlow: LazyPagingItems<Item>,
     searchList: List<Item> = emptyList()
 ) {
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    val showScrollToTopButton by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 3
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,6 +84,7 @@ fun FeedScreen(
                 .weight(1f)
         ) {
             LazyColumn(
+                state = listState,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -109,10 +135,13 @@ fun FeedScreen(
                     else -> Unit
                 }
             }
-            Log.d("Paging","currentPagingFlow ${currentPagingFlow}")
+            Log.d("Paging", "currentPagingFlow ${currentPagingFlow}")
 
-            Log.d("Paging","currentPagingFlow itemCount ${currentPagingFlow.itemCount}")
-            Log.d("Paging","currentPagingFlow load state refresh ${currentPagingFlow.loadState.refresh}")
+            Log.d("Paging", "currentPagingFlow itemCount ${currentPagingFlow.itemCount}")
+            Log.d(
+                "Paging",
+                "currentPagingFlow load state refresh ${currentPagingFlow.loadState.refresh}"
+            )
 
             // ---------- Empty State ----------
             if (currentPagingFlow.itemCount == 0 &&
@@ -139,8 +168,35 @@ fun FeedScreen(
                     )
                 }
             }
+            AnimatedVisibility(
+                visible = showScrollToTopButton,
+                enter = fadeIn() + slideInVertically { it },
+                exit = fadeOut() + slideOutVertically { it },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp)
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            listState.animateScrollToItem(0)
+                        }
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowUp,
+                        contentDescription = "Scroll to top"
+                    )
+                }
+            }
+
+
         }
+
     }
+
 }
 
 @Composable
