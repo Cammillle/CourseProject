@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 class GuidViewModel : ViewModel() {
     private val repository = GuidRepositoryImpl()
     private val ids =
-        listOf<Long>(9479, 14579, 193, 512, 334, 7785, 648, 12384, 9444, 10196, 9045, 485)
+        listOf<Long>(9479, 14579, 193, 512, 334, 648, 12384, 9444, 10196, 9045, 485)
 
     private val _guidScreenState = MutableStateFlow(GuidScreenState())
     val guidScreenState = _guidScreenState.asStateFlow()
