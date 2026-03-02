@@ -30,12 +30,9 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alfabank.homework.courseproject.R
-import com.alfabank.homework.courseproject.presentation.ui.homescreen.FeedScreenEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

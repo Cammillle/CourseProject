@@ -6,4 +6,14 @@
         <item>Казань</item>
         <item>Новосибирск</item>
     </string-array>
+    <string-array name="filters1">
+        <item>Концерты</item>
+        <item>Спектакли</item>
+        <item>Ярмарки</item>
+        <item>Активный отдых</item>
+    </string-array>
+    <string-array name="filters2">
+        <item>Выставки</item>
+        <item>Фестивали</item>
+    </string-array>
 </resources>
