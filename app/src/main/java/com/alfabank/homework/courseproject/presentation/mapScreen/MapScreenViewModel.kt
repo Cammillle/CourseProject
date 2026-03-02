@@ -10,20 +10,28 @@ import com.alfabank.homework.courseproject.navigation.MapScreenArgs
 import com.alfabank.homework.courseproject.navigation.Screen
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
-class MapScreenViewModel(
+@HiltViewModel
+class MapScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val args: MapScreenArgs? = savedStateHandle.get<MapScreenArgs>(Screen.KEY_MAP_ARGS)
+    private val args: MapScreenArgs? =
+        savedStateHandle
+            .get<String>(Screen.KEY_MAP_ARGS)
+            ?.let { json ->
+                Json.decodeFromString<MapScreenArgs>(json)
+            }
 
     private val _screenState = MutableStateFlow(createInitialState(args))
     val screenState = _screenState.asStateFlow()
-
 
     private fun createInitialState(args: MapScreenArgs?): MapScreenState {
         return when (args) {

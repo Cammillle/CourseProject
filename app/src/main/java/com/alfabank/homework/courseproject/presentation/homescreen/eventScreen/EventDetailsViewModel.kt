@@ -4,16 +4,19 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.alfabank.homework.courseproject.data.EventRepositoryImpl
+import com.alfabank.homework.courseproject.domain.EventRepository
 import com.alfabank.homework.courseproject.navigation.Screen
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class EventDetailsViewModel(
-    private val savedStateHandle: SavedStateHandle
+@HiltViewModel
+class EventDetailsViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
+    private val repository: EventRepository
 ) : ViewModel() {
-    private val repository = EventRepositoryImpl
 
     private val _state = MutableStateFlow(EventState())
     val eventState = _state.asStateFlow()

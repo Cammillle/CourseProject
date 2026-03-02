@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.alfabank.homework.courseproject.navigation.MapScreenArgs
@@ -35,7 +36,7 @@ import com.alfabank.homework.courseproject.presentation.homescreen.eventScreen.f
 fun GuidScreen(
     onMapNavigate: (MapScreenArgs) -> Unit
 ) {
-    val viewModel: GuidViewModel = viewModel()
+    val viewModel: GuidViewModel = hiltViewModel()
     val guidState = viewModel.guidScreenState.collectAsStateWithLifecycle()
     val lists = guidState.value.lists
 

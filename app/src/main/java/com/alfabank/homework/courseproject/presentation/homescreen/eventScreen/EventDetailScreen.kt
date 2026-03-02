@@ -55,6 +55,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -77,7 +78,7 @@ fun EventDetailScreen(
     onMapNavigate: (MapScreenArgs) -> Unit
 ) {
     //передача id ивента через SavedStateHandle, достаем из вьюмодели
-    val viewModel: EventDetailsViewModel = viewModel()
+    val viewModel: EventDetailsViewModel = hiltViewModel()
     val eventState = viewModel.eventState.collectAsStateWithLifecycle()
     val state = eventState.value
 

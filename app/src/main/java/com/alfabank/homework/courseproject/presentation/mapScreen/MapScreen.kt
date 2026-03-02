@@ -1,6 +1,5 @@
 package com.alfabank.homework.courseproject.presentation.mapScreen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -29,23 +28,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.alfabank.homework.courseproject.navigation.MapScreenArgs
 import com.alfabank.homework.courseproject.presentation.utils.openUrl
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
-    mapArgs: MapScreenArgs,
     onBack: () -> Unit
 ) {
-    Log.d("MapScreen", "map args $mapArgs")
 
-    val viewModel: MapScreenViewModel = viewModel(
-        factory = MapScreenViewModelFactory(mapArgs)
-    )
+    val viewModel: MapScreenViewModel = hiltViewModel()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()

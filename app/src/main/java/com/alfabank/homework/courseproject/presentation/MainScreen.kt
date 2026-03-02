@@ -175,9 +175,8 @@ fun MainScreen() {
                     }
                 )
             },
-            yandexMapScreenContent = { mapArgs ->
+            yandexMapScreenContent = {
                 MapScreen(
-                    mapArgs,
                     onBack = { navigationState.navHostController.popBackStack() }
                 )
             }

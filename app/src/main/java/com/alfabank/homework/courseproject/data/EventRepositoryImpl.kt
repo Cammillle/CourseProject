@@ -6,26 +6,26 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.alfabank.homework.courseproject.DatabaseProvider
 import com.alfabank.homework.courseproject.api.EventsApi
 import com.alfabank.homework.courseproject.data.local.AllEventsRemoteMediator
 import com.alfabank.homework.courseproject.data.local.CategoryEventsRemoteMediator
+import com.alfabank.homework.courseproject.data.local.EventDatabase
 import com.alfabank.homework.courseproject.data.local.toItem
+import com.alfabank.homework.courseproject.domain.EventRepository
 import com.alfabank.homework.courseproject.domain.model.Item
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-object EventRepositoryImpl {
-    private val api = EventsApi()
-    private val database = DatabaseProvider.getDatabase()
-    private val dao = database.eventsDao()
-
+class EventRepositoryImpl @Inject constructor(
+    private val api: EventsApi,
+    private val database: EventDatabase
+) : EventRepository {
     @OptIn(ExperimentalPagingApi::class)
-    fun getEventsWithCategory(category: String, city: String): Flow<PagingData<Item>> {
-
+    override fun getEventsWithCategory(category: String, city: String): Flow<PagingData<Item>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 20,
@@ -50,7 +50,7 @@ object EventRepositoryImpl {
     }
 
     @OptIn(ExperimentalPagingApi::class)
-    fun getEventsWithoutCategory(city: String): Flow<PagingData<Item>> {
+    override fun getEventsWithoutCategory(city: String): Flow<PagingData<Item>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 20,
@@ -69,9 +69,9 @@ object EventRepositoryImpl {
         }
     }
 
-    fun getEventById(id: Long): Flow<Result<Item>> {
+    override fun getEventById(id: Long): Flow<Result<Item>> {
         return flow {
-            val localEvent = dao.getEventById(id)
+            val localEvent = database.eventsDao().getEventById(id)
             if (localEvent != null) {
                 emit(Result.success(localEvent.toItem()))
                 return@flow
@@ -80,19 +80,19 @@ object EventRepositoryImpl {
     }
 
     // Search (Local Only)
-    fun searchEvent(query: String): Flow<List<Item>> {
-        return dao.searchEvent(query).map { list ->
+    override fun searchEvent(query: String): Flow<List<Item>> {
+        return database.eventsDao().searchEvent(query).map { list ->
             list.map { entity -> entity.toItem() }
         }
     }
 
     //Favourite
-    suspend fun toggleFavorite(id: Long, current: Boolean) {
-        dao.updateFavorite(id, !current)
+    override suspend fun toggleFavorite(id: Long, current: Boolean) {
+        database.eventsDao().updateFavorite(id, !current)
     }
 
-    fun getFavouriteEvents(): Flow<List<Item>> = flow {
-        val response = dao.getFavouriteEvents()
+    override fun getFavouriteEvents(): Flow<List<Item>> = flow {
+        val response = database.eventsDao().getFavouriteEvents()
         response.collect {
             emit(it.map { it.toItem() })
         }

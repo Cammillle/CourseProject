@@ -5,8 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.alfabank.homework.courseproject.data.EventRepositoryImpl
+import com.alfabank.homework.courseproject.domain.EventRepository
 import com.alfabank.homework.courseproject.domain.model.Item
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -23,9 +24,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class EventViewModel : ViewModel() {
-    private val repository = EventRepositoryImpl
+@HiltViewModel
+class EventViewModel @Inject constructor(
+    private val repository: EventRepository
+) : ViewModel() {
     private val categoryMap = mapOf(
         "Концерты" to "concert",
         "Спектакли" to "theater",

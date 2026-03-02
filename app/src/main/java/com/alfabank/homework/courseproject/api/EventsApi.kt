@@ -6,7 +6,6 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -54,23 +53,11 @@ interface EventsApi {
 
 }
 
-fun EventsApi(): EventsApi {
-    val logging = HttpLoggingInterceptor()
-        .setLevel(HttpLoggingInterceptor.Level.BASIC)
-    val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(logging)
-        .build()
-    val baseUrl = "https://kudago.com/public-api/v1.4/"
-
-    val json = Json {
-        ignoreUnknownKeys = true
-        coerceInputValues = true
-        explicitNulls = false
-        // Custom serializers would be added here if needed
-        // serializersModule = SerializersModule {
-        //     contextual(Date::class, DateSerializer)
-        // }
-    }
+fun EventsApi(
+    baseUrl:String,
+    json: Json,
+    okHttpClient: OkHttpClient
+): EventsApi {
 
     val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
