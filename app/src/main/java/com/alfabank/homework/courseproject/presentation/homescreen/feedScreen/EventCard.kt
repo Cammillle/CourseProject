@@ -40,6 +40,8 @@ import coil.request.ImageRequest
 import com.alfabank.homework.courseproject.R
 import com.alfabank.homework.courseproject.domain.model.Item
 import com.alfabank.homework.courseproject.presentation.homescreen.eventScreen.firstUppercase
+import com.alfabank.homework.courseproject.presentation.utils.fromSlug
+import com.alfabank.homework.courseproject.presentation.utils.getSlug
 
 @Suppress("NonSkippableComposable")
 @Composable
@@ -225,9 +227,10 @@ fun EventCard(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
+
                     // Город
                     Text(
-                        text = event.city,
+                        text = event.city.fromSlug(),
                         style = TextStyle(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 14.sp,

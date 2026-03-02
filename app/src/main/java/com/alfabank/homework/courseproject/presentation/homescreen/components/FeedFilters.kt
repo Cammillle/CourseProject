@@ -19,7 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.unit.dp
 import com.alfabank.homework.courseproject.R
 
@@ -28,9 +28,8 @@ fun FeedFilters(
     selectedCategory: String?,
     onCategorySelected: (String) -> Unit,
 ) {
-    val context = LocalContext.current
-    val filters1 = context.resources.getStringArray(R.array.filters1)
-    val filters2 = context.resources.getStringArray(R.array.filters2)
+    val filters1 = stringArrayResource(R.array.filters1)
+    val filters2 = stringArrayResource(R.array.filters2)
     var selectedFilter by rememberSaveable { mutableStateOf(selectedCategory) }
 
     Column {

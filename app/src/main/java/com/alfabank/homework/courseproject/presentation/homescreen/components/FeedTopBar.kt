@@ -33,6 +33,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.alfabank.homework.courseproject.R
+import com.alfabank.homework.courseproject.presentation.utils.getSlug
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -146,31 +147,11 @@ fun FeedTopBar(
             onCitySelected = { city ->
                 selectedCity = city
                 showCityDialog = false
-                Log.d("city","$city")
+                Log.d("city", "$city")
                 val slug = city.getSlug()
                 onCitySelected(slug)
-                Log.d("city","${city.getSlug()}")
+                Log.d("city", city.getSlug())
             }
         )
     }
-}
-
-private fun String.getSlug(): String {
-    val cityToCodeMap = mapOf(
-        "Москва" to "msk",
-        "Санкт-Петербург" to "spb",
-        "Новосибирск" to "nsk",
-        "Екатеринбург" to "ekb",
-        "Нижний Новгород" to "nnv",
-        "Казань" to "kzn",
-        "Выборг" to "vbg",
-        "Самара" to "smr",
-        "Краснодар" to "krd",
-        "Сочи" to "sochi",
-        "Уфа" to "ufa",
-        "Красноярск" to "krasnoyarsk",
-        "Киев" to "kev",
-        "Нью-Йорк" to "new-york"
-    )
-    return cityToCodeMap[this] ?: ""
 }

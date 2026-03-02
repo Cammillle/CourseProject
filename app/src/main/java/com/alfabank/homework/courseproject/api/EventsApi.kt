@@ -21,11 +21,11 @@ interface EventsApi {
         @Query("page") page: Int,
         @Query("actual_since") actualSince: String,
         @Query("order_by") orderBy: String = "-publication_date",
-        @Query("expand") expand: List<String> = listOf("id,place,dates,location,description,images,title,age_restriction,price,categories"),
+        @Query("expand") expand: List<String> = listOf("site_url,id,place,dates,location,description,images,title,age_restriction,price,categories"),
         @Query("location") location: String = "spb",
         @Query("text_format") textFormat: String = "text",
         @Query("page_size") pageSize: Int = 20,
-        @Query("fields") fields: List<String> = listOf("id,tags,place,dates,location,description,images,title,age_restriction,price,categories,publication_date "),
+        @Query("fields") fields: List<String> = listOf("site_url,id,tags,place,dates,location,description,images,title,age_restriction,price,categories,publication_date "),
     ): ListOfEventsResponseDTO
 
     @GET("events")

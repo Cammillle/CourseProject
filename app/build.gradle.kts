@@ -59,6 +59,8 @@ dependencies {
 
     val paging_version = "3.4.1"
 
+    implementation("androidx.browser:browser:1.7.0")
+
     implementation("androidx.paging:paging-runtime:$paging_version")
 
     implementation("androidx.room:room-paging:2.8.2")

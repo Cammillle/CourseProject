@@ -1,5 +1,6 @@
 package com.alfabank.homework.courseproject.data.local
 
+import android.util.Log
 import com.alfabank.homework.courseproject.data.dto.event.EventDTO
 import com.alfabank.homework.courseproject.domain.model.Item
 import kotlinx.serialization.encodeToString
@@ -9,6 +10,7 @@ fun EventDTO.toEventEntity(
     isFavourite: Boolean?
 ): EventEntity {
 
+    Log.d("TAGTAG", "toEventEntity ${this.place?.siteUrl}")
     val firstDate = dates?.last()
     val startDate = firstDate?.startDate
     val startTime = firstDate?.startTime
@@ -28,7 +30,7 @@ fun EventDTO.toEventEntity(
         bodyText = bodyText,
         imagesJson = imagesJson,
         price = price,
-        itemUrl = siteUrl,
+        itemUrl = siteUrl ?: place?.siteUrl,
         placeTitle = place?.title,
         lat = place?.coords?.lat ?: location?.coords?.lat,
         lon = place?.coords?.lon ?: location?.coords?.lon,
