@@ -60,18 +60,54 @@ class MapScreenViewModel(
         }
     }
 
+    private val DEFAULT_POINT = Point(59.9342802, 30.3350986)
+
     private fun calculateCameraPositionForItems(items: List<Item>): CameraPosition {
-        // Реализация: найти среднюю точку или использовать первую точку с подходящим зумом
-        return if (items.isNotEmpty()) {
-            CameraPosition(
-                Point(items.first().lat ?: 59.939094, items.first().lon ?: 30.315868),
+        val validPoints = items
+            .mapNotNull { item ->
+                val lat = item.lat
+                val lon = item.lon
+                if (lat != null && lon != null) Point(lat, lon) else null
+            }
+
+        if (validPoints.isEmpty()) {
+            return CameraPosition(
+                DEFAULT_POINT,
                 11f,
                 0f,
                 0f
             )
-        } else {
-            CameraPosition(Point(59.9342802, 30.3350986), 11f, 0f, 0f)
         }
+
+        // Средняя точка
+        val avgLat = validPoints.map { it.latitude }.average()
+        val avgLon = validPoints.map { it.longitude }.average()
+
+        // разброс точек
+        val minLat = validPoints.minOf { it.latitude }
+        val maxLat = validPoints.maxOf { it.latitude }
+        val minLon = validPoints.minOf { it.longitude }
+        val maxLon = validPoints.maxOf { it.longitude }
+
+        val latDelta = maxLat - minLat
+        val lonDelta = maxLon - minLon
+        val maxDelta = maxOf(latDelta, lonDelta)
+
+        //для зума
+        val zoom = when {
+            maxDelta < 0.01 -> 15f
+            maxDelta < 0.05 -> 13f
+            maxDelta < 0.2  -> 11f
+            maxDelta < 1.0  -> 9f
+            else            -> 7f
+        }
+
+        return CameraPosition(
+            Point(avgLat, avgLon),
+            zoom,
+            0f,
+            0f
+        )
     }
 
     fun selectEvent(event: Item) {
