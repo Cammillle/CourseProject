@@ -3,6 +3,7 @@ package com.alfabank.homework.courseproject.presentation.mapScreen
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PointF
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -11,6 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.alfabank.homework.courseproject.R
 import com.alfabank.homework.courseproject.domain.model.Item
 import com.yandex.mapkit.Animation
@@ -34,11 +38,30 @@ fun YandexMapComponent(
     selectedEventId: Long?,
     onEventSelected: (Item) -> Unit
 ) {
-
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val mapView = remember {
-        MapView(context)
+        MapView(context).apply {
+            onStart()
+        }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_START -> mapView.onStart()
+                Lifecycle.Event.ON_STOP -> mapView.onStop()
+                else -> {}
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            mapView.onStop()
+        }
     }
 
     //коллекция кластеров
@@ -170,6 +193,7 @@ private fun configureClusterAppearance(
         }
     )
 }
+
 private fun configurePlacemark(
     placemark: PlacemarkMapObject,
     event: Item,
@@ -195,8 +219,13 @@ private fun configurePlacemark(
         }
     )
 
+    val text = if (event.placeTitle.isNullOrEmpty()) event.title else event.placeTitle
+    Log.d("YandexMapComponent", "text $text")
+    Log.d("YandexMapComponent", "place title ${event.placeTitle}")
+    Log.d("YandexMapComponent", "title ${event.title}")
+
     placemark.setText(
-        (event.title ?: event.placeTitle ?: "").replace("+", " "),
+        text!!.replace("+", " "),
         TextStyle().apply {
             size = 12f
             color = if (isSelected) Color.RED else Color.BLACK

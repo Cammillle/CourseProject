@@ -1,7 +1,6 @@
 package com.alfabank.homework.courseproject.presentation.homescreen.feedScreen
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -76,6 +75,7 @@ fun FeedScreen(
             }
         )
 
+
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = { currentPagingFlow.refresh() },
@@ -83,120 +83,120 @@ fun FeedScreen(
                 .fillMaxSize()
                 .weight(1f)
         ) {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                if (searchList.isNotEmpty()) {
-                    items(items = searchList, key = { it.id }) { event ->
-                        EventCard(
-                            event = event,
-                            onClick = { onEventClick(event.id) },
-                            onBookmarkClick = onBookmarkClick,
+            Box(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (searchList.isNotEmpty()) {
+                        items(items = searchList, key = { it.id }) { event ->
+                            EventCard(
+                                event = event,
+                                onClick = { onEventClick(event.id) },
+                                onBookmarkClick = onBookmarkClick,
+                            )
+                        }
+                    }
+                    items(
+                        count = currentPagingFlow.itemCount,
+                        key = currentPagingFlow.itemKey { it.id }
+                    ) { index ->
+                        val event = currentPagingFlow[index]
+                        event?.let { event ->
+                            EventCard(
+                                event = event,
+                                onClick = { onEventClick(event.id) },
+                                onBookmarkClick = onBookmarkClick,
+                            )
+                        }
+                    }
+                    // ---------- Append Loader ----------
+                    when (currentPagingFlow.loadState.append) {
+                        is LoadState.Loading -> {
+                            item {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                        }
+
+                        is LoadState.Error -> {
+                            item {
+                                RetryItem {
+                                    currentPagingFlow.retry()
+                                }
+                            }
+                        }
+
+                        else -> Unit
+                    }
+                }
+
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = showScrollToTopButton,
+                    enter = fadeIn() + slideInVertically { it },
+                    exit = fadeOut() + slideOutVertically { it },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp)
+                ) {
+                    FloatingActionButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(0)
+                            }
+                        },
+                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowUp,
+                            contentDescription = null
                         )
                     }
                 }
-                items(
-                    count = currentPagingFlow.itemCount,
-                    key = currentPagingFlow.itemKey { it.id }
-                ) { index ->
-                    val event = currentPagingFlow[index]
-                    event?.let { event ->
-                        EventCard(
-                            event = event,
-                            onClick = { onEventClick(event.id) },
-                            onBookmarkClick = onBookmarkClick,
+
+                Log.d("Paging", "currentPagingFlow ${currentPagingFlow}")
+
+                Log.d("Paging", "currentPagingFlow itemCount ${currentPagingFlow.itemCount}")
+                Log.d(
+                    "Paging",
+                    "currentPagingFlow load state refresh ${currentPagingFlow.loadState.refresh}"
+                )
+
+                // ---------- Empty State ----------
+                if (currentPagingFlow.itemCount == 0 &&
+                    currentPagingFlow.loadState.refresh is LoadState.NotLoading
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No events found")
+                    }
+                }
+
+                // ---------- First Load Error ----------
+                if (currentPagingFlow.loadState.refresh is LoadState.Error) {
+                    val error = currentPagingFlow.loadState.refresh as LoadState.Error
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        RetryItem(
+                            message = error.error.message,
+                            onRetry = { currentPagingFlow.retry() }
                         )
                     }
                 }
-                // ---------- Append Loader ----------
-                when (currentPagingFlow.loadState.append) {
-                    is LoadState.Loading -> {
-                        item {
-                            Box(
-                                modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        }
-                    }
-
-                    is LoadState.Error -> {
-                        item {
-                            RetryItem {
-                                currentPagingFlow.retry()
-                            }
-                        }
-                    }
-
-                    else -> Unit
-                }
             }
-            Log.d("Paging", "currentPagingFlow ${currentPagingFlow}")
-
-            Log.d("Paging", "currentPagingFlow itemCount ${currentPagingFlow.itemCount}")
-            Log.d(
-                "Paging",
-                "currentPagingFlow load state refresh ${currentPagingFlow.loadState.refresh}"
-            )
-
-            // ---------- Empty State ----------
-            if (currentPagingFlow.itemCount == 0 &&
-                currentPagingFlow.loadState.refresh is LoadState.NotLoading
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No events found")
-                }
-            }
-
-            // ---------- First Load Error ----------
-            if (currentPagingFlow.loadState.refresh is LoadState.Error) {
-                val error = currentPagingFlow.loadState.refresh as LoadState.Error
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    RetryItem(
-                        message = error.error.message,
-                        onRetry = { currentPagingFlow.retry() }
-                    )
-                }
-            }
-            AnimatedVisibility(
-                visible = showScrollToTopButton,
-                enter = fadeIn() + slideInVertically { it },
-                exit = fadeOut() + slideOutVertically { it },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp)
-            ) {
-                FloatingActionButton(
-                    onClick = {
-                        coroutineScope.launch {
-                            listState.animateScrollToItem(0)
-                        }
-                    },
-                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowUp,
-                        contentDescription = "Scroll to top"
-                    )
-                }
-            }
-
-
         }
-
     }
-
 }
 
 @Composable
