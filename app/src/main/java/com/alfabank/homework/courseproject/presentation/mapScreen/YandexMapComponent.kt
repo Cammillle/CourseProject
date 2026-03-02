@@ -3,7 +3,6 @@ package com.alfabank.homework.courseproject.presentation.mapScreen
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PointF
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -15,21 +14,16 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.alfabank.homework.courseproject.R
 import com.alfabank.homework.courseproject.domain.model.Item
 import com.yandex.mapkit.Animation
-import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.Cluster
 import com.yandex.mapkit.map.ClusterListener
-import com.yandex.mapkit.map.ClusterTapListener
-import com.yandex.mapkit.map.ClusterizedPlacemarkCollection
 import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
-import kotlinx.coroutines.delay
 
 @Suppress("NonSkippableComposable")
 @Composable
@@ -44,15 +38,10 @@ fun YandexMapComponent(
     val context = LocalContext.current
 
     val mapView = remember {
-        MapView(context).apply {
-            val styleJson = """
-                [{"elements": ["label"],"stylers": {"visibility": "off"}}]
-            """.trimIndent()
-            mapWindow.map.setMapStyle(styleJson)
-        }
+        MapView(context)
     }
 
-    // Создаём кластеризированную коллекцию ОДИН раз
+    //коллекция кластеров
     val clusterizedCollection = remember(mapView) {
         mapView.mapWindow.map.mapObjects.addClusterizedPlacemarkCollection(
             object : ClusterListener {
@@ -63,16 +52,19 @@ fun YandexMapComponent(
         )
     }
 
-    // Установка стартовой камеры (только если позиция реально изменилась)
+    // плейсмаркеры
+    val placemarkMap = remember { mutableStateMapOf<Long, PlacemarkMapObject>() }
+
+    // Камера
     LaunchedEffect(cameraPosition) {
         mapView.mapWindow.map.move(
             cameraPosition,
-            Animation(Animation.Type.SMOOTH, 0.7f),
+            Animation(Animation.Type.SMOOTH, 0.6f),
             null
         )
     }
 
-    // Обработка нажатий
+    // Слушатель нажатия
     DisposableEffect(Unit) {
 
         val tapListener = MapObjectTapListener { mapObject, _ ->
@@ -93,18 +85,54 @@ fun YandexMapComponent(
         }
     }
 
+    //обновление плейсмаркеров при смене коллекции ивентов
+    LaunchedEffect(events) {
 
-//    // Обновление маркеров
-    LaunchedEffect(events, selectedEventId) {
-        updateClusterizedMarkers(
-            clusterizedCollection = clusterizedCollection,
-            events = events,
-            selectedEventId = selectedEventId,
-            context = context
+        clusterizedCollection.clear()
+        placemarkMap.clear()
+
+        val validEvents = events.filter { it.lat != null && it.lon != null }
+
+        val points = validEvents.map { Point(it.lat!!, it.lon!!) }
+
+        val placemarks = clusterizedCollection.addEmptyPlacemarks(points)
+
+        placemarks.forEachIndexed { index, placemark ->
+
+            val event = validEvents[index]
+
+            placemark.userData = event
+
+            placemarkMap[event.id] = placemark
+
+            configurePlacemark(
+                placemark = placemark,
+                event = event,
+                isSelected = event.id == selectedEventId,
+                context = context
+            )
+        }
+
+        clusterizedCollection.clusterPlacemarks(
+            60.0,
+            12
         )
     }
 
 
+    LaunchedEffect(selectedEventId) {
+
+        placemarkMap.forEach { (id, placemark) ->
+            val event = placemark.userData as? Item ?: return@forEach
+
+            configurePlacemark(
+                placemark = placemark,
+                event = event,
+                isSelected = id == selectedEventId,
+                context = context
+            )
+        }
+    }
 
     AndroidView(
         factory = { mapView },
@@ -112,9 +140,6 @@ fun YandexMapComponent(
     )
 }
 
-/**
- * Функция для настройки внешнего вида кластера.
- */
 private fun configureClusterAppearance(
     cluster: Cluster,
     context: Context
@@ -142,72 +167,43 @@ private fun configureClusterAppearance(
             size = 14f
             color = Color.WHITE
             placement = TextStyle.Placement.CENTER
-            //outlineColor = Color
-            //outlineWidth = 1f
         }
     )
 }
-
-/**
- * Обновляет маркеры в кластеризованной коллекции.
- */
-private fun updateClusterizedMarkers(
-    clusterizedCollection: ClusterizedPlacemarkCollection,
-    events: List<Item>,
-    selectedEventId: Long?,
+private fun configurePlacemark(
+    placemark: PlacemarkMapObject,
+    event: Item,
+    isSelected: Boolean,
     context: Context
 ) {
 
-    clusterizedCollection.clear()
-
-    val validEvents = events.filter { it.lat != null && it.lon != null }
-
-    val points = validEvents.map { Point(it.lat!!, it.lon!!) }
-
-    val placemarks = clusterizedCollection.addEmptyPlacemarks(points)
-
-    placemarks.forEachIndexed { index, placemark ->
-
-        val event = validEvents[index]
-
-        val isSelected = event.id == selectedEventId
-
-        placemark.setIcon(
-            ImageProvider.fromResource(
-                context,
-                if (isSelected)
-                    R.drawable.circle_24_red
-                else
-                    R.drawable.circle_24_green
-            )
+    placemark.setIcon(
+        ImageProvider.fromResource(
+            context,
+            if (isSelected)
+                R.drawable.circle_24_red
+            else
+                R.drawable.circle_24_green
         )
+    )
 
-        placemark.setIconStyle(
-            IconStyle().apply {
-                anchor = PointF(0.5f, 1f)
-                scale = 1f  // НЕ меняем scale при выборе
-                zIndex = if (isSelected) 1500f else 1000f
-            }
-        )
+    placemark.setIconStyle(
+        IconStyle().apply {
+            anchor = PointF(0.5f, 1f)
+            scale = 1f
+            zIndex = if (isSelected) 1500f else 1000f
+        }
+    )
 
-        placemark.setText(
-            (event.title ?: event.placeTitle ?: "").replace("+", " "),
-            TextStyle().apply {
-                size = 12f
-                color = if (isSelected) Color.RED else Color.BLACK
-                placement = TextStyle.Placement.BOTTOM
-                offset = 5f
-                outlineColor = Color.WHITE
-                outlineWidth = 1f
-            }
-        )
-
-        placemark.userData = event
-    }
-
-    // ВАЖНО: адекватные параметры
-    clusterizedCollection.clusterPlacemarks(
-        60.0,  // radius
-        12   // minZoom — чтобы подписи появлялись при приближении
+    placemark.setText(
+        (event.title ?: event.placeTitle ?: "").replace("+", " "),
+        TextStyle().apply {
+            size = 12f
+            color = if (isSelected) Color.RED else Color.BLACK
+            placement = TextStyle.Placement.BOTTOM
+            offset = 5f
+            outlineColor = Color.WHITE
+            outlineWidth = 1f
+        }
     )
 }
