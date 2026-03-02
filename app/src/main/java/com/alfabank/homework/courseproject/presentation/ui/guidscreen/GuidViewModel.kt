@@ -3,8 +3,9 @@ package com.alfabank.homework.courseproject.presentation.ui.guidscreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alfabank.homework.courseproject.data.GuidRepositoryImpl
-import com.alfabank.homework.courseproject.data.dto.lists.ListItem
 import com.alfabank.homework.courseproject.domain.Item
+import com.alfabank.homework.courseproject.domain.model.ListItem
+import com.alfabank.homework.courseproject.domain.model.ListWithItems
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import kotlinx.coroutines.async
@@ -15,9 +16,10 @@ import kotlinx.coroutines.launch
 
 class GuidViewModel : ViewModel() {
     private val repository = GuidRepositoryImpl()
-    private val ids = listOf(4058, 14579,12257,14475,14570,14559,14560,7785,14558,648,12384)
+    private val ids =
+        listOf<Long>(4058, 14579, 12257, 14475, 14570, 14559, 14560, 7785, 14558, 648, 12384)
 
-    private val _guidScreenState = MutableStateFlow<GuidScreenState>(GuidScreenState())
+    private val _guidScreenState = MutableStateFlow(GuidScreenState())
     val guidScreenState = _guidScreenState.asStateFlow()
 
     init {
@@ -57,15 +59,10 @@ class GuidViewModel : ViewModel() {
 
 }
 
-var cameraPosition: CameraPosition = CameraPosition(
-    Point(59.9342802, 30.3350986),
-    11.0f,
-    0.0f,
-    0.0f
-)
+
 
 data class GuidScreenState(
-    var lists: List<ListItem> = emptyList(),
+    var lists: List<ListWithItems> = emptyList(),
     var selectedEvent: Item? = null,
     var isLoading: Boolean = false,
     var error: String? = null

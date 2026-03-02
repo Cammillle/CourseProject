@@ -63,9 +63,9 @@ fun GuidScreen(
             ) {
                 items(items = lists) { item ->
                     ListItemCard(
-                        title = item.title!!.firstUppercase(),
-                        description = item.description!!.firstUppercase(),
-                        imageUrls = item.images ?: emptyList(),
+                        title = item.listEntity.title!!.firstUppercase(),
+                        description = item.listEntity.description!!.firstUppercase(),
+                        imageUrls = item.listEntity.images ?: emptyList(),
                         onMapNavigate = {
                             onMapNavigate(MapScreenArgs.ListData(item))
                         },

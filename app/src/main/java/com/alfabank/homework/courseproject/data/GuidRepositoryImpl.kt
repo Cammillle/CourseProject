@@ -3,8 +3,12 @@ package com.alfabank.homework.courseproject.data
 import coil.network.HttpException
 import com.alfabank.homework.courseproject.DatabaseProvider
 import com.alfabank.homework.courseproject.api.ListsApi
-import com.alfabank.homework.courseproject.data.dto.lists.ListItem
-import com.alfabank.homework.courseproject.data.dto.lists.toListItem
+import com.alfabank.homework.courseproject.data.dto.lists.ListItemResponseDTO
+import com.alfabank.homework.courseproject.data.dto.lists.toListItemEntity
+import com.alfabank.homework.courseproject.data.local.ListItemCrossEntity
+import com.alfabank.homework.courseproject.data.local.toItemEntity
+import com.alfabank.homework.courseproject.data.local.toListWithItems
+import com.alfabank.homework.courseproject.domain.model.ListWithItems
 import okio.IOException
 
 class GuidRepositoryImpl {
@@ -13,21 +17,33 @@ class GuidRepositoryImpl {
     private val database = DatabaseProvider.getDatabase()
     private val dao = database.listsDao()
 
-    suspend fun getListsById(id: Int): Result<ListItem> {
-        if(dao.getListsCount() > 1){
-            return Result.success(dao.getListWithItems(id))
+    suspend fun getListsById(id: Long): Result<ListWithItems> {
+        val cached = dao.getListWithItems(id)
+        if (cached != null) {
+            return Result.success(cached.toListWithItems())
         }
+        return try {
+            val response = api.getListItemsById(id)
+            cacheListResponse(response)
+            val cached = dao.getListWithItems(id)
+            Result.success((cached!!.toListWithItems()))
+        }catch (e: IOException){
+            e.printStackTrace()
+            Result.failure(e)
+        }catch (e: HttpException) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
 
-        val response = try {
-            api.getListItemsById(id)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return Result.failure(e)
-        } catch (e: HttpException) {
-            e.printStackTrace()
-            return Result.failure(e)
-        }
-        return Result.success(response.toListItem())
+    private suspend fun cacheListResponse(dto: ListItemResponseDTO) {
+        val listEntity = dto.toListItemEntity()
+        val itemEntities = dto.items?.map { it.toItemEntity() } ?: emptyList()
+        val crossEntities = dto.items?.map { ListItemCrossEntity(listEntity.id, it.id) } ?: emptyList()
+
+        dao.insertListResponse(listEntity)
+        dao.insertItems(itemEntities)
+        dao.insertCrossReferences(crossEntities)
     }
 
 

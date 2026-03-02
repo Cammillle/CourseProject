@@ -25,11 +25,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.alfabank.homework.courseproject.data.dto.lists.ListItem
-import com.alfabank.homework.courseproject.domain.Item
 import com.alfabank.homework.courseproject.navigation.MapScreenArgs
 
-@Suppress("NonSkippableComposable")
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
@@ -45,6 +43,7 @@ fun MapScreen(
     val screenState = viewModel.screenState.collectAsStateWithLifecycle()
     val currentState = screenState.value
 
+    Log.d("MapScreen", "currents state ${currentState.events}")
     Scaffold(
         topBar = {
             TopAppBar(

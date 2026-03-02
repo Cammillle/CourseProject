@@ -28,6 +28,7 @@ class MapScreenViewModel(
         return when (args) {
             is MapScreenArgs.ListData -> {
                 val items = args.listItem.items ?: emptyList()
+                Log.d("MapScreen", "items of listItem $items")
                 MapScreenState(
                     cameraPosition = calculateCameraPositionForItems(items),
                     events = items,

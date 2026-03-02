@@ -20,8 +20,5 @@ interface ListsDao {
 
     @Transaction
     @Query("SELECT * FROM lists_of_items WHERE id = :listId")
-    suspend fun getListWithItems(listId: Int): ListWithItems?
-
-    @Query("SELECT COUNT(*) FROM lists_of_items")
-    suspend fun getListsCount(): Int
+    suspend fun getListWithItems(listId: Long): ListWithItemsDBO?
 }

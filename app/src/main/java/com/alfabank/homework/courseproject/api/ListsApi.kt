@@ -15,7 +15,7 @@ interface ListsApi {
 
     @GET("lists/{item_id}")
     suspend fun getListItemsById(
-        @Path("item_id") itemId: Int,
+        @Path("item_id") itemId: Long,
         @Query("text_format") textFormat: String = "text",
         //@Query("fields") fields: List<String> = listOf("-body_text"),
         @Query("expand") expand: List<String> = listOf("place","images")

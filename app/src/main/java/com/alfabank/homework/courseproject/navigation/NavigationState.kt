@@ -5,7 +5,6 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.alfabank.homework.courseproject.data.dto.lists.ListItem
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

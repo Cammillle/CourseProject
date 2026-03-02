@@ -34,6 +34,7 @@ fun YandexMapComponent(
     selectedEventId: Long? = null,
     onEventSelected: (Item) -> Unit
 ) {
+    Log.d("YandexMapComponent", "Events $events")
     val context = LocalContext.current
 
     val mapView = remember {
@@ -142,7 +143,8 @@ private fun updateMarkers(
                     zIndex = 1000f
                 }
             )
-            val title = event.placeTitle ?: event.title ?: ""
+            val title = event.title ?: event.placeTitle ?: ""
+            Log.d("YandexMapComponent", "titles $title")
             placemark.setText(
                 title.replace("+", " "),
                 TextStyle().apply {

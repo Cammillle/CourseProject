@@ -6,7 +6,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.alfabank.homework.courseproject.data.dto.lists.ListItem
 import kotlinx.serialization.json.Json
 
 @Composable

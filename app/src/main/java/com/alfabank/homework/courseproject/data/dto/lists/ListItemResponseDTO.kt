@@ -1,6 +1,8 @@
 package com.alfabank.homework.courseproject.data.dto.lists
 
+import com.alfabank.homework.courseproject.data.local.ListEntity
 import com.alfabank.homework.courseproject.domain.Item
+import com.alfabank.homework.courseproject.domain.model.ListItem
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -24,28 +26,16 @@ data class ListItemResponseDTO(
     val title: String?
 )
 
-fun ListItemResponseDTO.toListItem(): ListItem{
-    return ListItem(
-        ctype = ctype,
+fun ListItemResponseDTO.toListItemEntity(): ListEntity{
+    return ListEntity(
         description = description,
         id = id,
         images = images?.map { it.image!! },
         itemUrl = itemUrl,
-        items = items?.map { it.toItem() },
         siteUrl = siteUrl,
         title = title
     )
 }
 
 
-@Serializable
-data class ListItem(
-    val ctype: String?,// list
-    val description: String?,
-    val id: Long,
-    val images: List<String>?,
-    val itemUrl: String?,
-    val items: List<Item>?,
-    val siteUrl: String?,
-    val title: String?
-)
+
