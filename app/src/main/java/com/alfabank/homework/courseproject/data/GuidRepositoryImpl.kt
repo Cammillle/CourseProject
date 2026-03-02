@@ -1,6 +1,5 @@
 package com.alfabank.homework.courseproject.data
 
-import coil.network.HttpException
 import com.alfabank.homework.courseproject.DatabaseProvider
 import com.alfabank.homework.courseproject.api.ListsApi
 import com.alfabank.homework.courseproject.data.dto.lists.ListItemResponseDTO
@@ -10,6 +9,7 @@ import com.alfabank.homework.courseproject.data.local.toItemEntity
 import com.alfabank.homework.courseproject.data.local.toListWithItems
 import com.alfabank.homework.courseproject.domain.model.ListWithItems
 import okio.IOException
+import retrofit2.HttpException
 
 class GuidRepositoryImpl {
     private val api = ListsApi()

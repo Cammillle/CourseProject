@@ -4,10 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alfabank.homework.courseproject.data.GuidRepositoryImpl
 import com.alfabank.homework.courseproject.domain.Item
-import com.alfabank.homework.courseproject.domain.model.ListItem
 import com.alfabank.homework.courseproject.domain.model.ListWithItems
-import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraPosition
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +14,7 @@ import kotlinx.coroutines.launch
 class GuidViewModel : ViewModel() {
     private val repository = GuidRepositoryImpl()
     private val ids =
-        listOf<Long>(4058, 14579, 12257, 14475, 14570, 14559, 14560, 7785, 14558, 648, 12384)
+        listOf<Long>(9479, 14579, 193, 512, 334, 7785, 648, 12384, 9444, 10196, 9045, 485)
 
     private val _guidScreenState = MutableStateFlow(GuidScreenState())
     val guidScreenState = _guidScreenState.asStateFlow()
