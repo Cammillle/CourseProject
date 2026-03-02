@@ -1,4 +1,4 @@
-package com.alfabank.homework.courseproject.data.local
+package com.alfabank.homework.courseproject.data.local.paging
 
 import android.util.Log
 import androidx.paging.ExperimentalPagingApi
@@ -7,6 +7,11 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.alfabank.homework.courseproject.api.EventsApi
+import com.alfabank.homework.courseproject.data.local.dbo.EventCategoryCrossRef
+import com.alfabank.homework.courseproject.data.local.EventDatabase
+import com.alfabank.homework.courseproject.data.local.dbo.EventEntity
+import com.alfabank.homework.courseproject.data.local.dbo.RemoteKeys
+import com.alfabank.homework.courseproject.data.local.toEventEntity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

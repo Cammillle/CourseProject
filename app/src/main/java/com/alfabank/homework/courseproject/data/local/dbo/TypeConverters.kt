@@ -1,4 +1,4 @@
-package com.alfabank.homework.courseproject.data.local
+package com.alfabank.homework.courseproject.data.local.dbo
 
 import androidx.room.TypeConverter
 

@@ -1,10 +1,14 @@
-package com.alfabank.homework.courseproject.data.local
+package com.alfabank.homework.courseproject.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.alfabank.homework.courseproject.data.local.dbo.ItemEntity
+import com.alfabank.homework.courseproject.data.local.dbo.ListEntity
+import com.alfabank.homework.courseproject.data.local.dbo.ListItemCrossEntity
+import com.alfabank.homework.courseproject.data.local.dbo.ListWithItemsDBO
 
 @Dao
 interface ListsDao {

@@ -1,4 +1,4 @@
-package com.alfabank.homework.courseproject.data
+package com.alfabank.homework.courseproject.data.local.repository
 
 import android.util.Log
 import androidx.paging.ExperimentalPagingApi
@@ -7,10 +7,10 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.alfabank.homework.courseproject.api.EventsApi
-import com.alfabank.homework.courseproject.data.local.AllEventsRemoteMediator
-import com.alfabank.homework.courseproject.data.local.CategoryEventsRemoteMediator
+import com.alfabank.homework.courseproject.data.local.paging.AllEventsRemoteMediator
+import com.alfabank.homework.courseproject.data.local.paging.CategoryEventsRemoteMediator
 import com.alfabank.homework.courseproject.data.local.EventDatabase
-import com.alfabank.homework.courseproject.data.local.toItem
+import com.alfabank.homework.courseproject.data.local.dbo.toItem
 import com.alfabank.homework.courseproject.domain.EventRepository
 import com.alfabank.homework.courseproject.domain.model.Item
 import kotlinx.coroutines.Dispatchers

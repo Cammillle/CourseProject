@@ -1,7 +1,7 @@
 package com.alfabank.homework.courseproject
 
-import com.alfabank.homework.courseproject.data.EventRepositoryImpl
-import com.alfabank.homework.courseproject.data.GuidRepositoryImpl
+import com.alfabank.homework.courseproject.data.local.repository.EventRepositoryImpl
+import com.alfabank.homework.courseproject.data.local.repository.GuidRepositoryImpl
 import com.alfabank.homework.courseproject.domain.EventRepository
 import com.alfabank.homework.courseproject.domain.GuidRepository
 import dagger.Binds

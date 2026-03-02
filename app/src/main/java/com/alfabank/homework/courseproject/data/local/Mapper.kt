@@ -2,6 +2,7 @@ package com.alfabank.homework.courseproject.data.local
 
 import android.util.Log
 import com.alfabank.homework.courseproject.data.dto.event.EventDTO
+import com.alfabank.homework.courseproject.data.local.dbo.EventEntity
 import com.alfabank.homework.courseproject.domain.model.Item
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json

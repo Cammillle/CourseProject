@@ -1,12 +1,12 @@
-package com.alfabank.homework.courseproject.data
+package com.alfabank.homework.courseproject.data.local.repository
 
 import com.alfabank.homework.courseproject.api.ListsApi
 import com.alfabank.homework.courseproject.data.dto.lists.ListItemResponseDTO
 import com.alfabank.homework.courseproject.data.dto.lists.toListItemEntity
 import com.alfabank.homework.courseproject.data.local.EventDatabase
-import com.alfabank.homework.courseproject.data.local.ListItemCrossEntity
-import com.alfabank.homework.courseproject.data.local.toItemEntity
-import com.alfabank.homework.courseproject.data.local.toListWithItems
+import com.alfabank.homework.courseproject.data.local.dbo.ListItemCrossEntity
+import com.alfabank.homework.courseproject.data.local.dbo.toItemEntity
+import com.alfabank.homework.courseproject.data.local.dbo.toListWithItems
 import com.alfabank.homework.courseproject.domain.GuidRepository
 import com.alfabank.homework.courseproject.domain.model.ListWithItems
 import okio.IOException
