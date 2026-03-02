@@ -26,6 +26,10 @@ class GuidViewModel : ViewModel() {
         loadLists()
     }
 
+    fun retry() {
+        loadLists()
+    }
+
     private fun loadLists() {
         viewModelScope.launch {
             _guidScreenState.update { state ->
@@ -45,7 +49,8 @@ class GuidViewModel : ViewModel() {
                         onFailure = { error ->
                             _guidScreenState.update { state ->
                                 state.copy(
-                                    error = error.message ?: "Failed to load more lists"
+                                    error = error.message ?: "Failed to load more lists",
+                                    isLoading = false
                                 )
                             }
                         }
@@ -58,7 +63,6 @@ class GuidViewModel : ViewModel() {
 
 
 }
-
 
 
 data class GuidScreenState(

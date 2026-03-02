@@ -16,7 +16,7 @@ data class ItemEntity(
     val bodyText: String?,
 
     val image: String,
-
+    val firstImage: String?,
     val itemUrl: String?,
     val title: String?,
     val placeTitle: String?,
@@ -24,7 +24,7 @@ data class ItemEntity(
     val lon: Double?
 )
 
-fun ItemDTO.toItemEntity(): ItemEntity{
+fun ItemDTO.toItemEntity(): ItemEntity {
     return ItemEntity(
         id = id,
         address = address,
@@ -36,7 +36,8 @@ fun ItemDTO.toItemEntity(): ItemEntity{
         title = title,
         placeTitle = place?.title ?: "",
         lat = place?.coords?.lat ?: coords?.lat,
-        lon = place?.coords?.lon ?: coords?.lon
+        lon = place?.coords?.lon ?: coords?.lon,
+        firstImage = firstImage?.thumbnails?.x384
     )
 }
 
@@ -56,7 +57,7 @@ fun ItemEntity.toItem(): Item {
         startTime = "",
         isEndless = false,
         city = "",
-        images = emptyList(),
+        images = listOf(firstImage),
         categories = emptyList(),
         price = "",
         isFavourite = false,

@@ -1,11 +1,16 @@
 package com.alfabank.homework.courseproject.presentation.ui.guidscreen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.LOG_TAG
 import com.alfabank.homework.courseproject.navigation.MapScreenArgs
 import com.alfabank.homework.courseproject.presentation.ui.guidscreen.composable.ListItemCard
 import com.alfabank.homework.courseproject.presentation.ui.homescreen.eventScreen.firstUppercase
@@ -35,7 +41,8 @@ fun GuidScreen(
 
     val currentState = guidState.value
 
-    if(currentState.error == null){
+    Log.d("GuidScreen", "state $currentState")
+    if (currentState.error == null) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             containerColor = MaterialTheme.colorScheme.background,
@@ -81,10 +88,18 @@ fun GuidScreen(
         if (currentState.isLoading) {
             CircularProgressIndicator()
         } else if (currentState.error != null) {
-            Text(
-                text = currentState.error.toString(),
-                color = MaterialTheme.colorScheme.error
-            )
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(currentState.error.orEmpty())
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(onClick = {
+                    viewModel.retry()
+                }) {
+                    Text("Retry")
+                }
+            }
         }
     }
 }
