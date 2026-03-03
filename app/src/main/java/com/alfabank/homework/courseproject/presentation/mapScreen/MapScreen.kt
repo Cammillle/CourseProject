@@ -38,7 +38,6 @@ import kotlinx.coroutines.launch
 fun MapScreen(
     onBack: () -> Unit
 ) {
-
     val viewModel: MapScreenViewModel = hiltViewModel()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }

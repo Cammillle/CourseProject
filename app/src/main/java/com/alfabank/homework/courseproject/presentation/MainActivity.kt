@@ -4,35 +4,28 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.material3.Surface
+import com.alfabank.homework.courseproject.MainViewModel
 import com.alfabank.homework.courseproject.presentation.ui.theme.CourseProjectTheme
-import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    override fun onStart() {
-        super.onStart()
-        MapKitFactory.getInstance().onStart()
-    }
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        MapKitFactory.setApiKey("")
-        MapKitFactory.initialize(this)
+
         setContent {
             CourseProjectTheme {
                 Surface {
-                    MainScreen()
+                    MainScreen(viewModel.uiState, onRetry = viewModel::retry)
                 }
             }
         }
     }
 
-    override fun onStop() {
-        MapKitFactory.getInstance().onStop()
-        super.onStop()
-    }
 }

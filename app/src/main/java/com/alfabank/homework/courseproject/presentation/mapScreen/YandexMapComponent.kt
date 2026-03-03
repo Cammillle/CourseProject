@@ -18,6 +18,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.alfabank.homework.courseproject.R
 import com.alfabank.homework.courseproject.domain.model.Item
 import com.yandex.mapkit.Animation
+import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.Cluster
@@ -48,10 +49,11 @@ fun YandexMapComponent(
     }
 
     DisposableEffect(lifecycleOwner) {
+        val mapKit = MapKitFactory.getInstance()
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_START -> mapView.onStart()
-                Lifecycle.Event.ON_STOP -> mapView.onStop()
+                Lifecycle.Event.ON_START -> mapKit.onStart()
+                Lifecycle.Event.ON_STOP -> mapKit.onStop()
                 else -> {}
             }
         }

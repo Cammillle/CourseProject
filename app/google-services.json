@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1042537179047",
+    "project_id": "courseproject-2b53e",
+    "storage_bucket": "courseproject-2b53e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1042537179047:android:a1b5e3120d6754f157b882",
+        "android_client_info": {
+          "package_name": "com.alfabank.homework.courseproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACywxIEYwy1OMrtDnVQAha1AhqBhmbZuE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -20,6 +20,7 @@ coroutines = "1.7.3"
 room = "2.8.2"
 ksp = "2.2.10-2.0.2"
 dagger = "2.57.1"
+firebaseConfig = "23.0.1"
 
 
 [libraries]
@@ -52,6 +53,7 @@ room-ktx = {module = "androidx.room:room-ktx", version.ref = "room"}
 yandex-mapskit = { module = "com.yandex.android:maps.mobile", version.ref = "mapKit" }
 dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
+firebase-config = { group = "com.google.firebase", name = "firebase-config", version.ref = "firebaseConfig" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

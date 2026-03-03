@@ -1,7 +1,10 @@
 package com.alfabank.homework.courseproject.presentation
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -10,9 +13,12 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -21,6 +27,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.alfabank.homework.courseproject.MainUiState
 import com.alfabank.homework.courseproject.navigation.AppNavGraph
 import com.alfabank.homework.courseproject.navigation.NavigationItem
 import com.alfabank.homework.courseproject.navigation.Screen
@@ -34,9 +41,41 @@ import com.alfabank.homework.courseproject.presentation.homescreen.components.Fe
 import com.alfabank.homework.courseproject.presentation.homescreen.eventScreen.EventDetailScreen
 import com.alfabank.homework.courseproject.presentation.mapScreen.MapScreen
 import com.alfabank.homework.courseproject.presentation.profilescreen.ProfileScreen
+import com.yandex.mapkit.MapKitFactory
+import kotlinx.coroutines.flow.StateFlow
 
+@Suppress("NonSkippableComposable")
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    uiStateFlow: StateFlow<MainUiState>,
+    onRetry: () -> Unit
+) {
+    val uiState by uiStateFlow.collectAsStateWithLifecycle()
+    when (uiState) {
+        is MainUiState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+        is MainUiState.Success -> {
+            val apiKey = (uiState as MainUiState.Success).apiKey
+            val context = LocalContext.current
+
+            LaunchedEffect(apiKey) {
+                MapKitFactory.setApiKey(apiKey)
+                MapKitFactory.initialize(context)
+            }
+
+        }
+        is MainUiState.Error -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Button(onClick = onRetry) {
+                    Text("Ошибка: ${(uiState as MainUiState.Error).message}. Повторить")
+                }
+            }
+        }
+    }
+
     val viewModel: EventViewModel = viewModel()
     val queries by viewModel.query.collectAsStateWithLifecycle()
 

@@ -4,7 +4,6 @@ import android.content.Context
 import com.alfabank.homework.courseproject.api.EventsApi
 import com.alfabank.homework.courseproject.api.ListsApi
 import com.alfabank.homework.courseproject.data.local.EventDatabase
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
