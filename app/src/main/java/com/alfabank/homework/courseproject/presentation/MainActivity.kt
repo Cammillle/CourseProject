@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        MapKitFactory.setApiKey("bc0b2b9d-9fdf-46cd-828f-95a834344db5")
+        MapKitFactory.setApiKey("")
         MapKitFactory.initialize(this)
         setContent {
             CourseProjectTheme {

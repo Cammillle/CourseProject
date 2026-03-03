@@ -1,6 +1,5 @@
 package com.alfabank.homework.courseproject.presentation.guidscreen
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.alfabank.homework.courseproject.navigation.MapScreenArgs
 import com.alfabank.homework.courseproject.presentation.guidscreen.composable.ListItemCard
 import com.alfabank.homework.courseproject.presentation.homescreen.eventScreen.firstUppercase
@@ -42,7 +40,6 @@ fun GuidScreen(
 
     val currentState = guidState.value
 
-    Log.d("GuidScreen", "state $currentState")
     if (currentState.error == null) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),

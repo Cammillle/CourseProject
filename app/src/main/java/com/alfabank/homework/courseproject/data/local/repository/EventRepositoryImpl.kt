@@ -10,7 +10,7 @@ import com.alfabank.homework.courseproject.api.EventsApi
 import com.alfabank.homework.courseproject.data.local.paging.AllEventsRemoteMediator
 import com.alfabank.homework.courseproject.data.local.paging.CategoryEventsRemoteMediator
 import com.alfabank.homework.courseproject.data.local.EventDatabase
-import com.alfabank.homework.courseproject.data.local.dbo.toItem
+import com.alfabank.homework.courseproject.data.local.toItem
 import com.alfabank.homework.courseproject.domain.EventRepository
 import com.alfabank.homework.courseproject.domain.model.Item
 import kotlinx.coroutines.Dispatchers
