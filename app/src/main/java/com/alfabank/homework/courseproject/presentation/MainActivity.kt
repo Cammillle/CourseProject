@@ -22,7 +22,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             CourseProjectTheme {
                 Surface {
-                    MainScreen(viewModel.uiState, onRetry = viewModel::retry)
+                    MainScreen(viewModel.uiState,
+                        onRetry = viewModel::retry)
                 }
             }
         }

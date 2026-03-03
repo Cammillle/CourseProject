@@ -41,7 +41,13 @@ interface EventDao {
         city: String
     ): PagingSource<Int, EventEntity>
 
-    @Query("SELECT COUNT(*) FROM events where events.city = :city")
+    @Query(  """
+        SELECT COUNT(*) FROM events e
+        INNER JOIN event_category_cross_ref c
+        ON e.id = c.eventId
+        WHERE c.category = "all"
+        and e.city =:city
+    """)
     suspend fun getEventsCount(city: String): Int
 
     @Query(

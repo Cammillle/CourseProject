@@ -39,8 +39,6 @@ class EventRepositoryImpl @Inject constructor(
             ),
             pagingSourceFactory = {
                 Log.d("CAtegory paging", " $category $city")
-                val paging = database.eventsDao().pagingSourceByCategory(category, city)
-                Log.d("CAtegory paging", " $paging")
                 database.eventsDao().pagingSourceByCategory(category, city)
             }
         ).flow.map {
