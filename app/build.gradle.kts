@@ -61,19 +61,17 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     //firebase
-    implementation(platform("com.google.firebase:firebase-bom:34.9.0"))
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 
-    val paging_version = "3.4.1"
+    implementation(libs.androidx.browser)
 
-    implementation("androidx.browser:browser:1.7.0")
+    implementation(libs.androidx.paging.runtime)
 
-    implementation("androidx.paging:paging-runtime:$paging_version")
-
-    implementation("androidx.room:room-paging:2.8.2")
+    implementation(libs.androidx.room.paging)
 
     // optional - Jetpack Compose integration
-    implementation("androidx.paging:paging-compose:3.4.1")
+    implementation(libs.androidx.paging.compose)
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
@@ -95,18 +93,17 @@ dependencies {
     //Hilt
     implementation(libs.dagger.hilt.android)
     ksp(libs.dagger.hilt.compiler)
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
     // Image Loading
     implementation(libs.coil.compose)
-    implementation("com.google.accompanist:accompanist-pager:0.35.0-alpha")
-    implementation("androidx.compose.material3:material3:1.3.0")
+    implementation(libs.androidx.material3)
 
     // AndroidX Security (для EncryptedSharedPreferences и MasterKey)
-    implementation("androidx.security:security-crypto:1.1.0")
+    implementation(libs.androidx.security.crypto)
 
     //Room
     implementation(libs.room)
