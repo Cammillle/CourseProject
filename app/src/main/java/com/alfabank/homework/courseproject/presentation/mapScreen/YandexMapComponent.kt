@@ -44,6 +44,10 @@ fun YandexMapComponent(
 
     val mapView = remember {
         MapView(context).apply {
+            val styleJson = """
+                [{"elements": ["label"],"stylers": {"visibility": "off"}}]
+            """.trimIndent()
+            mapWindow.map.setMapStyle(styleJson)
             onStart()
         }
     }
@@ -138,6 +142,7 @@ fun YandexMapComponent(
             )
         }
 
+        //кластеризация радиусом 60
         clusterizedCollection.clusterPlacemarks(
             60.0,
             12
