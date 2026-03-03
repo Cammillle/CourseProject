@@ -1,4 +1,4 @@
-package com.alfabank.homework.courseproject
+package com.alfabank.homework.courseproject.di
 
 import android.content.Context
 import com.alfabank.homework.courseproject.api.EventsApi

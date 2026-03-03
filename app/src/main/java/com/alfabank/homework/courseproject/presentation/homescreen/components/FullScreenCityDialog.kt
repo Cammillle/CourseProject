@@ -14,7 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alfabank.homework.courseproject.R
@@ -26,14 +27,14 @@ fun FullScreenCityDialog(
     onDismiss: () -> Unit,
     onCitySelected: (String) -> Unit
 ) {
-    val context = LocalContext.current
-    val cities = context.resources.getStringArray(R.array.cities)
+    val cities = stringArrayResource(R.array.cities)
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(),
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 8.dp,
+        scrimColor = Color.Transparent,
     ) {
         Column(
             modifier = Modifier

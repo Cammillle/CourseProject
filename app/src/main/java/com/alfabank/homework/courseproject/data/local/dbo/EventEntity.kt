@@ -21,8 +21,8 @@ data class EventEntity(
     val isEndless: Boolean?,
     val itemUrl: String?,
     val publicationDate: String?,
-    val imagesJson: String?, // JSON-строка списка URL
-    val categories: String?, // JSON-строка
+    val imagesJson: String?,
+    val categories: String?,
     val isFavourite: Boolean = false
 )
 
@@ -40,10 +40,9 @@ data class RemoteKeys(
 
 @Entity(
     tableName = "event_category_cross_ref",
-    primaryKeys = ["eventId", "category", "city"]
+    primaryKeys = ["eventId", "category"]
 )
 data class EventCategoryCrossRef(
     val eventId: Long,
     val category: String,
-    val city: String
 )

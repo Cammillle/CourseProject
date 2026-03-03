@@ -98,7 +98,6 @@ class CategoryEventsRemoteMediator(
                     EventCategoryCrossRef(
                         eventId = it.id,
                         category = category,
-                        city = city
                     )
                 }
                 remoteKeysDao.insertAllKeys(keys)

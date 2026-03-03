@@ -1,4 +1,4 @@
-package com.alfabank.homework.courseproject
+package com.alfabank.homework.courseproject.di
 
 import com.alfabank.homework.courseproject.data.local.repository.EventRepositoryImpl
 import com.alfabank.homework.courseproject.data.local.repository.GuidRepositoryImpl
