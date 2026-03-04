@@ -74,7 +74,7 @@ class EventViewModel @Inject constructor(
         if (query.category == "all") {
             repository.getEventsWithoutCategory(query.city)
         } else {
-            repository.getEventsWithCategory(query.category, query.city)
+            repository.getEventsWithCategory(category = query.category, city = query.city)
         }
     }.cachedIn(viewModelScope)
 
@@ -99,7 +99,7 @@ class EventViewModel @Inject constructor(
 
     fun selectCity(city: String) {
         _query.update { queries ->
-            queries.copy(city = city )
+            queries.copy(city = city)
         }
     }
 

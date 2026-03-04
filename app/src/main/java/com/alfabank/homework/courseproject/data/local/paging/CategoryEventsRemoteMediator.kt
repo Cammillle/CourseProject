@@ -67,7 +67,8 @@ class CategoryEventsRemoteMediator(
             val response = api.getPopularEventsByCategories(
                 actualSince = today(),
                 page = page,
-                categories = category
+                categories = category,
+                location = city
             )
             val events = response.results?.let {
                 it.map { dto ->
