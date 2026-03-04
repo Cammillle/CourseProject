@@ -74,6 +74,7 @@ fun MainScreen() {
                     onCitySelected = { city ->
                         viewModel.selectCity(city)
                     },
+                    selectedCity = queries.city,
                 )
             }
         },

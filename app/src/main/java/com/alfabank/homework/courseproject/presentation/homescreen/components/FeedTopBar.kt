@@ -33,11 +33,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.alfabank.homework.courseproject.R
+import com.alfabank.homework.courseproject.presentation.utils.fromSlug
 import com.alfabank.homework.courseproject.presentation.utils.getSlug
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedTopBar(
+    selectedCity: String,
     navigateOnFilterScreen: () -> Unit,
     onSearchQueryChanged: (String) -> Unit,
     onRefreshSearch: () -> Unit,
@@ -45,7 +47,7 @@ fun FeedTopBar(
 ) {
     var showCityDialog by remember { mutableStateOf(false) }
 
-    var selectedCity by remember { mutableStateOf("Санкт-Петербург") }
+    var selectedCity = selectedCity.fromSlug()
 
     var searchQuery by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
