@@ -112,4 +112,7 @@ dependencies {
 
     // Яндекс MapKit
     implementation(libs.yandex.mapskit)
+
+    //Data store
+    implementation(libs.androidx.datastore.preferences)
 }

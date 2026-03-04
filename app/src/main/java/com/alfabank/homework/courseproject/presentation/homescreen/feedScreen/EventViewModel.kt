@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.alfabank.homework.courseproject.domain.EventRepository
+import com.alfabank.homework.courseproject.domain.UserPreferencesRepository
 import com.alfabank.homework.courseproject.domain.model.Item
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
@@ -28,7 +30,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EventViewModel @Inject constructor(
-    private val repository: EventRepository
+    private val repository: EventRepository,
+    private val userPreferencesRepo: UserPreferencesRepository
 ) : ViewModel() {
     private val categoryMap = mapOf(
         "Концерты" to "concert",
@@ -42,6 +45,10 @@ class EventViewModel @Inject constructor(
 
     init {
         Log.d("ViewModel", "Instance created: ${hashCode()}")
+        viewModelScope.launch {
+            val savedCity = userPreferencesRepo.selectedCity.first()
+            _query.update { it.copy(city = savedCity) }
+        }
     }
 
     override fun onCleared() {
@@ -98,8 +105,11 @@ class EventViewModel @Inject constructor(
     }
 
     fun selectCity(city: String) {
-        _query.update { queries ->
-            queries.copy(city = city)
+        viewModelScope.launch {
+            userPreferencesRepo.saveCity(city)
+            _query.update { queries ->
+                queries.copy(city = city)
+            }
         }
     }
 
