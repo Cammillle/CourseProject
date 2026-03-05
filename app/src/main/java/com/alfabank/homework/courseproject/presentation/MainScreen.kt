@@ -157,7 +157,10 @@ fun MainScreen() {
             },
             favouriteScreenContent = {
                 FavouriteScreen(
-                    items = favouriteEvents.value
+                    items = favouriteEvents.value,
+                    onItemClick = { id ->
+                        navigationState.navigateToEventDetails(id)
+                    }
                 )
             },
             profileScreenContent = { ProfileScreen() },

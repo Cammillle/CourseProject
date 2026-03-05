@@ -2,6 +2,7 @@ package com.alfabank.homework.courseproject.presentation.favouritescreen
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -43,6 +44,7 @@ import com.alfabank.homework.courseproject.domain.model.Item
 @Composable
 fun FavouriteScreen(
     items: List<Item> = emptyList(),
+    onItemClick: (Long) -> Unit
 ) {
     Log.d("Favoruite screen", "Items $items")
     val itemsByCategory = items.groupBy { item ->
@@ -90,7 +92,8 @@ fun FavouriteScreen(
                 CategoryRow(
                     categoryName = category,
                     imageId = mapImages[category] ?: R.drawable.festival,
-                    items = categoryItem
+                    items = categoryItem,
+                    onItemClick = onItemClick
                 )
             }
         }
@@ -100,6 +103,7 @@ fun FavouriteScreen(
 @Suppress("NonSkippableComposable")
 @Composable
 fun CategoryRow(
+    onItemClick: (Long) -> Unit,
     categoryName: String,
     imageId: Int,
     items: List<Item>
@@ -136,7 +140,10 @@ fun CategoryRow(
         ) {
             items(items) { item ->
                 Log.d("Favoruite screen", "Item $item")
-                CategoryItemCard(item)
+                CategoryItemCard(
+                    item,
+                    onItemClick = onItemClick
+                )
             }
         }
     }
@@ -145,10 +152,12 @@ fun CategoryRow(
 @Suppress("NonSkippableComposable")
 @Composable
 fun CategoryItemCard(
-    item: Item
+    item: Item,
+    onItemClick: (Long) -> Unit
 ) {
     Card(
         modifier = Modifier
+            .clickable(onClick = { onItemClick(item.id) })
             .width(160.dp)
             .height(200.dp),
         shape = RoundedCornerShape(12.dp),
