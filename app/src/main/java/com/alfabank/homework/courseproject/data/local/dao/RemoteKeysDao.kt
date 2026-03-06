@@ -30,7 +30,7 @@ interface RemoteKeysDao {
     ): RemoteKeys?
 
     @Query("DELETE FROM remote_keys")
-    suspend fun clearAll()
+    suspend fun clearAllRemoteKeys()
 
     @Query("DELETE FROM remote_keys WHERE category IS :category and city =:city")
     suspend fun clearByCategory(

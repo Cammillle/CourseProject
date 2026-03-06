@@ -73,7 +73,7 @@ interface EventDao {
     // ---------- Clear ----------
 
     @Query("DELETE FROM events")
-    suspend fun clearAll()
+    suspend fun clearAllEvents()
 
     @Query(
         """

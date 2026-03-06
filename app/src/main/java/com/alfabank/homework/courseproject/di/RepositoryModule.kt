@@ -2,8 +2,10 @@ package com.alfabank.homework.courseproject.di
 
 import com.alfabank.homework.courseproject.data.local.repository.EventRepositoryImpl
 import com.alfabank.homework.courseproject.data.local.repository.GuidRepositoryImpl
+import com.alfabank.homework.courseproject.data.local.repository.ProfileRepositoryImpl
 import com.alfabank.homework.courseproject.domain.EventRepository
 import com.alfabank.homework.courseproject.domain.GuidRepository
+import com.alfabank.homework.courseproject.domain.ProfileRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -25,4 +27,10 @@ abstract class RepositoryModule {
     abstract fun bindGuidRepository(
         impl: GuidRepositoryImpl
     ): GuidRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindProfileRepository(
+        impl: ProfileRepositoryImpl
+    ): ProfileRepository
 }
