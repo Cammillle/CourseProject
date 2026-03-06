@@ -117,14 +117,12 @@ fun CategoryRow(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            //horizontalArrangement = Arrangement.Absolute.spacedBy(4.dp)
         ) {
             Image(
                 modifier = Modifier.size(24.dp),
                 painter = painterResource(imageId),
                 contentDescription = null
             )
-            //Заголовок
             Text(
                 text = categoryName,
                 style = MaterialTheme.typography.titleLarge,
