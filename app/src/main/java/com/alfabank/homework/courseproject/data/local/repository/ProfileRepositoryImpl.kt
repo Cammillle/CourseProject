@@ -19,4 +19,16 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun clearAllRemoteKeys() {
         database.remoteKeysDao().clearAllRemoteKeys()
     }
+
+    override suspend fun clearAllListItems() {
+        database.listsDao().clearItems()
+    }
+
+    override suspend fun clearAllLists() {
+        database.listsDao().clearAllLists()
+    }
+
+    override suspend fun clearAllListCrossReffs() {
+        database.listsDao().clearListCrossReferences()
+    }
 }

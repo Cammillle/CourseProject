@@ -25,4 +25,15 @@ interface ListsDao {
     @Transaction
     @Query("SELECT * FROM lists_of_items WHERE id = :listId")
     suspend fun getListWithItems(listId: Long): ListWithItemsDBO?
+
+    ///----------CLEAR-----------------
+
+    @Query("DELETE FROM lists_of_items")
+    suspend fun clearAllLists()
+
+    @Query("DELETE FROM items")
+    suspend fun clearItems()
+
+    @Query("DELETE FROM list_item_cross")
+    suspend fun clearListCrossReferences()
 }

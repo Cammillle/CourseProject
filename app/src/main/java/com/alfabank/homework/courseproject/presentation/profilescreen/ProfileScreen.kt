@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,6 +110,7 @@ fun ProfileScreen() {
                             coroutineScope.launch {
                                 try {
                                     viewModel.clearCache()
+                                    delay(1000)
                                 } finally {
                                     isLoading = false
                                     showClearCacheDialog = false

@@ -6,4 +6,11 @@ interface ProfileRepository {
     suspend fun clearAllCrossRefs()
     suspend fun clearAllRemoteKeys()
 
+    suspend fun clearAllListItems()
+
+    suspend fun clearAllLists()
+
+    suspend fun clearAllListCrossReffs()
+
+
 }
