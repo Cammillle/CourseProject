@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
                                 contentAlignment = Alignment.Center
                             ) {
                                 Button(onClick = viewModel::retry) {
-                                    Text("Ошибка: ${(uiState as MainUiState.Error).message}. Повторить")
+                                    Text("Ошибка: ${currentState}.message}. Повторить")
                                 }
                             }
                         }
