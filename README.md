@@ -33,3 +33,46 @@
 - Реализовать определение геопозиции и составление маршрутов
 - Добавить подборки ивентов по городам
 
+## 📱 Скриншоты
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="screenshots/main.png" width="200" alt="Главный экран">
+        <br>
+        <em>Главный экран</em>
+      </td>
+      <td align="center">
+        <img src="screenshots/filters.png" width="200" alt="Фильтры">
+        <br>
+        <em>Фильтры</em>
+      </td>
+      <td align="center">
+        <img src="screenshots/maps.png" width="200" alt="Карта с ивентами">
+        <br>
+        <em>Карта с ивентами</em>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="screenshots/guids.png" width="200" alt="Экран с гидами">
+        <br>
+        <em>Экран с гидами</em>
+      </td>
+      <td align="center">
+        <img src="screenshots/favourite.png" width="200" alt="Экран с избранным">
+        <br>
+        <em>Экран с избранным</em>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+
