@@ -16,4 +16,47 @@
         <item>Выставки</item>
         <item>Фестивали</item>
     </string-array>
+
+    <string-array name="categories">
+        <item>События для бизнеса</item>
+        <item>Кинопоказы</item>
+        <item>Концерты</item>
+        <item>Обучение</item>
+        <item>Развлечения</item>
+        <item>Выставки</item>
+        <item>Фестивали</item>
+        <item>Праздники</item>
+        <item>Детям</item>
+        <item>Разное</item>
+        <item>Вечеринки</item>
+        <item>Квесты</item>
+        <item>Активный отдых</item>
+        <item>Благотворительность</item>
+        <item>Спектакли</item>
+        <item>Экскурсии</item>
+        <item>Ярмарки</item>
+    </string-array>
+
+    <string-array name="categories_en">
+        <item>business-events</item>
+        <item>cinema</item>
+        <item>concert</item>
+        <item>education</item>
+        <item>entertainment</item>
+        <item>exhibition</item>
+        <item>festival</item>
+        <item>holiday</item>
+        <item>kids</item>
+        <item>other</item>
+        <item>party</item>
+        <item>quest</item>
+        <item>recreation</item>
+        <item>social-activity</item>
+        <item>theater</item>
+        <item>tour</item>
+        <item>yarmarki-razvlecheniya-yarmarki</item>
+    </string-array>
+
+
+
 </resources>
